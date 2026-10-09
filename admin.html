@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIT24 Admin ERP | Front Desk & Client Management App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gym: {
+              black: '#050505',
+              dark: '#0d0d10',
+              card: '#121216',
+              red: '#ff0033',
+              reddark: '#b30024'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#050505] text-zinc-100 antialiased selection:bg-[#ff0033] selection:text-white min-h-screen flex flex-col">
+
+  <!-- TOP GYMBOX APP BAR -->
+  <header class="bg-[#0d0d10] border-b-2 border-white/10 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <div class="flex items-center gap-4">
+        <a href="admin.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 bg-[#ff0033] flex items-center justify-center font-gymbox text-2xl text-white group-hover:bg-white group-hover:text-black transition-all">
+            24
+          </div>
+          <div>
+            <span class="text-2xl font-gymbox tracking-wider text-white">FIT24 ERP</span>
+            <span class="text-[9px] font-mono uppercase tracking-widest text-[#ff0033] block -mt-1 font-bold">FRONT DESK & OPERATIONS</span>
+          </div>
+        </a>
+        <span class="hidden md:inline px-2 py-0.5 bg-black border border-[#ff0033]/40 text-[#ff0033] text-[10px] font-mono font-bold uppercase">
+          ● KANHANGAD DESK TERMINAL
+        </span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-zinc-400">
+          <span>TB Road, Hosdurg</span>
+          <span class="text-zinc-600">|</span>
+          <span class="text-emerald-400 font-bold">Desk Live</span>
+        </div>
+        
+        <a href="index.html" class="px-3 py-1.5 bg-white/5 hover:bg-[#ff0033] border border-white/10 text-xs font-mono font-bold uppercase text-zinc-300 hover:text-white transition-all flex items-center gap-1.5">
+          <span>🌐 View Public Site</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col lg:flex-row gap-6">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-full lg:w-64 flex-shrink-0">
+      <div class="bg-[#0d0d10] border-2 border-white/10 p-3 space-y-1.5 sticky top-24">
+        
+        <button data-tab="tab-dashboard" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all bg-[#ff0033] text-white">
+          <span class="text-lg">📊</span>
+          Dashboard Overview
+        </button>
+
+        <button data-tab="tab-checkin" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-emerald-400">⚡</span>
+          Fast Check-In Desk
+        </button>
+
+        <button data-tab="tab-members" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-[#ff0033]">👥</span>
+          Member CRM
+        </button>
+
+        <button data-tab="tab-leads" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center justify-between transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <div class="flex items-center gap-3">
+            <span class="text-lg text-rose-500">🎯</span>
+            <span>Lead Pipeline</span>
+          </div>
+          <span id="nav-new-leads-badge" class="px-1.5 py-0.5 text-[10px] font-mono bg-[#ff0033] text-white font-bold hidden">0</span>
+        </button>
+
+        <button data-tab="tab-facilities" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-orange-400">🧖</span>
+          Facility Passbook
+        </button>
+
+        <button data-tab="tab-pause" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-amber-400">⏸</span>
+          Membership Pause
+        </button>
+
+        <button data-tab="tab-cafe" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-yellow-400">☕</span>
+          Café POS & Wallet
+        </button>
+
+        <button data-tab="tab-trainers" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-red-500">🥊</span>
+          Trainers & Coaches
+        </button>
+
+        <button data-tab="tab-classes" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-cyan-400">📅</span>
+          Class Timetable
+        </button>
+
+        <button data-tab="tab-blog" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center gap-3 transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <span class="text-lg text-purple-400">📰</span>
+          Blog & Journal
+        </button>
+
+        <div class="pt-4 border-t border-white/10 space-y-1">
+          <button id="export-storage-btn" class="w-full px-3.5 py-2 text-left text-xs font-mono text-zinc-400 hover:text-white hover:bg-white/5 flex items-center gap-2">
+            📥 Export Backup (JSON)
+          </button>
+          <button id="reset-storage-btn" class="w-full px-3.5 py-2 text-left text-xs font-mono text-[#ff0033] hover:text-white hover:bg-[#ff0033]/20 flex items-center gap-2">
+            🔄 Reset Demo Data
+          </button>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 min-w-0">
+
+      <!-- ================= 1. TAB: DASHBOARD OVERVIEW ================= -->
+      <section id="tab-dashboard" class="admin-tab-panel space-y-6">
+        
+        <!-- Live Counters -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-[#0e0e12] border-2 border-white/10 p-5">
+            <span class="text-[10px] uppercase font-mono tracking-wider text-zinc-400">Total Members</span>
+            <div id="metric-total-members" class="text-4xl font-gymbox text-white mt-1">0</div>
+            <div id="metric-tier-breakdown" class="text-[10px] text-zinc-500 font-mono mt-2">Loading...</div>
+          </div>
+
+          <div class="bg-[#0e0e12] border-2 border-white/10 p-5">
+            <span class="text-[10px] uppercase font-mono tracking-wider text-emerald-400">Active Plans</span>
+            <div id="metric-active-members" class="text-4xl font-gymbox text-emerald-400 mt-1">0</div>
+            <div class="text-[10px] text-zinc-500 font-mono mt-2">Currently valid access</div>
+          </div>
+
+          <div class="bg-[#0e0e12] border-2 border-white/10 p-5">
+            <span class="text-[10px] uppercase font-mono tracking-wider text-amber-400">Paused Members</span>
+            <div id="metric-paused-members" class="text-4xl font-gymbox text-amber-400 mt-1">0</div>
+            <div class="text-[10px] text-zinc-500 font-mono mt-2">Min 7-day freeze applied</div>
+          </div>
+
+          <div class="bg-black border-2 border-[#ff0033] p-5 shadow-lg">
+            <span class="text-[10px] uppercase font-mono tracking-wider text-[#ff0033] flex items-center gap-1.5 font-bold">
+              <span class="w-2 h-2 rounded-full bg-[#ff0033] animate-ping"></span> Live Floor Occupancy
+            </span>
+            <div id="metric-live-occupancy" class="text-4xl font-gymbox text-white mt-1">0</div>
+            <div class="text-[10px] text-zinc-400 font-mono mt-2">Athletes inside club right now</div>
+          </div>
+        </div>
+
+        <!-- Quick Front Desk Actions -->
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white mb-4">RECEPTION EXPRESS SHORTCUTS</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <button onclick="document.querySelector('[data-tab=tab-checkin]').click()" 
+                    class="p-4 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-left transition-all group">
+              <span class="text-2xl block mb-1">⚡</span>
+              <span class="text-xs font-gymbox text-base uppercase text-white block">Fast Check-In</span>
+              <span class="text-[10px] text-zinc-400 group-hover:text-white font-mono">Search or QR Code</span>
+            </button>
+
+            <button onclick="document.getElementById('open-add-member-modal').click()" 
+                    class="p-4 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-left transition-all group">
+              <span class="text-2xl block mb-1">➕</span>
+              <span class="text-xs font-gymbox text-base uppercase text-white block">Register Member</span>
+              <span class="text-[10px] text-zinc-400 group-hover:text-white font-mono">Pro, Prime, Elite</span>
+            </button>
+
+            <button onclick="document.querySelector('[data-tab=tab-leads]').click()" 
+                    class="p-4 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-left transition-all group">
+              <span class="text-2xl block mb-1">🎯</span>
+              <span class="text-xs font-gymbox text-base uppercase text-white block">Lead Pipeline</span>
+              <span class="text-[10px] text-zinc-400 group-hover:text-white font-mono">Inquiries & CRM</span>
+            </button>
+
+            <button onclick="document.querySelector('[data-tab=tab-facilities]').click()" 
+                    class="p-4 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-left transition-all group">
+              <span class="text-2xl block mb-1">🧖</span>
+              <span class="text-xs font-gymbox text-base uppercase text-white block">Deduct Quota</span>
+              <span class="text-[10px] text-zinc-400 group-hover:text-white font-mono">Sauna & Ice Bath</span>
+            </button>
+
+            <button onclick="document.querySelector('[data-tab=tab-cafe]').click()" 
+                    class="p-4 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-left transition-all group">
+              <span class="text-2xl block mb-1">☕</span>
+              <span class="text-xs font-gymbox text-base uppercase text-white block">Café POS Bill</span>
+              <span class="text-[10px] text-zinc-400 group-hover:text-white font-mono">Use Member Wallet</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Today's Activity Feed & Facility Counters -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white">TODAY'S CHECK-IN STREAM</h4>
+              <span id="metric-today-checkins" class="text-xs font-mono font-bold text-[#ff0033]">0 entries</span>
+            </div>
+            <div id="dashboard-recent-feed" class="space-y-2">
+              <!-- Rendered by admin.js -->
+            </div>
+          </div>
+
+          <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white mb-4">FACILITIES ACTIVITY TODAY</h4>
+            <div class="space-y-3 font-mono text-xs">
+              <div class="p-3 bg-black border border-white/5 flex items-center justify-between">
+                <span class="text-zinc-300">🧖 Sauna Sessions Consumed:</span>
+                <span class="font-bold text-orange-400">Active</span>
+              </div>
+              <div class="p-3 bg-black border border-white/5 flex items-center justify-between">
+                <span class="text-zinc-300">🧊 Ice Bath Plunges Recorded:</span>
+                <span class="font-bold text-cyan-400">Active</span>
+              </div>
+              <div class="p-3 bg-black border border-white/5 flex items-center justify-between">
+                <span class="text-zinc-300">🎟 Guest Passes Redeemed:</span>
+                <span class="font-bold text-emerald-400">Active</span>
+              </div>
+              <div class="p-3 bg-black border border-white/5 flex items-center justify-between">
+                <span class="text-zinc-300">☕ Café Wallet Transactions:</span>
+                <span class="font-bold text-amber-400">Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 2. TAB: EXPRESS CHECK-IN DESK ================= -->
+      <section id="tab-checkin" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-[#ff0033] p-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <span class="text-[10px] font-mono font-bold text-[#ff0033] uppercase">// RECEPTION ENTRY DESK</span>
+              <h3 class="text-3xl font-gymbox text-white">EXPRESS ATHLETE CHECK-IN</h3>
+            </div>
+            <button id="simulate-qr-btn" class="px-4 py-2.5 bg-black hover:bg-white hover:text-black border border-white/20 text-xs font-mono font-bold uppercase transition-all">
+              📷 Scan Digital Pass
+            </button>
+          </div>
+
+          <div class="relative mb-4">
+            <input id="checkin-search-input" type="text" placeholder="Search by Athlete Name, Phone Number, or Code (e.g. F24-1001)..." 
+                   class="w-full bg-black border-2 border-white/20 px-5 py-4 text-base text-white focus:outline-none focus:border-[#ff0033] font-mono">
+            <div id="checkin-suggestions" class="absolute top-full left-0 right-0 mt-2 bg-[#121217] border-2 border-white/20 z-20 max-h-60 overflow-y-auto hidden"></div>
+          </div>
+
+          <div id="checkin-preview-card" class="hidden mb-4"></div>
+
+          <button id="do-checkin-btn" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-2xl uppercase tracking-wider text-white transition-all">
+            LOG ATHLETE ENTRY & CHECK IN
+          </button>
+        </div>
+
+        <!-- Today's Attendance Table -->
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white">TODAY'S VISITOR LOG</h4>
+            <span class="text-xs text-zinc-500 font-mono">Auto-timestamped entry</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Member ID</th>
+                  <th class="py-3 px-4">Name</th>
+                  <th class="py-3 px-4">Tier</th>
+                  <th class="py-3 px-4">Check-In Time</th>
+                  <th class="py-3 px-4">Method</th>
+                  <th class="py-3 px-4 text-right">Floor Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendance-log-tbody">
+                <!-- Rendered by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. TAB: MEMBER CRM ================= -->
+      <section id="tab-members" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <span class="text-[10px] font-mono font-bold text-[#ff0033] uppercase">// CLIENT DATABASE & CRM</span>
+              <h3 class="text-3xl font-gymbox text-white">MEMBER DIRECTORY</h3>
+            </div>
+            <button id="open-add-member-modal" class="px-5 py-2.5 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-base uppercase text-white transition-all">
+              ➕ Add New Member
+            </button>
+          </div>
+
+          <!-- Filters -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+            <input id="member-table-search" type="text" placeholder="Search by name, phone or code..." 
+                   class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+            <select id="member-filter-tier" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Tiers (Pro, Prime, Elite)</option>
+              <option value="ELITE">Elite Tier</option>
+              <option value="PRIME">Prime Tier</option>
+              <option value="PRO">Pro Tier</option>
+            </select>
+            <select id="member-filter-status" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="PAUSED">Paused</option>
+            </select>
+          </div>
+
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Code</th>
+                  <th class="py-3 px-4">Athlete Info</th>
+                  <th class="py-3 px-4">Plan Tier</th>
+                  <th class="py-3 px-4">Validity</th>
+                  <th class="py-3 px-4">Facility Quotas</th>
+                  <th class="py-3 px-4">Café Wallet</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="members-table-tbody">
+                <!-- Rendered by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. TAB: FACILITY PASSBOOK ================= -->
+      <section id="tab-facilities" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="mb-6">
+            <span class="text-[10px] font-mono font-bold text-orange-400 uppercase">// RECOVERY CONSUMPTION TRACKER</span>
+            <h3 class="text-3xl font-gymbox text-white">FACILITY QUOTA DEDUCTION</h3>
+            <p class="text-xs text-zinc-400 font-mono mt-1">
+              Deduct Finnish Sauna, Ice Bath plunges, or complimentary Guest Passes against the member's allotted tier quota.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 font-mono">
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Select Member</label>
+              <select id="facility-member-select" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+                <option value="">-- Choose Member --</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Facility Service</label>
+              <select id="facility-type-select" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+                <option value="Sauna">🧖 Finnish Sauna (Heat Therapy)</option>
+                <option value="Ice Bath">🧊 Ice Bath (Sub-Zero Plunge)</option>
+                <option value="Guest Pass">🎟 Complimentary Guest Pass</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Front Desk Staff Notes</label>
+              <input id="facility-staff-notes" type="text" placeholder="e.g. 20-min session logged" 
+                     class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+            </div>
+          </div>
+
+          <button id="deduct-facility-btn" class="w-full py-4 bg-orange-600 hover:bg-white hover:text-black text-white font-gymbox text-xl uppercase transition-all">
+            CONFIRM & DEDUCT 1 SESSION FROM MEMBER QUOTA
+          </button>
+        </div>
+
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white mb-4">FACILITY USAGE AUDIT TRAIL</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Member ID</th>
+                  <th class="py-3 px-4">Name</th>
+                  <th class="py-3 px-4">Facility Used</th>
+                  <th class="py-3 px-4">Timestamp</th>
+                  <th class="py-3 px-4">Remaining Quota</th>
+                  <th class="py-3 px-4">Staff Stamp</th>
+                </tr>
+              </thead>
+              <tbody id="facility-logs-tbody">
+                <!-- Rendered by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. TAB: MEMBERSHIP PAUSE ENGINE ================= -->
+      <section id="tab-pause" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="mb-6">
+            <span class="text-[10px] font-mono font-bold text-amber-400 uppercase">// BROCHURE PAUSE RULES ENGINE</span>
+            <h3 class="text-3xl font-gymbox text-white">MEMBERSHIP FREEZE / PAUSE</h3>
+            <p class="text-xs text-zinc-400 font-mono mt-1">
+              Minimum 7 days per pause. Only plans of 3 months or more eligible. Maximum 2 split blocks allowed.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 font-mono">
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Select Member</label>
+              <select id="pause-member-select" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+                <option value="">-- Choose Member --</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Pause Days</label>
+              <input id="pause-days-input" type="number" min="7" max="60" value="7" 
+                     class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <span class="text-[10px] text-zinc-500">Min 7 days required</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Reason for Pause</label>
+              <input id="pause-reason-input" type="text" placeholder="e.g. Traveling / Medical" 
+                     class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="apply-pause-btn" class="flex-1 py-3.5 bg-amber-600 hover:bg-white hover:text-black text-white font-gymbox text-xl uppercase transition-all">
+              APPLY FREEZE (EXTEND EXPIRY)
+            </button>
+            <button id="resume-pause-btn" class="px-6 py-3.5 bg-white/10 hover:bg-emerald-600 text-white font-mono font-bold text-xs uppercase transition-all">
+              Resume Member Early
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 mb-4">CURRENTLY FROZEN PLANS</h4>
+          <div id="active-pauses-list" class="space-y-3 font-mono"></div>
+        </div>
+      </section>
+
+      <!-- ================= 6. TAB: CAFÉ POS & WALLET ================= -->
+      <section id="tab-cafe" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="mb-6">
+            <span class="text-[10px] font-mono font-bold text-yellow-400 uppercase">// NUTRITION FUEL BAR POS</span>
+            <h3 class="text-3xl font-gymbox text-white">CAFÉ BILLING & REWARD WALLET</h3>
+            <p class="text-xs text-zinc-400 font-mono mt-1">
+              Tier discounts applied: 10% for Prime, 15% for Elite. Deduct directly from complimentary signup wallet credits.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 font-mono">
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Select Member</label>
+              <select id="cafe-member-select" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+                <option value="">-- Choose Member --</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Gross Bill Amount (₹)</label>
+              <input id="cafe-gross-bill" type="number" placeholder="e.g. 360" 
+                     class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Order Notes</label>
+              <input id="cafe-order-notes" type="text" placeholder="e.g. Double Hydro-Whey Shake" 
+                     class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+            </div>
+          </div>
+
+          <div id="cafe-bill-preview" class="mb-4"></div>
+
+          <div class="flex items-center gap-3 mb-6 p-3 bg-black border border-white/10">
+            <input type="checkbox" id="cafe-pay-wallet-checkbox" checked class="w-4 h-4 text-[#ff0033]">
+            <label for="cafe-pay-wallet-checkbox" class="text-xs font-mono font-bold text-zinc-300">
+              Pay using FIT24 Complimentary Wallet Credits (Uncheck for Cash / UPI direct)
+            </label>
+          </div>
+
+          <button id="cafe-charge-btn" class="w-full py-4 bg-yellow-400 hover:bg-white hover:text-black text-black font-gymbox text-2xl uppercase transition-all">
+            CHARGE CAFÉ BILL & ISSUE RECEIPT
+          </button>
+        </div>
+
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white mb-4">CAFÉ SALES LEDGER</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Member ID</th>
+                  <th class="py-3 px-4">Name</th>
+                  <th class="py-3 px-4">Items</th>
+                  <th class="py-3 px-4">Gross</th>
+                  <th class="py-3 px-4">Discount</th>
+                  <th class="py-3 px-4">Net Paid</th>
+                  <th class="py-3 px-4">Mode</th>
+                  <th class="py-3 px-4">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="cafe-logs-tbody">
+                <!-- Rendered by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 7. TAB: LEAD PIPELINE CRM ================= -->
+      <section id="tab-leads" class="admin-tab-panel hidden space-y-6">
+        
+        <!-- Top Metrics & Header -->
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <span class="text-[10px] font-mono font-bold text-rose-500 uppercase tracking-widest">// PROSPECT PIPELINE & CONVERSION CRM</span>
+              <h3 class="text-3xl font-gymbox text-white">ATHLETE LEAD PIPELINE</h3>
+              <p class="text-xs text-zinc-400 font-mono mt-1">
+                Real-time capture of VIP tour requests, walk-in inquiries & WhatsApp chats. 1-Click convert into active members.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="open-add-lead-modal" class="px-5 py-2.5 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-base uppercase text-white transition-all flex items-center gap-2">
+                <span>➕</span> Add Walk-In Lead
+              </button>
+            </div>
+          </div>
+
+          <!-- Lead Pipeline KPI Badges -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-black border border-white/10 p-4">
+              <div class="text-[10px] uppercase font-mono text-zinc-400">Total Inquiries</div>
+              <div id="metric-total-leads" class="text-3xl font-gymbox text-white mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">All recorded leads</div>
+            </div>
+            <div class="bg-black border border-rose-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-rose-400 flex items-center justify-between">
+                <span>New / Uncontacted</span>
+                <span class="w-2 h-2 rounded-full bg-[#ff0033] animate-pulse"></span>
+              </div>
+              <div id="metric-new-leads" class="text-3xl font-gymbox text-rose-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">Needs front desk reply</div>
+            </div>
+            <div class="bg-black border border-cyan-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-cyan-400">Tours Scheduled</div>
+              <div id="metric-tours-leads" class="text-3xl font-gymbox text-cyan-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">VIP visits booked</div>
+            </div>
+            <div class="bg-black border border-emerald-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-emerald-400">Converted Members</div>
+              <div id="metric-converted-leads" class="text-3xl font-gymbox text-emerald-400 mt-1">0</div>
+              <div id="metric-conversion-rate" class="text-[10px] font-mono text-emerald-500/80 mt-1">0% conversion rate</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="relative">
+              <input id="lead-table-search" type="text" placeholder="Search by name, phone, email, notes..." 
+                     class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+            </div>
+            <select id="lead-filter-status" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Statuses</option>
+              <option value="New">Status: New</option>
+              <option value="Contacted">Status: Contacted</option>
+              <option value="Tour Scheduled">Status: Tour Scheduled</option>
+              <option value="Trial Attended">Status: Trial Attended</option>
+              <option value="Converted">Status: Converted ★</option>
+              <option value="Lost">Status: Lost</option>
+            </select>
+            <select id="lead-filter-source" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Acquisition Channels</option>
+              <option value="Website VIP Tour">Website VIP Tour</option>
+              <option value="Walk-In Front Desk">Walk-In Front Desk</option>
+              <option value="WhatsApp Club Desk">WhatsApp Club Desk</option>
+              <option value="Instagram / Social">Instagram / Social</option>
+              <option value="Referral">Member Referral</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Leads Table Card -->
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white">ATHLETE PROSPECT PIPELINE</h4>
+            <span id="lead-table-count" class="text-xs text-zinc-500 font-mono">0 prospects loaded</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Prospect</th>
+                  <th class="py-3 px-4">Contact Info</th>
+                  <th class="py-3 px-4">Target Plan / Interest</th>
+                  <th class="py-3 px-4">Channel</th>
+                  <th class="py-3 px-4">Pipeline Stage</th>
+                  <th class="py-3 px-4">Notes & Preferences</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leads-table-tbody">
+                <!-- Rendered dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 8. TAB: TRAINER ROSTER & PROFILES ================= -->
+      <section id="tab-trainers" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <span class="text-[10px] font-mono font-bold text-red-500 uppercase tracking-widest">// COACH ROSTER & SPECIALIST DIRECTORY</span>
+              <h3 class="text-3xl font-gymbox text-white">TRAINER PROFILE MANAGEMENT</h3>
+              <p class="text-xs text-zinc-400 font-mono mt-1">
+                Manage master drillmasters, credentials, certifications, photos, and public website showcase.
+              </p>
+            </div>
+            <button id="open-add-trainer-btn" class="px-5 py-2.5 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-base uppercase text-white transition-all flex items-center gap-2">
+              <span>➕</span> Add New Trainer
+            </button>
+          </div>
+
+          <!-- Top KPI Metrics -->
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-black border border-white/10 p-4">
+              <div class="text-[10px] uppercase font-mono text-zinc-400">Total Coaches</div>
+              <div id="metric-total-trainers" class="text-3xl font-gymbox text-white mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">Active roster directory</div>
+            </div>
+            <div class="bg-black border border-emerald-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-emerald-400">Active On Floor</div>
+              <div id="metric-active-trainers" class="text-3xl font-gymbox text-emerald-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">Available for PT & classes</div>
+            </div>
+            <div class="bg-black border border-red-500/30 p-4 col-span-2 md:col-span-1">
+              <div class="text-[10px] uppercase font-mono text-[#ff0033]">Disciplines Covered</div>
+              <div id="metric-specialties-count" class="text-3xl font-gymbox text-[#ff0033] mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">Combat, Strength, Physio, Ladies</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input id="trainer-search-input" type="text" placeholder="Search coach by name, title, or specialty..." 
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+            <select id="trainer-status-filter" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Coaches (Active & Inactive)</option>
+              <option value="ACTIVE" selected>Active On Floor</option>
+              <option value="INACTIVE">Inactive / On Leave</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Trainers Table -->
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white">COACHES & DRILLMASTERS DIRECTORY</h4>
+            <span id="trainer-table-count" class="text-xs text-zinc-500 font-mono">0 coaches listed</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Coach Profile</th>
+                  <th class="py-3 px-4">Title & Badge</th>
+                  <th class="py-3 px-4">Specialty & Expertise</th>
+                  <th class="py-3 px-4">Bio & Philosophy</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="trainers-table-tbody">
+                <!-- Rendered dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 9. TAB: GROUP CLASS SCHEDULE & TIMINGS ================= -->
+      <section id="tab-classes" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <span class="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">// RING, MAT & FLOOR TIMETABLES</span>
+              <h3 class="text-3xl font-gymbox text-white">GROUP CLASS TIMING & ROSTER SETTING</h3>
+              <p class="text-xs text-zinc-400 font-mono mt-1">
+                Configure weekly sessions, start times, assigned coaches, intensity and ladies-only flags for all classes.
+              </p>
+            </div>
+            <button id="open-add-class-btn" class="px-5 py-2.5 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-base uppercase text-white transition-all flex items-center gap-2">
+              <span>➕</span> Schedule New Class
+            </button>
+          </div>
+
+          <!-- Top KPI Metrics -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-black border border-white/10 p-4">
+              <div class="text-[10px] uppercase font-mono text-zinc-400">Weekly Sessions</div>
+              <div id="metric-total-classes" class="text-3xl font-gymbox text-white mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">Across Mon-Sat</div>
+            </div>
+            <div class="bg-black border border-amber-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-amber-400">Morning Slots</div>
+              <div id="metric-morning-classes" class="text-3xl font-gymbox text-amber-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">06:00 AM - 10:00 AM</div>
+            </div>
+            <div class="bg-black border border-cyan-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-cyan-400">Evening Peak</div>
+              <div id="metric-evening-classes" class="text-3xl font-gymbox text-cyan-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">05:00 PM - 09:30 PM</div>
+            </div>
+            <div class="bg-black border border-pink-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-pink-400">Ladies-Only Sessions</div>
+              <div id="metric-ladies-classes" class="text-3xl font-gymbox text-pink-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">11:00 AM - 03:00 PM</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input id="class-search-input" type="text" placeholder="Search class name or coach..." 
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+            <select id="class-day-filter" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Days</option>
+              <option value="Mon">Monday</option>
+              <option value="Tue">Tuesday</option>
+              <option value="Wed">Wednesday</option>
+              <option value="Thu">Thursday</option>
+              <option value="Fri">Friday</option>
+              <option value="Sat">Saturday</option>
+            </select>
+            <select id="class-cat-filter" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Categories</option>
+              <option value="BOXING">Combat & Boxing</option>
+              <option value="STRENGTH">Strength & Iron</option>
+              <option value="HIIT">HIIT & HYROX</option>
+              <option value="YOGA">Yoga & Mobility</option>
+              <option value="LADIES">Ladies-Only 🌸</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Class Timetable Table -->
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white">ACTIVE TIMETABLE ROSTER</h4>
+            <span id="class-table-count" class="text-xs text-zinc-500 font-mono">0 sessions scheduled</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Day & Timing</th>
+                  <th class="py-3 px-4">Session Name</th>
+                  <th class="py-3 px-4">Assigned Coach</th>
+                  <th class="py-3 px-4">Discipline</th>
+                  <th class="py-3 px-4">Intensity</th>
+                  <th class="py-3 px-4">Ladies Access</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="classes-table-tbody">
+                <!-- Rendered dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 10. TAB: BLOG & FIELD JOURNAL ================= -->
+      <section id="tab-blog" class="admin-tab-panel hidden space-y-6">
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <span class="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest">// ATHLETIC INTEL & CONTENT MANAGEMENT</span>
+              <h3 class="text-3xl font-gymbox text-white">BLOG & FIELD JOURNAL PUBLISHING</h3>
+              <p class="text-xs text-zinc-400 font-mono mt-1">
+                Draft, edit and publish recovery science guides, café nutrition breakdowns, and club news directly to the website.
+              </p>
+            </div>
+            <button id="open-add-blog-btn" class="px-5 py-2.5 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-base uppercase text-white transition-all flex items-center gap-2">
+              <span>➕</span> Draft New Article
+            </button>
+          </div>
+
+          <!-- Top KPI Metrics -->
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-black border border-white/10 p-4">
+              <div class="text-[10px] uppercase font-mono text-zinc-400">Total Articles</div>
+              <div id="metric-total-blogs" class="text-3xl font-gymbox text-white mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">Field journal archive</div>
+            </div>
+            <div class="bg-black border border-emerald-500/30 p-4">
+              <div class="text-[10px] uppercase font-mono text-emerald-400">Published Live</div>
+              <div id="metric-published-blogs" class="text-3xl font-gymbox text-emerald-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">Visible on website</div>
+            </div>
+            <div class="bg-black border border-amber-500/30 p-4 col-span-2 md:col-span-1">
+              <div class="text-[10px] uppercase font-mono text-amber-400">Drafts</div>
+              <div id="metric-drafts-blogs" class="text-3xl font-gymbox text-amber-400 mt-1">0</div>
+              <div class="text-[10px] font-mono text-zinc-500 mt-1">In review / unpublished</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input id="blog-search-input" type="text" placeholder="Search articles by title or keyword..." 
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+            <select id="blog-cat-filter" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Categories</option>
+              <option value="Recovery Science">Recovery Science</option>
+              <option value="Community & Wellness">Community & Wellness</option>
+              <option value="Nutrition & Fuel">Nutrition & Fuel</option>
+              <option value="Club Intel">Club Intel</option>
+            </select>
+            <select id="blog-status-filter" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Statuses</option>
+              <option value="PUBLISHED">Published Live</option>
+              <option value="DRAFT">Draft Only</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Blog Posts Table -->
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white">FIELD JOURNAL ARTICLES</h4>
+            <span id="blog-table-count" class="text-xs text-zinc-500 font-mono">0 articles listed</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-[10px] uppercase text-zinc-400">
+                  <th class="py-3 px-4">Cover & Title</th>
+                  <th class="py-3 px-4">Topic Category</th>
+                  <th class="py-3 px-4">Read Time</th>
+                  <th class="py-3 px-4">Publication Status</th>
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="blog-table-tbody">
+                <!-- Rendered dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ADD MEMBER MODAL -->
+  <div id="add-member-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+      <button onclick="document.getElementById('add-member-modal').classList.add('hidden')" class="absolute top-4 right-4 text-zinc-400 hover:text-white font-mono text-lg">✕</button>
+
+      <div class="mb-5">
+        <span class="text-[10px] font-mono font-bold text-[#ff0033] uppercase">// FRONT DESK ONBOARDING</span>
+        <h3 class="text-3xl font-gymbox text-white">NEW MEMBER REGISTRATION</h3>
+        <p class="text-xs font-mono text-zinc-400 mt-1">Assigns tier quotas, pause limits, and complimentary café credit automatically.</p>
+      </div>
+
+      <form id="add-member-form" class="space-y-4 font-mono">
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Full Name</label>
+          <input id="new-member-name" required type="text" placeholder="e.g. Arun Kumar"
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Mobile Number</label>
+            <input id="new-member-phone" required type="tel" placeholder="+91 98470 12345"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Gender</label>
+            <select id="new-member-gender" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Email Address</label>
+          <input id="new-member-email" type="email" placeholder="arun@example.com"
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Membership Tier</label>
+            <select id="new-member-tier" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="ELITE">ELITE (VIP All-inclusive)</option>
+              <option value="PRIME" selected>PRIME (Gym + Recovery)</option>
+              <option value="PRO">PRO (Gym Only)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Duration Length</label>
+            <select id="new-member-duration" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="1">1 Month (No Pause)</option>
+              <option value="3">3 Months (15d Pause)</option>
+              <option value="6">6 Months (30d Pause)</option>
+              <option value="12" selected>12 Months (45d Pause)</option>
+              <option value="24">24 Months (60d Pause)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-2xl uppercase tracking-wider transition-all mt-4">
+          REGISTER ATHLETE & ISSUE DIGITAL PASS
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD WALK-IN LEAD MODAL -->
+  <div id="add-lead-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-rose-500 max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+      <button onclick="document.getElementById('add-lead-modal').classList.add('hidden')" class="absolute top-4 right-4 text-zinc-400 hover:text-white font-mono text-lg">✕</button>
+
+      <div class="mb-5">
+        <span class="text-[10px] font-mono font-bold text-rose-500 uppercase tracking-widest">// PIPELINE INTAKE</span>
+        <h3 class="text-3xl font-gymbox text-white">RECORD PROSPECT INQUIRY</h3>
+        <p class="text-xs font-mono text-zinc-400 mt-1">Capture walk-in visitors, inbound phone calls, or social leads for fast WhatsApp follow-up.</p>
+      </div>
+
+      <form id="add-lead-form" class="space-y-4 font-mono">
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Full Name</label>
+          <input id="new-lead-name" required type="text" placeholder="e.g. Mohammed Farhan"
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">WhatsApp / Phone</label>
+            <input id="new-lead-phone" required type="tel" placeholder="+91 98470 54321"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Email (Optional)</label>
+            <input id="new-lead-email" type="email" placeholder="farhan@example.com"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Target Discipline / Tier</label>
+            <select id="new-lead-interest" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="PRIME (Gym + Recovery)">PRIME (Gym + Recovery)</option>
+              <option value="ELITE (VIP All-inclusive)">ELITE (VIP All-inclusive)</option>
+              <option value="PRO (Gym Only)">PRO (Gym Only)</option>
+              <option value="Boxing & Combat Arena">Boxing & Combat Arena</option>
+              <option value="Sauna & Ice Plunge Contrast">Sauna & Ice Plunge Contrast</option>
+              <option value="Personal Coaching">Personal Coaching</option>
+              <option value="General Club Tour">General Club Tour</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Inquiry Source</label>
+            <select id="new-lead-source" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="Walk-In Front Desk">Walk-In Front Desk</option>
+              <option value="WhatsApp Club Desk">WhatsApp Club Desk</option>
+              <option value="Website VIP Tour">Website VIP Tour</option>
+              <option value="Instagram / Social">Instagram / Social</option>
+              <option value="Member Referral">Member Referral</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Initial Status</label>
+          <select id="new-lead-status" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+            <option value="New" selected>New (Needs Outreach)</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Tour Scheduled">Tour Scheduled</option>
+            <option value="Trial Attended">Trial Attended</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Notes & Follow-up Details</label>
+          <textarea id="new-lead-notes" rows="2" placeholder="e.g. Visiting on Sunday at 5 PM with colleague. Interested in 12-month deal."
+                    class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-2xl uppercase tracking-wider transition-all mt-4">
+          RECORD IN LEAD PIPELINE
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="admin-member-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div id="admin-member-modal-content"></div>
+  </div>
+
+  <!-- TRAINER MODAL (ADD / EDIT) -->
+  <div id="trainer-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-red-500 max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="document.getElementById('trainer-modal').classList.add('hidden')" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+
+      <div class="mb-5">
+        <span class="text-[10px] font-bold text-red-500 uppercase tracking-widest">// DRILLMASTER CONFIGURATION</span>
+        <h3 id="trainer-modal-title" class="text-3xl font-gymbox text-white">ADD COACH PROFILE</h3>
+        <p class="text-xs text-zinc-400 mt-1">Configure trainer bio, specialty badges, credentials and floor status.</p>
+      </div>
+
+      <form id="trainer-form" class="space-y-4">
+        <input type="hidden" id="trainer-form-id">
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Coach Full Name</label>
+          <input id="trainer-form-name" required type="text" placeholder="e.g. Rahul Menon"
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Title / Role</label>
+            <input id="trainer-form-title" required type="text" placeholder="e.g. Head Coach"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Badge Text</label>
+            <input id="trainer-form-badge" type="text" placeholder="e.g. HEAD COACH"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Badge Color</label>
+            <select id="trainer-form-badge-color" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="red">Red (Head / Elite)</option>
+              <option value="pink">Pink (Ladies Lead)</option>
+              <option value="orange">Orange (Combat / Boxing)</option>
+              <option value="cyan">Cyan (Physio / Recovery)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Floor Status</label>
+            <select id="trainer-form-status" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="true">Active On Floor</option>
+              <option value="false">Inactive / On Leave</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Specialty & Discipline</label>
+          <input id="trainer-form-specialty" required type="text" placeholder="e.g. Strength & Olympic Biomechanics"
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Photo URL</label>
+          <input id="trainer-form-photo" type="url" placeholder="https://images.unsplash.com/..."
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Biography & Credentials</label>
+          <textarea id="trainer-form-bio" rows="3" placeholder="CSCS certified with 8+ years coaching competitive athletes..."
+                    class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-2xl uppercase tracking-wider transition-all mt-4">
+          SAVE COACH PROFILE
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- GROUP CLASS MODAL (ADD / EDIT) -->
+  <div id="class-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-cyan-400 max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="document.getElementById('class-modal').classList.add('hidden')" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+
+      <div class="mb-5">
+        <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">// TIMETABLE CONFIGURATION</span>
+        <h3 id="class-modal-title" class="text-3xl font-gymbox text-white">SCHEDULE GROUP CLASS</h3>
+        <p class="text-xs text-zinc-400 mt-1">Configure weekly slot timing, assigned coach, category and intensity.</p>
+      </div>
+
+      <form id="class-form" class="space-y-4">
+        <input type="hidden" id="class-form-id">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Day of Week</label>
+            <select id="class-form-day" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="Mon">Monday</option>
+              <option value="Tue">Tuesday</option>
+              <option value="Wed">Wednesday</option>
+              <option value="Thu">Thursday</option>
+              <option value="Fri">Friday</option>
+              <option value="Sat">Saturday</option>
+              <option value="Sun">Sunday</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Start Time</label>
+            <input id="class-form-time" required type="text" placeholder="e.g. 06:30 AM"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Session / Class Name</label>
+          <input id="class-form-name" required type="text" placeholder="e.g. Boxing Ring Conditioning"
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Assigned Coach</label>
+            <input id="class-form-coach" required type="text" placeholder="e.g. Vikram Das"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Duration</label>
+            <input id="class-form-duration" type="text" placeholder="e.g. 45 mins" value="45 mins"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Discipline Category</label>
+            <select id="class-form-category" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="BOXING">Combat & Boxing</option>
+              <option value="STRENGTH">Strength & Biomechanics</option>
+              <option value="HIIT">HIIT & HYROX</option>
+              <option value="YOGA">Yoga & Mobility</option>
+              <option value="LADIES">Ladies-Only</option>
+              <option value="GENERAL">General Fitness</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Intensity Level</label>
+            <select id="class-form-intensity" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="Medium">Medium</option>
+              <option value="High" selected>High</option>
+              <option value="Extreme">Extreme</option>
+              <option value="Low">Low / Active Recovery</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="p-3 bg-black border border-white/10 flex items-center justify-between">
+          <label for="class-form-ladies" class="text-xs text-zinc-300 font-bold uppercase cursor-pointer">
+            🌸 Dedicated Ladies-Only Access (11 AM - 3 PM)
+          </label>
+          <input type="checkbox" id="class-form-ladies" class="w-4 h-4 accent-[#ff0033] cursor-pointer">
+        </div>
+
+        <button type="submit" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-2xl uppercase tracking-wider transition-all mt-4">
+          SAVE CLASS TIMING
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- BLOG POST MODAL (ADD / EDIT) -->
+  <div id="blog-post-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-purple-400 max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="document.getElementById('blog-post-modal').classList.add('hidden')" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+
+      <div class="mb-5">
+        <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest">// FIELD JOURNAL PUBLISHING</span>
+        <h3 id="blog-modal-title" class="text-3xl font-gymbox text-white">WRITE JOURNAL ARTICLE</h3>
+        <p class="text-xs text-zinc-400 mt-1">Publish athletic recovery science, café nutrition breakdowns, and club news.</p>
+      </div>
+
+      <form id="blog-form" class="space-y-4">
+        <input type="hidden" id="blog-form-id">
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Article Headline</label>
+          <input id="blog-form-title" required type="text" placeholder="e.g. The Science of Sub-Zero Contrast Therapy"
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Topic Category</label>
+            <select id="blog-form-category" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <option value="Recovery Science">Recovery Science</option>
+              <option value="Nutrition & Fuel">Nutrition & Fuel</option>
+              <option value="Community & Wellness">Community & Wellness</option>
+              <option value="Club Intel">Club Intel</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Estimated Read Time</label>
+            <input id="blog-form-readtime" type="text" placeholder="e.g. 4 min read" value="4 min read"
+                   class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Cover Image URL</label>
+          <input id="blog-form-cover" type="url" placeholder="https://images.unsplash.com/photo-1517838277536-..."
+                 class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Short Excerpt (Cards preview)</label>
+          <textarea id="blog-form-excerpt" rows="2" placeholder="Brief 1-2 sentence hook for the homepage preview..."
+                    class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Full Article Content</label>
+          <textarea id="blog-form-content" rows="6" placeholder="Full article body paragraphs..."
+                    class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]"></textarea>
+        </div>
+
+        <div class="p-3 bg-black border border-white/10 flex items-center justify-between">
+          <label for="blog-form-published" class="text-xs text-zinc-300 font-bold uppercase cursor-pointer">
+            Publish Live on Website (Visible to public)
+          </label>
+          <input type="checkbox" id="blog-form-published" checked class="w-4 h-4 accent-[#ff0033] cursor-pointer">
+        </div>
+
+        <button type="submit" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-2xl uppercase tracking-wider transition-all mt-4">
+          PUBLISH ARTICLE TO JOURNAL
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

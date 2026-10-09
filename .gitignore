@@ -1,0 +1,15 @@
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & Temp
+*.log
+*.tmp
+*.bak
+
+# IDE & Editor Config
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
