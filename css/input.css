@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FIT24 - GYMBOX THEME & DESIGN SYSTEM (RED & BLACK) */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --gym-black: #050505;
+  --gym-dark: #0d0d0f;
+  --gym-card: #121216;
+  --gym-card-hover: #1a1a22;
+  --gym-red: #ff0033;
+  --gym-red-hover: #e6002e;
+  --gym-red-dark: #b30024;
+  --gym-red-glow: rgba(255, 0, 51, 0.45);
+  --gym-border: rgba(255, 255, 255, 0.12);
+  --gym-border-red: rgba(255, 0, 51, 0.5);
+  --gym-neon-yellow: #ffee00;
+}
+
+body {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  background-color: var(--gym-black);
+  color: #f4f4f5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Gymbox Signature Ultra-Condensed Headline Typography */
+.font-gymbox {
+  font-family: 'Anton', 'Bebas Neue', Impact, sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 0.92;
+}
+
+.font-bebas {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Bold Red Industrial Accents */
+.text-gym-red {
+  color: var(--gym-red);
+}
+
+.bg-gym-red {
+  background-color: var(--gym-red);
+}
+
+.border-gym-red {
+  border-color: var(--gym-red);
+}
+
+/* Red Glow / Laser Box Shadows */
+.glow-gymbox-red {
+  box-shadow: 0 0 35px -5px rgba(255, 0, 51, 0.5);
+}
+
+.glow-card-gymbox {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.9);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glow-card-gymbox:hover {
+  transform: translateY(-4px);
+  border-color: var(--gym-red);
+  box-shadow: 0 15px 40px -10px rgba(255, 0, 51, 0.35);
+}
+
+/* Infinite Horizontal Marquee Ticker */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: 200%;
+  animation: marquee 22s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Gymbox Edgy Diagonal Stripe Texture */
+.bg-stripes-gymbox {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 0, 51, 0.03),
+    rgba(255, 0, 51, 0.03) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #222226;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gym-red);
+}
+
+/* Active buttons & tabs */
+.gym-tab-active {
+  background-color: var(--gym-red) !important;
+  color: #ffffff !important;
+  border-color: var(--gym-red) !important;
+  box-shadow: 0 0 20px rgba(255, 0, 51, 0.6);
+}
+
+/* Gymbox Inverted Button on Hover */
+.btn-gymbox {
+  position: relative;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.btn-gymbox:hover {
+  background-color: #ffffff;
+  color: #000000;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+}
+
+/* Custom Range Sliders */
+input[type=range] {
+  accent-color: var(--gym-red);
+}
+
+/* Horizontal Track & Image Hover Zoom Reveal */
+.discipline-card {
+  position: relative;
+  overflow: hidden;
+  background-color: #0b0b0e;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.discipline-card:hover {
+  border-color: var(--gym-red);
+  box-shadow: 0 15px 45px -10px rgba(255, 0, 51, 0.5);
+}
+
+.discipline-card .card-bg-img {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+.discipline-card:hover .card-bg-img {
+  transform: scale(1.14);
+  filter: brightness(0.65) contrast(1.1);
+}
+
+/* Subtext Reveal on Hover */
+.card-reveal-content {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(16px);
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+              opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.discipline-card:hover .card-reveal-content {
+  max-height: 260px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Track smooth translation */
+#disciplines-track {
+  will-change: transform;
+  transition: transform 0.08s linear;
+}

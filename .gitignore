@@ -13,3 +13,6 @@ desktop.ini
 .idea/
 *.sublime-project
 *.sublime-workspace
+
+# Binaries
+tailwindcss.exe
