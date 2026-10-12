@@ -1146,6 +1146,8 @@ function renderTrainersTable() {
     else if (t.badgeColor === "orange") badgeStyle = "bg-amber-500/10 text-amber-400 border-amber-500/30";
     else if (t.badgeColor === "cyan") badgeStyle = "bg-cyan-500/10 text-cyan-400 border-cyan-500/30";
 
+    const stats = window.fit24Store.getTrainerMonthlyStats(t.id);
+
     return `
       <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
         <!-- Coach Profile -->
@@ -1171,13 +1173,16 @@ function renderTrainersTable() {
         <!-- Specialty -->
         <td class="py-3 px-4">
           <div class="text-xs text-zinc-300 font-mono">${t.specialty}</div>
+          ${t.classesTaught && t.classesTaught.length ? `<div class="text-[10px] text-zinc-500 font-mono mt-0.5">Classes: ${t.classesTaught.join(', ')}</div>` : ''}
         </td>
 
-        <!-- Bio & Philosophy -->
-        <td class="py-3 px-4">
-          <div class="text-xs text-zinc-400 max-w-[260px] truncate" title="${t.bio || ''}">
-            ${t.bio || '<span class="text-zinc-600 italic">No bio specified</span>'}
-          </div>
+        <!-- Client Roster & Payout -->
+        <td class="py-3 px-4 font-mono">
+          <div class="text-xs text-white"><strong>${stats.clientsCount}</strong> Athletes Assigned</div>
+          <div class="text-[10px] text-emerald-400 mt-0.5 font-bold">${stats.sessionsConducted} PT Done · Est. Payout: ₹${stats.estimatedEarnings.toLocaleString()}</div>
+          <button onclick="window.viewTrainerClients('${t.id}')" class="mt-1 text-[10px] text-[#ff0033] hover:text-white underline font-bold uppercase block">
+            View Roster (${stats.clientsCount}) →
+          </button>
         </td>
 
         <!-- Status -->
@@ -2180,6 +2185,8 @@ window.openMemberDossier = function(id) {
   const ptUsed = member.ptSessionsUsed || 0;
   const ptRem = ptTotal - ptUsed;
   const biometrics = member.biometrics || [];
+  const trainers = window.fit24Store.getTrainers() || [];
+  const workoutPlan = member.workoutPlan;
 
   content.innerHTML = `
     <div class="space-y-6">
@@ -2206,8 +2213,15 @@ window.openMemberDossier = function(id) {
             <button onclick="window.promptEditMedical('${member.id}')" class="text-[10px] text-zinc-400 hover:text-white underline">Edit</button>
           </div>
           <div class="space-y-2 text-xs font-mono">
+            <div class="p-2 bg-purple-500/10 border border-purple-500/30">
+              <span class="text-purple-400 font-bold block text-[10px] mb-1">🏋️ Assigned Coach:</span>
+              <select onchange="window.assignMemberCoach('${member.id}', this.value)" class="w-full bg-black border border-white/20 text-xs text-white p-1.5 focus:border-[#ff0033]">
+                <option value="">-- No Coach Assigned --</option>
+                ${trainers.map(t => `<option value="${t.id}" ${t.id === member.assignedTrainerId ? 'selected' : ''}>${t.name} (${t.title || t.badge})</option>`).join("")}
+              </select>
+            </div>
             <div class="p-2 bg-red-500/10 border border-red-500/30">
-              <span class="text-red-400 font-bold block text-[10px]">⚠️ Medical Alert / Limitation:</span>
+              <span class="text-red-400 font-bold block text-[10px]">⚠️ Medical Alert:</span>
               <span class="text-zinc-200 text-xs">${member.medicalAlerts || 'None recorded'}</span>
             </div>
             <div class="p-2 bg-white/5 border border-white/10">
@@ -2276,6 +2290,46 @@ window.openMemberDossier = function(id) {
           </div>
         </div>
       </div>
+
+      <!-- Prescribed Workout Blueprint -->
+      <div class="bg-black border border-white/10 p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-2">
+          <div>
+            <span class="text-[10px] font-mono font-bold text-[#ff0033] uppercase tracking-widest">// COACH PRESCRIPTION BLUEPRINT</span>
+            <h4 class="text-lg font-gymbox text-white uppercase">${workoutPlan ? workoutPlan.title : 'NO WORKOUT PLAN PRESCRIBED'}</h4>
+            <div class="text-[10px] text-zinc-400">${workoutPlan ? workoutPlan.phase : 'Assign a split preset below'}</div>
+          </div>
+          <!-- Presets -->
+          <div class="flex flex-wrap gap-1">
+            <button onclick="window.applyWorkoutPreset('${member.id}', 'STRENGTH')" class="px-2 py-1 bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[10px] font-bold uppercase border border-red-500/40">⚡ Strength</button>
+            <button onclick="window.applyWorkoutPreset('${member.id}', 'COMBAT')" class="px-2 py-1 bg-amber-600/30 hover:bg-amber-600 text-amber-300 hover:text-white text-[10px] font-bold uppercase border border-amber-500/40">🥊 Combat</button>
+            <button onclick="window.applyWorkoutPreset('${member.id}', 'LADIES')" class="px-2 py-1 bg-pink-600/30 hover:bg-pink-600 text-pink-300 hover:text-white text-[10px] font-bold uppercase border border-pink-500/40">🌸 Ladies</button>
+            <button onclick="window.applyWorkoutPreset('${member.id}', 'REHAB')" class="px-2 py-1 bg-cyan-600/30 hover:bg-cyan-600 text-cyan-300 hover:text-white text-[10px] font-bold uppercase border border-cyan-500/40">🩺 Rehab</button>
+          </div>
+        </div>
+
+        ${workoutPlan ? `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            ${(workoutPlan.split || []).map(s => `
+              <div class="p-2 bg-white/5 border border-white/10 space-y-1">
+                <div class="flex justify-between items-center">
+                  <span class="text-[#ff0033] font-bold text-[10px]">${s.day}</span>
+                  <strong class="text-white text-xs">${s.title}</strong>
+                </div>
+                <div class="text-zinc-300 text-[11px]">${s.exercises}</div>
+                ${s.notes ? `<div class="text-[9px] text-amber-400 italic">Cue: ${s.notes}</div>` : ''}
+              </div>
+            `).join("")}
+          </div>
+          <div class="flex items-center gap-4 text-[10px] text-zinc-400 pt-2 border-t border-white/10">
+            <span>🔥 Calories: <strong class="text-yellow-400">${workoutPlan.dietTargets ? workoutPlan.dietTargets.calories : 2200} kcal</strong></span>
+            <span>🥩 Protein: <strong class="text-[#ff0033]">${workoutPlan.dietTargets ? workoutPlan.dietTargets.proteinGrams : 140}g</strong></span>
+            <span>💧 Hydration: <strong class="text-cyan-400">${workoutPlan.dietTargets ? workoutPlan.dietTargets.waterLiters : 3.5}L</strong></span>
+          </div>
+        ` : `
+          <div class="text-zinc-500 text-xs italic py-2">Click one of the preset buttons above to assign a training split to this member.</div>
+        `}
+      </div>
     </div>
   `;
 
@@ -2326,6 +2380,140 @@ window.deductMemberPT = function(memberId) {
   alert(`🥊 PT Session Deducted! ${res.remaining}`);
   window.openMemberDossier(memberId);
   renderAllData();
+};
+
+window.assignMemberCoach = function(memberId, trainerId) {
+  window.fit24Store.assignTrainer(memberId, trainerId);
+  window.openMemberDossier(memberId);
+  renderAllData();
+  renderTrainersTable();
+};
+
+window.applyWorkoutPreset = function(memberId, presetKey) {
+  const presets = {
+    STRENGTH: {
+      title: "Hypertrophy & Biomechanics Split",
+      phase: "Phase 2: Strength Block (Week 4 of 12)",
+      dietTargets: { calories: 2400, proteinGrams: 160, waterLiters: 4.0 },
+      split: [
+        { day: "Day 1 (Mon)", title: "Heavy Push & Chest", exercises: "Incline DB Press 4x8, Barbell Bench 4x6, Dips 3x10, DB Lateral Raises 4x15", notes: "Focus on 2-sec eccentric pause on bench" },
+        { day: "Day 2 (Wed)", title: "Back & Pull Engine", exercises: "Conventional Deadlifts 4x5, Lat Pulldowns 4x10, Facepulls 3x15, Heavy Bag 4 rounds", notes: "Wrap wrists and maintain neutral spine" },
+        { day: "Day 3 (Fri)", title: "Lower Body Power", exercises: "Barbell Back Squats 4x8, Romanian Deadlifts 3x10, Standing Calves 4x15", notes: "Knees tracking toes, explosive ascent" },
+        { day: "Day 4 (Sat)", title: "Olympic / Conditioning", exercises: "Power Cleans 5x3, Farmer's Carries 4x50m, Assault Bike intervals", notes: "Follow with 85°C dry sauna recovery" }
+      ]
+    },
+    COMBAT: {
+      title: "Fight Conditioning & Striking Endurance",
+      phase: "Speed & Power Rounds",
+      dietTargets: { calories: 2200, proteinGrams: 140, waterLiters: 4.0 },
+      split: [
+        { day: "Day 1 (Tue)", title: "Combat Footwork & Jab-Cross", exercises: "Footwork ladder drills 15m, 1-2 Combo on pads 5x3min, Jump rope 1000 skips", notes: "Keep chin tucked, recover hands to cheek" },
+        { day: "Day 2 (Thu)", title: "Heavy Bag Power Rounds", exercises: "Hooks & uppercuts 6x3min, Med ball slams 4x15, Burpees 4x12", notes: "Explosive hip rotation on left hook" },
+        { day: "Day 3 (Sat)", title: "Sparring & Strength", exercises: "Controlled ring sparring 4 rounds, Hex bar deadlift 4x6, Pullups 4x8", notes: "Mouthguard mandatory" }
+      ]
+    },
+    LADIES: {
+      title: "Ladies Functional Tone & HIIT Sculpt",
+      phase: "Core & Metabolic Conditioning",
+      dietTargets: { calories: 1750, proteinGrams: 110, waterLiters: 3.0 },
+      split: [
+        { day: "Day 1 (Mon)", title: "Kettlebell Flow & Glutes", exercises: "KB Swings 4x15, Goblet Squats 4x12, Glute Bridges 4x20", notes: "Hips back, snap glutes at lock" },
+        { day: "Day 2 (Wed)", title: "Cardio Rave & Core", exercises: "Zumba interval rhythm, Battle ropes 4x30s, Plank holds 3x60s", notes: "Keep heart rate in zone 3-4" }
+      ]
+    },
+    REHAB: {
+      title: "Postural Alignment & Athletic Mobility",
+      phase: "Spine & Core Stability (Week 2 of 8)",
+      dietTargets: { calories: 1900, proteinGrams: 120, waterLiters: 3.5 },
+      split: [
+        { day: "Day 1 (Mon)", title: "Thoracic & Core Flow", exercises: "Cat-Cow 3x10, Bird-Dog 3x12, Deadbugs 3x15, Cable Woodchops 3x12", notes: "Activate deep transverse abdominis" },
+        { day: "Day 2 (Wed)", title: "Glute & Hip Decompression", exercises: "Hip Thrusts 4x10, Bulgarian Split Squats 3x10, Banded Lateral Walks", notes: "Full hip extension at top" },
+        { day: "Day 3 (Fri)", title: "Full Body Functional", exercises: "Kettlebell Deadlifts 4x10, Dumbbell Overhead Press 3x10, Row Machine 2000m", notes: "Finish with 4°C ice bath contrast therapy" }
+      ]
+    }
+  };
+
+  const chosen = presets[presetKey];
+  if (!chosen) return;
+  window.fit24Store.updateMemberWorkoutPlan(memberId, chosen);
+  alert(`✅ Assigned "${chosen.title}" to athlete!`);
+  window.openMemberDossier(memberId);
+};
+
+window.viewTrainerClients = function(trainerId) {
+  const trainer = window.fit24Store.getTrainer(trainerId);
+  if (!trainer) return;
+  const clients = window.fit24Store.getTrainerClients(trainerId);
+  const stats = window.fit24Store.getTrainerMonthlyStats(trainerId);
+  const modal = document.getElementById("trainer-clients-modal");
+  const content = document.getElementById("trainer-clients-content");
+  if (!modal || !content) return;
+
+  content.innerHTML = `
+    <div class="space-y-5">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3">
+          <img src="${trainer.photoUrl}" class="w-12 h-12 object-cover border border-[#ff0033]">
+          <div>
+            <span class="text-[10px] font-mono font-bold text-[#ff0033] uppercase">// COACH CLIENT ROSTER</span>
+            <h3 class="text-2xl font-gymbox text-white uppercase">${trainer.name}</h3>
+            <div class="text-xs text-zinc-400">${trainer.specialty} · Commission: ₹${trainer.perSessionRate || 500} / session</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-zinc-400 font-mono">Monthly Estimated Earnings</div>
+          <div class="text-2xl font-gymbox text-emerald-400">₹${stats.estimatedEarnings.toLocaleString()}</div>
+          <div class="text-[10px] text-zinc-500 font-mono">${stats.sessionsConducted} PT sessions conducted</div>
+        </div>
+      </div>
+
+      <!-- Clients Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left font-mono text-xs">
+          <thead>
+            <tr class="border-b border-white/10 text-[10px] text-zinc-500 uppercase">
+              <th class="py-2.5 px-3">Athlete</th>
+              <th class="py-2.5 px-3">Tier</th>
+              <th class="py-2.5 px-3">PT Sessions Balance</th>
+              <th class="py-2.5 px-3">Status</th>
+              <th class="py-2.5 px-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${clients.length === 0 ? `
+              <tr><td colspan="5" class="py-6 text-center text-zinc-500 italic">No athletes assigned to this coach yet.</td></tr>
+            ` : clients.map(c => `
+              <tr class="border-b border-white/5 hover:bg-white/[0.02]">
+                <td class="py-2.5 px-3">
+                  <strong class="text-white block">${c.name}</strong>
+                  <span class="text-[10px] text-zinc-400">${c.id}</span>
+                </td>
+                <td class="py-2.5 px-3">
+                  <span class="px-2 py-0.5 text-[10px] uppercase font-bold border ${c.tier === 'ELITE' ? 'border-yellow-400/40 text-yellow-400' : c.tier === 'PRIME' ? 'border-orange-400/40 text-orange-400' : 'border-white/20 text-white'}">${c.tier}</span>
+                </td>
+                <td class="py-2.5 px-3">
+                  <strong class="text-[#ff0033]">${Math.max(0, (c.ptSessionsTotal || 0) - (c.ptSessionsUsed || 0))} / ${c.ptSessionsTotal || 0} Left</strong>
+                  <span class="text-[10px] text-zinc-500 block">(${c.ptSessionsUsed || 0} used)</span>
+                </td>
+                <td class="py-2.5 px-3">
+                  <span class="${c.status === 'ACTIVE' ? 'text-emerald-400' : 'text-amber-400'} text-[10px] uppercase font-bold">● ${c.status}</span>
+                </td>
+                <td class="py-2.5 px-3 text-right space-x-1.5">
+                  <button onclick="window.deductMemberPT('${c.id}'); window.viewTrainerClients('${trainer.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded">
+                    -1 PT
+                  </button>
+                  <button onclick="document.getElementById('trainer-clients-modal').classList.add('hidden'); window.openMemberDossier('${c.id}')" class="px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold uppercase rounded">
+                    Dossier
+                  </button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  modal.classList.remove("hidden");
 };
 
 // ==========================================

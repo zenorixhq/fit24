@@ -245,6 +245,27 @@ const FIT24_DATA = {
       endDate: "2027-10-18",
       status: "ACTIVE",
       amountPaid: 42999,
+      assignedTrainerId: "ba89f66e-c912-4e11-a7bb-a7b6e5731384",
+      ptSessionsTotal: 12,
+      ptSessionsUsed: 4,
+      workoutPlan: {
+        title: "Hypertrophy & Biomechanics Split",
+        phase: "Phase 2: Strength Block (Week 4 of 12)",
+        dietTargets: { calories: 2400, proteinGrams: 160, waterLiters: 4.0 },
+        split: [
+          { day: "Day 1 (Mon)", title: "Heavy Push & Chest", exercises: "Incline DB Press 4x8, Barbell Bench 4x6, Dips 3x10, DB Lateral Raises 4x15", notes: "Focus on 2-sec eccentric pause on bench" },
+          { day: "Day 2 (Wed)", title: "Back & Pull Engine", exercises: "Conventional Deadlifts 4x5, Lat Pulldowns 4x10, Facepulls 3x15, Heavy Bag 4 rounds", notes: "Wrap wrists and maintain neutral spine" },
+          { day: "Day 3 (Fri)", title: "Lower Body Power", exercises: "Barbell Back Squats 4x8, Romanian Deadlifts 3x10, Standing Calves 4x15", notes: "Knees tracking toes, explosive ascent" },
+          { day: "Day 4 (Sat)", title: "Olympic / Conditioning", exercises: "Power Cleans 5x3, Farmer's Carries 4x50m, Assault Bike intervals", notes: "Follow with 85°C dry sauna recovery" }
+        ]
+      },
+      emergencyContact: "Anitha Nambiar (+91 98470 99887)",
+      medicalAlerts: "Mild shoulder impingement (left)",
+      bloodGroup: "O+",
+      biometrics: [
+        { date: "2026-10-18", weight: 79.2, bodyFat: 18.5, muscleMass: 38.0, notes: "Baseline check-in at club opening" },
+        { date: "2026-10-25", weight: 78.4, bodyFat: 17.8, muscleMass: 38.4, notes: "Waist down 1.5cm, strength up on squats" }
+      ],
       saunaTotal: 12,
       saunaUsed: 3,
       iceBathTotal: 12,
@@ -274,6 +295,26 @@ const FIT24_DATA = {
       endDate: "2027-04-18",
       status: "ACTIVE",
       amountPaid: 17299,
+      assignedTrainerId: "fa32efc1-7f91-455b-b998-38b46e499c82",
+      ptSessionsTotal: 8,
+      ptSessionsUsed: 2,
+      workoutPlan: {
+        title: "Postural Alignment & Athletic Mobility",
+        phase: "Spine & Core Stability (Week 2 of 8)",
+        dietTargets: { calories: 1900, proteinGrams: 120, waterLiters: 3.5 },
+        split: [
+          { day: "Day 1 (Mon)", title: "Thoracic & Core Flow", exercises: "Cat-Cow 3x10, Bird-Dog 3x12, Deadbugs 3x15, Cable Woodchops 3x12", notes: "Activate deep transverse abdominis" },
+          { day: "Day 2 (Wed)", title: "Glute & Hip Decompression", exercises: "Hip Thrusts 4x10, Bulgarian Split Squats 3x10, Banded Lateral Walks", notes: "Full hip extension at top" },
+          { day: "Day 3 (Fri)", title: "Full Body Functional", exercises: "Kettlebell Deadlifts 4x10, Dumbbell Overhead Press 3x10, Row Machine 2000m", notes: "Finish with 4°C ice bath contrast therapy" }
+        ]
+      },
+      emergencyContact: "Suresh Menon (+91 94470 11223)",
+      medicalAlerts: "Past lumbar L4-L5 disc strain",
+      bloodGroup: "B+",
+      biometrics: [
+        { date: "2026-10-18", weight: 62.0, bodyFat: 24.2, muscleMass: 25.1, notes: "Initial postural scan" },
+        { date: "2026-10-25", weight: 61.2, bodyFat: 23.5, muscleMass: 25.4, notes: "Lower back pain reduced by 80%" }
+      ],
       saunaTotal: 6,
       saunaUsed: 2,
       iceBathTotal: 6,
@@ -303,6 +344,25 @@ const FIT24_DATA = {
       endDate: "2027-10-18",
       status: "ACTIVE",
       amountPaid: 19999,
+      assignedTrainerId: "8f56efb9-fbe9-4556-91e8-78c66a4bc4d9",
+      ptSessionsTotal: 10,
+      ptSessionsUsed: 5,
+      workoutPlan: {
+        title: "Fight Conditioning & Striking Endurance",
+        phase: "Speed & Power Rounds",
+        dietTargets: { calories: 2200, proteinGrams: 140, waterLiters: 4.0 },
+        split: [
+          { day: "Day 1 (Tue)", title: "Combat Footwork & Jab-Cross", exercises: "Footwork ladder drills 15m, 1-2 Combo on pads 5x3min, Jump rope 1000 skips", notes: "Keep chin tucked, recover hands to cheek" },
+          { day: "Day 2 (Thu)", title: "Heavy Bag Power Rounds", exercises: "Hooks & uppercuts 6x3min, Med ball slams 4x15, Burpees 4x12", notes: "Explosive hip rotation on left hook" },
+          { day: "Day 3 (Sat)", title: "Sparring & Strength", exercises: "Controlled ring sparring 4 rounds, Hex bar deadlift 4x6, Pullups 4x8", notes: "Mouthguard mandatory" }
+        ]
+      },
+      emergencyContact: "Kareem (+91 97450 44556)",
+      medicalAlerts: "None reported",
+      bloodGroup: "A+",
+      biometrics: [
+        { date: "2026-10-18", weight: 74.0, bodyFat: 19.0, muscleMass: 33.0, notes: "Start combat conditioning" }
+      ],
       saunaTotal: 0,
       saunaUsed: 0,
       iceBathTotal: 0,
@@ -332,6 +392,24 @@ const FIT24_DATA = {
       endDate: "2027-01-25",
       status: "PAUSED",
       amountPaid: 9699,
+      assignedTrainerId: "2c7c5cb9-4a9f-4318-bd88-66a98da80219",
+      ptSessionsTotal: 6,
+      ptSessionsUsed: 2,
+      workoutPlan: {
+        title: "Ladies Functional Tone & HIIT Sculpt",
+        phase: "Core & Metabolic Conditioning",
+        dietTargets: { calories: 1750, proteinGrams: 110, waterLiters: 3.0 },
+        split: [
+          { day: "Day 1 (Mon)", title: "Kettlebell Flow & Glutes", exercises: "KB Swings 4x15, Goblet Squats 4x12, Glute Bridges 4x20", notes: "Hips back, snap glutes at lock" },
+          { day: "Day 2 (Wed)", title: "Cardio Rave & Core", exercises: "Zumba interval rhythm, Battle ropes 4x30s, Plank holds 3x60s", notes: "Keep heart rate in zone 3-4" }
+        ]
+      },
+      emergencyContact: "Mahesh Rao (+91 96330 99881)",
+      medicalAlerts: "Asthma inhaler in gym bag",
+      bloodGroup: "O+",
+      biometrics: [
+        { date: "2026-10-18", weight: 58.5, bodyFat: 26.0, muscleMass: 21.0, notes: "Baseline fitness intake" }
+      ],
       saunaTotal: 6,
       saunaUsed: 1,
       iceBathTotal: 6,
@@ -364,6 +442,26 @@ const FIT24_DATA = {
       endDate: "2028-10-18",
       status: "ACTIVE",
       amountPaid: 77999,
+      assignedTrainerId: "ba89f66e-c912-4e11-a7bb-a7b6e5731384",
+      ptSessionsTotal: 24,
+      ptSessionsUsed: 8,
+      workoutPlan: {
+        title: "VIP Executive Power & Hypertrophy",
+        phase: "Volume Overload (Week 6)",
+        dietTargets: { calories: 2600, proteinGrams: 175, waterLiters: 4.5 },
+        split: [
+          { day: "Day 1 (Mon)", title: "Heavy Bench & Overhead", exercises: "Barbell Flat Bench 5x5, Overhead Press 4x6, Dips 4x12", notes: "Track bar speed with coach" },
+          { day: "Day 2 (Tue)", title: "Back & Trap Density", exercises: "Barbell Rows 4x8, Single Arm DB Rows 4x10, Shrugs 4x15", notes: "Full lat stretch at bottom" },
+          { day: "Day 3 (Thu)", title: "Leg Annihilation", exercises: "Front Squats 4x6, Leg Press 4x15, Walking Lunges 3x20m", notes: "Follow with 85°C sauna flush" }
+        ]
+      },
+      emergencyContact: "Deepa Balakrishnan (+91 94000 33445)",
+      medicalAlerts: "None",
+      bloodGroup: "AB+",
+      biometrics: [
+        { date: "2026-10-18", weight: 83.0, bodyFat: 16.5, muscleMass: 42.0, notes: "High performance VIP onboarding" },
+        { date: "2026-10-25", weight: 82.2, bodyFat: 15.8, muscleMass: 42.5, notes: "Bench 1RM increased to 110kg" }
+      ],
       saunaTotal: 12,
       saunaUsed: 1,
       iceBathTotal: 12,
@@ -415,6 +513,10 @@ const FIT24_DATA = {
       photoUrl: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=800&q=80",
       badge: "HEAD COACH",
       badgeColor: "red",
+      phone: "+91 98470 12345",
+      whatsappDirect: "https://wa.me/919847012345?text=Hi%20Coach%20Rahul,%20I'd%20like%20to%20consult%20regarding%20Strength%20Biomechanics%20at%20FIT24",
+      perSessionRate: 500,
+      classesTaught: ["Strength & Biomechanics", "Olympic Weightlifting Intro"],
       isActive: true,
       displayOrder: 0
     },
@@ -427,6 +529,10 @@ const FIT24_DATA = {
       photoUrl: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
       badge: "LADIES LEAD",
       badgeColor: "pink",
+      phone: "+91 94470 54321",
+      whatsappDirect: "https://wa.me/919447054321?text=Hi%20Coach%20Anjali,%20I'd%20like%20to%20consult%20about%20Ladies%20Functional%20Training%20at%20FIT24",
+      perSessionRate: 450,
+      classesTaught: ["Ladies-Only Core & Sculpt 🌸", "Ladies-Only Zumba Cardio 🌸", "Ladies-Only HIIT Circuit 🌸"],
       isActive: true,
       displayOrder: 1
     },
@@ -439,6 +545,10 @@ const FIT24_DATA = {
       photoUrl: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=800&q=80",
       badge: "COMBAT LEAD",
       badgeColor: "orange",
+      phone: "+91 97450 67890",
+      whatsappDirect: "https://wa.me/919745067890?text=Hi%20Coach%20Vikram,%20I'd%20like%20to%20book%20a%20boxing%20ring%20assessment%20at%20FIT24",
+      perSessionRate: 500,
+      classesTaught: ["Boxing Ring Conditioning", "Heavy Bag Power Drills", "Community Sparring"],
       isActive: true,
       displayOrder: 2
     },
@@ -451,6 +561,10 @@ const FIT24_DATA = {
       photoUrl: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=800&q=80",
       badge: "SPORTS PHYSIO",
       badgeColor: "cyan",
+      phone: "+91 94000 89123",
+      whatsappDirect: "https://wa.me/919400089123?text=Hi%20Dr.%20Sneha,%20I'd%20like%20to%20book%20a%20physiotherapy%20assessment%20at%20FIT24",
+      perSessionRate: 600,
+      classesTaught: ["Mobility & Spine Rehab"],
       isActive: true,
       displayOrder: 3
     }
@@ -566,7 +680,7 @@ const FIT24_DATA = {
 // Storage Management Helper for LocalStorage
 class Fit24Store {
   constructor() {
-    this.STORAGE_KEY = "FIT24_APP_STORAGE_v2";
+    this.STORAGE_KEY = "FIT24_APP_STORAGE_v3";
     this._memoryStore = null;
     this.init();
   }
@@ -692,6 +806,14 @@ class Fit24Store {
       endDate: endDate.toISOString().split('T')[0],
       status: "ACTIVE",
       amountPaid: durationPricing.price,
+      assignedTrainerId: memberData.assignedTrainerId || null,
+      ptSessionsTotal: parseInt(memberData.ptSessionsTotal) || 0,
+      ptSessionsUsed: 0,
+      emergencyContact: memberData.emergencyContact || "",
+      medicalAlerts: memberData.medicalAlerts || "",
+      bloodGroup: memberData.bloodGroup || "",
+      workoutPlan: memberData.workoutPlan || null,
+      biometrics: memberData.biometrics || [],
       saunaTotal: tierConfig.saunaQuota,
       saunaUsed: 0,
       iceBathTotal: tierConfig.iceBathQuota,
@@ -980,6 +1102,52 @@ class Fit24Store {
     return store.trainers;
   }
 
+  getTrainer(id) {
+    if (!id) return null;
+    return this.getTrainers().find(t => t.id === id);
+  }
+
+  getTrainerClients(trainerId) {
+    if (!trainerId) return [];
+    return this.getMembers().filter(m => m.assignedTrainerId === trainerId);
+  }
+
+  assignTrainer(memberId, trainerId) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+    member.assignedTrainerId = trainerId || null;
+    this.saveStore(store);
+    if (window.fit24Supabase) {
+      window.fit24Supabase.updateMemberField(memberId, 'assigned_trainer_id', trainerId);
+    }
+    return member;
+  }
+
+  updateMemberWorkoutPlan(memberId, workoutPlan) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+    member.workoutPlan = workoutPlan;
+    this.saveStore(store);
+    return member;
+  }
+
+  getTrainerMonthlyStats(trainerId) {
+    const trainer = this.getTrainer(trainerId);
+    if (!trainer) return { clientsCount: 0, sessionsConducted: 0, estimatedEarnings: 0 };
+    const clients = this.getTrainerClients(trainerId);
+    const sessionsConducted = clients.reduce((acc, m) => acc + (m.ptSessionsUsed || 0), 0);
+    const rate = trainer.perSessionRate || 500;
+    const estimatedEarnings = sessionsConducted * rate;
+    return {
+      clientsCount: clients.length,
+      sessionsConducted,
+      estimatedEarnings,
+      rate
+    };
+  }
+
   addTrainer(data) {
     const store = this.getStore();
     const newTrainer = {
@@ -988,6 +1156,10 @@ class Fit24Store {
       title: data.title || "Coach",
       specialty: data.specialty || "Strength & Functional",
       bio: data.bio || "",
+      phone: data.phone || "+91 62389 20442",
+      whatsappDirect: data.whatsappDirect || `https://wa.me/916238920442?text=Hi%20Coach%20${encodeURIComponent(data.name || '')}`,
+      perSessionRate: parseFloat(data.perSessionRate) || 500,
+      classesTaught: data.classesTaught || [],
       photoUrl: data.photoUrl || "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=800&q=80",
       badge: data.badge || "COACH",
       badgeColor: data.badgeColor || "red",

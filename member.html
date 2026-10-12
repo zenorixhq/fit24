@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FIT24 Member Portal | Digital Membership Card</title>
+  <title>FIT24 Member Portal | Digital Membership Card & Coach Blueprint</title>
   <meta name="theme-color" content="#ff0033">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,47 +13,79 @@
   <!-- FIT24 Compiled Production Stylesheet (Gymbox Theme + Tailwind) -->
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-[#050505] text-zinc-100 antialiased min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-[#050505] text-zinc-100 antialiased min-h-screen flex flex-col items-center justify-start py-8 px-4 selection:bg-[#ff0033] selection:text-white">
 
-  <div class="max-w-md w-full">
+  <div class="max-w-md w-full space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <a href="index.html" class="flex items-center gap-2">
-        <div class="w-9 h-9 bg-[#ff0033] flex items-center justify-center font-gymbox text-2xl text-white">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-10 h-10 bg-[#ff0033] flex items-center justify-center font-gymbox text-2xl text-white group-hover:bg-white group-hover:text-black transition-all">
           24
         </div>
-        <span class="font-gymbox text-2xl tracking-wider text-white">FIT24</span>
+        <div>
+          <span class="font-gymbox text-2xl tracking-wider text-white block leading-none">FIT24</span>
+          <span class="text-[9px] font-mono uppercase tracking-widest text-[#ff0033] font-bold">MEMBER PASS & BLUEPRINT</span>
+        </div>
       </a>
-      <a href="index.html" class="text-xs text-zinc-400 hover:text-white font-mono">← Home</a>
+      <div class="flex items-center gap-3">
+        <a href="admin.html" class="text-[11px] text-zinc-400 hover:text-white font-mono bg-white/5 px-2.5 py-1 border border-white/10">Desk ERP →</a>
+        <a href="index.html" class="text-[11px] text-[#ff0033] hover:underline font-mono">← Home</a>
+      </div>
     </div>
 
     <!-- Quick Switcher for Demo -->
-    <div class="mb-4 bg-black p-3 border border-white/10 flex items-center justify-between text-xs font-mono">
-      <span class="text-zinc-400">Switch Demo:</span>
-      <div class="space-x-1">
-        <button onclick="loadMember('F24-1001')" class="px-2 py-1 bg-yellow-400 text-black text-[10px] font-bold">Elite</button>
-        <button onclick="loadMember('F24-1002')" class="px-2 py-1 bg-[#ff0033] text-white text-[10px] font-bold">Prime</button>
-        <button onclick="loadMember('F24-1004')" class="px-2 py-1 bg-amber-500 text-black text-[10px] font-bold">Paused</button>
+    <div class="bg-[#0e0e12] p-3 border border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+      <span class="text-zinc-400 text-[11px]">Demo Member:</span>
+      <div class="flex flex-wrap gap-1">
+        <button onclick="loadMember('F24-1001')" class="px-2 py-0.5 bg-yellow-400 text-black text-[10px] font-bold uppercase hover:opacity-90">Rahul (Elite)</button>
+        <button onclick="loadMember('F24-1002')" class="px-2 py-0.5 bg-[#ff0033] text-white text-[10px] font-bold uppercase hover:opacity-90">Anjali (Prime)</button>
+        <button onclick="loadMember('F24-1003')" class="px-2 py-0.5 bg-zinc-200 text-black text-[10px] font-bold uppercase hover:opacity-90">Shafi (Pro)</button>
+        <button onclick="loadMember('F24-1004')" class="px-2 py-0.5 bg-amber-500 text-black text-[10px] font-bold uppercase hover:opacity-90">Sneha (Paused)</button>
+        <button onclick="loadMember('F24-1005')" class="px-2 py-0.5 bg-zinc-700 text-white text-[10px] font-bold uppercase hover:opacity-90">Arjun (VIP)</button>
       </div>
     </div>
 
     <!-- Digital Card Container -->
-    <div id="member-card-wrapper" class="space-y-4"></div>
+    <div id="member-card-wrapper"></div>
+
+    <!-- Assigned Coach & PT Passbook Card -->
+    <div id="member-coach-wrapper"></div>
+
+    <!-- Workout Blueprint & Routine Card -->
+    <div id="member-workout-wrapper"></div>
+
+    <!-- Biometrics & Weigh-in History -->
+    <div id="member-biometrics-wrapper"></div>
 
     <!-- Action Shortcuts -->
-    <div class="mt-6 grid grid-cols-2 gap-3 text-center font-mono">
+    <div class="grid grid-cols-2 gap-3 text-center font-mono">
       <a href="https://wa.me/916238920442?text=Hi%20FIT24,%20I%20would%20like%20to%20request%20a%20membership%20pause" target="_blank"
-         class="p-3 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-xs font-bold text-zinc-300 hover:text-white transition-all">
-        ⏸ Request Pause
+         class="p-3 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-xs font-bold text-zinc-300 hover:text-white transition-all flex flex-col items-center justify-center gap-1">
+        <span class="text-base">⏸</span>
+        <span>Request Pause</span>
       </a>
-      <a href="https://wa.me/916238920442?text=Hi%20FIT24,%20I%20would%20like%20to%20reserve%20a%20Sauna%20/%20Ice%20Bath%20slot" target="_blank"
-         class="p-3 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-xs font-bold text-zinc-300 hover:text-white transition-all">
-        🧖 Book Recovery Slot
+      <a href="https://wa.me/916238920442?text=Hi%20FIT24,%20I%20would%20like%20to%20reserve%20a%20Sauna%20/%20Ice%20Bath%20recovery%20slot" target="_blank"
+         class="p-3 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-xs font-bold text-zinc-300 hover:text-white transition-all flex flex-col items-center justify-center gap-1">
+        <span class="text-base">🧖</span>
+        <span>Book Recovery</span>
+      </a>
+      <a href="https://wa.me/916238920442?text=Hi%20FIT24,%20I'd%20like%20to%20reserve%20a%20spot%20in%20today's%20combat%20boxing%20ring%20class" target="_blank"
+         class="p-3 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-xs font-bold text-zinc-300 hover:text-white transition-all flex flex-col items-center justify-center gap-1">
+        <span class="text-base">🥊</span>
+        <span>Reserve Boxing Class</span>
+      </a>
+      <a href="https://wa.me/916238920442?text=Hi%20FIT24,%20I'd%20like%20to%20order%20from%20the%20Fit%20Café%20using%20my%20reward%20wallet" target="_blank"
+         class="p-3 bg-black hover:bg-[#ff0033] border border-white/10 hover:border-[#ff0033] text-xs font-bold text-zinc-300 hover:text-white transition-all flex flex-col items-center justify-center gap-1">
+        <span class="text-base">☕</span>
+        <span>Order Fuel Shake</span>
       </a>
     </div>
 
-    <div class="mt-8 text-center text-xs text-zinc-500 font-mono">
-      FIT24 Premium Fitness Club · TB Road, Hosdurg, Kanhangad
+    <!-- Club Footer -->
+    <div class="text-center text-xs text-zinc-500 font-mono space-y-1 pt-4 border-t border-white/5">
+      <div class="text-zinc-400 font-bold">FIT24 PREMIUM FITNESS CLUB · ANYTHING GOES</div>
+      <div>TB Road, Hosdurg, Kanhangad, Kasaragod</div>
+      <div class="text-[10px] text-zinc-600">PWA Pass Engine · Offline Pass Active</div>
     </div>
   </div>
 
@@ -61,14 +93,26 @@
   <script src="js/supabase.js"></script>
   <script src="js/data.js"></script>
   <script>
-    function loadMember(id) {
-      const member = window.fit24Store.getMember(id) || window.fit24Store.getMembers()[0];
-      const wrapper = document.getElementById("member-card-wrapper");
-      if (!wrapper || !member) return;
+    let currentSelectedMemberId = 'F24-1001';
 
-      const saunaRem = member.saunaTotal - member.saunaUsed;
-      const iceBathRem = member.iceBathTotal - member.iceBathUsed;
-      const guestRem = member.guestPassesTotal - member.guestPassesUsed;
+    function loadMember(id) {
+      currentSelectedMemberId = id;
+      const member = window.fit24Store.getMember(id) || window.fit24Store.getMembers()[0];
+      if (!member) return;
+
+      renderDigitalPass(member);
+      renderCoachSection(member);
+      renderWorkoutSection(member);
+      renderBiometricsSection(member);
+    }
+
+    function renderDigitalPass(member) {
+      const wrapper = document.getElementById("member-card-wrapper");
+      if (!wrapper) return;
+
+      const saunaRem = Math.max(0, (member.saunaTotal || 0) - (member.saunaUsed || 0));
+      const iceBathRem = Math.max(0, (member.iceBathTotal || 0) - (member.iceBathUsed || 0));
+      const guestRem = Math.max(0, (member.guestPassesTotal || 0) - (member.guestPassesUsed || 0));
 
       let tierBadge = member.tier === "ELITE" 
         ? "bg-yellow-400 text-black border-yellow-400" 
@@ -96,42 +140,220 @@
             <div><span class="text-zinc-500 block text-[9px]">MEMBER CODE</span> <strong class="text-white">${member.id}</strong></div>
             <div><span class="text-zinc-500 block text-[9px]">STATUS</span> <strong class="${member.isPaused ? 'text-amber-400' : 'text-emerald-400'}">${member.isPaused ? '⏸ PAUSED' : '● ACTIVE'}</strong></div>
             <div><span class="text-zinc-500 block text-[9px]">VALID UNTIL</span> <strong class="text-zinc-300">${member.endDate}</strong></div>
-            <div><span class="text-zinc-500 block text-[9px]">CAFÉ CREDITS</span> <strong class="text-[#ff0033]">₹${member.cafeCredit.toFixed(2)}</strong></div>
+            <div><span class="text-zinc-500 block text-[9px]">CAFÉ CREDITS</span> <strong class="text-[#ff0033]">₹${(member.cafeCredit || 0).toFixed(2)}</strong></div>
           </div>
 
           <!-- Quotas -->
           <div class="space-y-2 mb-5 p-3.5 bg-white/5 border border-white/5 font-mono">
-            <div class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">RECOVERY QUOTA PASSBOOK</div>
+            <div class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">RECOVERY & CLUB PASSBOOK</div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-zinc-300">🧖 Sauna Sessions:</span>
-              <strong class="text-white">${saunaRem} / ${member.saunaTotal} remaining</strong>
+              <strong class="text-white">${saunaRem} / ${member.saunaTotal || 0} remaining</strong>
             </div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-zinc-300">🧊 Ice Bath Plunges:</span>
-              <strong class="text-white">${iceBathRem} / ${member.iceBathTotal} remaining</strong>
+              <strong class="text-white">${iceBathRem} / ${member.iceBathTotal || 0} remaining</strong>
             </div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-zinc-300">🎟 Guest Passes:</span>
-              <strong class="text-white">${guestRem} / ${member.guestPassesTotal} remaining</strong>
+              <strong class="text-white">${guestRem} / ${member.guestPassesTotal || 0} remaining</strong>
             </div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-zinc-300">☕ Café Discount:</span>
-              <strong class="text-[#ff0033]">${member.cafeDiscount}% OFF automatically</strong>
+              <strong class="text-[#ff0033]">${member.cafeDiscount || 0}% OFF automatically</strong>
             </div>
           </div>
 
-          <!-- QR -->
+          <!-- QR & Barcode -->
           <div class="pt-3 border-t border-white/10 flex items-center justify-between">
             <div class="text-[10px] font-mono text-zinc-400">
               Present at Reception Counter<br>
               <span class="text-zinc-500">TB Road, Hosdurg, Kanhangad</span>
             </div>
-            <div class="w-14 h-14 bg-white p-1.5 flex flex-col justify-between items-center shadow-lg">
+            <div class="w-16 h-16 bg-white p-1.5 flex flex-col justify-between items-center shadow-lg">
               <div class="w-full flex justify-between"><div class="w-2.5 h-2.5 bg-black"></div><div class="w-2.5 h-2.5 bg-black"></div></div>
-              <span class="text-[7px] font-mono text-black font-black uppercase">${member.id}</span>
+              <span class="text-[7px] font-mono text-black font-black uppercase tracking-tight">${member.id}</span>
               <div class="w-full flex justify-between"><div class="w-2.5 h-2.5 bg-black"></div><div class="w-2.5 h-2.5 bg-black"></div></div>
             </div>
           </div>
+        </div>
+      `;
+    }
+
+    function renderCoachSection(member) {
+      const wrapper = document.getElementById("member-coach-wrapper");
+      if (!wrapper) return;
+
+      const trainer = window.fit24Store.getTrainer(member.assignedTrainerId) || window.fit24Store.getTrainers()[0];
+      const ptTotal = member.ptSessionsTotal || 0;
+      const ptUsed = member.ptSessionsUsed || 0;
+      const ptRemaining = Math.max(0, ptTotal - ptUsed);
+      const ptPct = ptTotal > 0 ? Math.round((ptRemaining / ptTotal) * 100) : 0;
+
+      const whatsappText = encodeURIComponent(`Hi Coach ${trainer ? trainer.name : ''}! I am ${member.name} (${member.id}). I have a quick question about my training program.`);
+      const trainerPhone = trainer && trainer.phone ? trainer.phone.replace(/[^0-9]/g, '') : "916238920442";
+      const directWhatsAppUrl = `https://wa.me/${trainerPhone}?text=${whatsappText}`;
+
+      wrapper.innerHTML = `
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div>
+              <span class="text-[9px] font-mono text-[#ff0033] uppercase tracking-widest font-bold">PERFORMANCE COACHING</span>
+              <h4 class="text-xl font-gymbox text-white uppercase tracking-wide">YOUR ASSIGNED DRILLMASTER</h4>
+            </div>
+            <span class="px-2 py-0.5 bg-[#ff0033]/20 border border-[#ff0033] text-[#ff0033] text-[10px] font-mono font-bold uppercase">
+              1-ON-1 PT
+            </span>
+          </div>
+
+          <!-- Coach Profile Bar -->
+          <div class="flex items-center gap-4 bg-black p-3.5 border border-white/10">
+            <img src="${trainer ? trainer.photoUrl : 'https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=400&q=80'}" 
+                 alt="${trainer ? trainer.name : 'Coach'}" 
+                 class="w-14 h-14 object-cover border-2 border-[#ff0033]">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <strong class="text-white font-gymbox text-lg tracking-wide truncate">${trainer ? trainer.name : 'Coach Rahul Menon'}</strong>
+                <span class="px-1.5 py-0.5 bg-red-600 text-white text-[9px] font-mono font-bold uppercase">${trainer ? trainer.badge : 'COACH'}</span>
+              </div>
+              <div class="text-xs text-zinc-400 font-mono truncate">${trainer ? trainer.specialty : 'Strength & Biomechanics'}</div>
+              <div class="text-[10px] text-zinc-500 font-mono mt-0.5">${trainer && trainer.title ? trainer.title : 'Lead Coach'}</div>
+            </div>
+          </div>
+
+          <!-- PT Passbook Progress Bar -->
+          <div class="bg-black p-3.5 border border-white/10 space-y-2 font-mono">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-zinc-400">1-on-1 PT Session Balance:</span>
+              <strong class="text-white font-bold">${ptRemaining} of ${ptTotal} Sessions Left</strong>
+            </div>
+            <div class="w-full bg-zinc-800 h-2.5 overflow-hidden">
+              <div class="bg-[#ff0033] h-full transition-all duration-500" style="width: ${ptPct}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-zinc-500">
+              <span>${ptUsed} completed this cycle</span>
+              <span class="text-[#ff0033] font-bold">${ptPct}% quota active</span>
+            </div>
+          </div>
+
+          <!-- Direct WhatsApp Coach CTA -->
+          <a href="${directWhatsAppUrl}" target="_blank"
+             class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg">
+            <span>💬 Message Coach ${trainer ? trainer.name.split(' ')[0] : ''} on WhatsApp</span>
+          </a>
+        </div>
+      `;
+    }
+
+    function renderWorkoutSection(member) {
+      const wrapper = document.getElementById("member-workout-wrapper");
+      if (!wrapper) return;
+
+      const plan = member.workoutPlan;
+      if (!plan) {
+        wrapper.innerHTML = `
+          <div class="bg-[#0e0e12] border-2 border-white/10 p-5 font-mono text-xs text-zinc-400 text-center">
+            No active workout plan assigned. Consult your coach at the front desk to set your routine.
+          </div>
+        `;
+        return;
+      }
+
+      const targets = plan.dietTargets || { calories: 2200, proteinGrams: 140, waterLiters: 3.5 };
+      const splitItemsHtml = (plan.split || []).map((item, idx) => `
+        <div class="bg-black p-3.5 border border-white/10 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="px-2 py-0.5 bg-[#ff0033] text-black font-gymbox text-xs uppercase font-bold tracking-wider">${item.day}</span>
+            <strong class="text-white font-gymbox text-base uppercase tracking-wide">${item.title}</strong>
+          </div>
+          <p class="text-xs text-zinc-300 font-mono leading-relaxed">${item.exercises}</p>
+          ${item.notes ? `<div class="text-[10px] text-amber-400/90 font-mono italic">💡 Cue: ${item.notes}</div>` : ''}
+        </div>
+      `).join('');
+
+      wrapper.innerHTML = `
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div>
+              <span class="text-[9px] font-mono text-[#ff0033] uppercase tracking-widest font-bold">COACH PRESCRIPTION</span>
+              <h4 class="text-xl font-gymbox text-white uppercase tracking-wide">${plan.title}</h4>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-400">${plan.phase || 'Active Phase'}</span>
+          </div>
+
+          <!-- Macro & Fuel Targets -->
+          <div class="grid grid-cols-3 gap-2 text-center font-mono bg-black p-3 border border-white/10">
+            <div>
+              <span class="text-[9px] text-zinc-500 uppercase block">TARGET KCAL</span>
+              <strong class="text-sm text-yellow-400 font-bold">${targets.calories}</strong>
+            </div>
+            <div>
+              <span class="text-[9px] text-zinc-500 uppercase block">PROTEIN</span>
+              <strong class="text-sm text-[#ff0033] font-bold">${targets.proteinGrams}g</strong>
+            </div>
+            <div>
+              <span class="text-[9px] text-zinc-500 uppercase block">HYDRATION</span>
+              <strong class="text-sm text-cyan-400 font-bold">${targets.waterLiters}L</strong>
+            </div>
+          </div>
+
+          <!-- Weekly Split Days -->
+          <div class="space-y-2.5">
+            ${splitItemsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBiometricsSection(member) {
+      const wrapper = document.getElementById("member-biometrics-wrapper");
+      if (!wrapper) return;
+
+      const history = member.biometrics || [];
+      if (history.length === 0) {
+        wrapper.innerHTML = ``;
+        return;
+      }
+
+      const latest = history[0];
+      const baseline = history[history.length - 1];
+      const weightDiff = (latest.weight - baseline.weight).toFixed(1);
+      const fatDiff = latest.bodyFat && baseline.bodyFat ? (latest.bodyFat - baseline.bodyFat).toFixed(1) : null;
+
+      const entriesHtml = history.slice(0, 3).map(entry => `
+        <div class="flex items-center justify-between p-2.5 bg-black border border-white/5 text-xs font-mono">
+          <div>
+            <strong class="text-white">${entry.date}</strong>
+            <span class="text-[10px] text-zinc-500 block">${entry.notes || 'Routine weigh-in'}</span>
+          </div>
+          <div class="text-right">
+            <span class="text-white font-bold">${entry.weight} kg</span>
+            ${entry.bodyFat ? `<span class="text-[10px] text-amber-400 block">${entry.bodyFat}% BF</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      wrapper.innerHTML = `
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div>
+              <span class="text-[9px] font-mono text-[#ff0033] uppercase tracking-widest font-bold">TRANSFORMATION RADAR</span>
+              <h4 class="text-xl font-gymbox text-white uppercase tracking-wide">BIOMETRICS & PROGRESS</h4>
+            </div>
+            <span class="text-[10px] font-mono text-emerald-400 font-bold">
+              ${weightDiff <= 0 ? `${weightDiff} kg` : `+${weightDiff} kg`}
+            </span>
+          </div>
+
+          <div class="space-y-2">
+            ${entriesHtml}
+          </div>
+
+          ${member.medicalAlerts ? `
+            <div class="p-2.5 bg-red-950/30 border border-red-800/40 text-[10px] font-mono text-red-300">
+              ⚠️ Medical Alert on Record: <strong>${member.medicalAlerts}</strong>
+            </div>
+          ` : ''}
         </div>
       `;
     }

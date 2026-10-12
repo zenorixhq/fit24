@@ -565,15 +565,20 @@ function renderDynamicTrainers() {
             <div class="inline-block mt-2 px-2 py-0.5 bg-white/5 border border-white/10 text-[10px] font-mono text-[#ff0033] font-bold">
               ${t.specialty}
             </div>
+            ${t.classesTaught && t.classesTaught.length ? `
+              <div class="mt-2 text-[10px] font-mono text-zinc-400">
+                <span class="text-zinc-500">Lead Classes:</span> ${t.classesTaught.join(', ')}
+              </div>
+            ` : ''}
             <p class="text-xs text-zinc-400 font-mono mt-3 line-clamp-3 leading-relaxed">
               ${t.bio}
             </p>
           </div>
 
-          <div class="pt-4 mt-4 border-t border-white/10">
+          <div class="pt-4 mt-4 border-t border-white/10 space-y-2">
             <a href="https://wa.me/916238920442?text=${waMsg}" target="_blank"
-               class="w-full py-2.5 bg-white/5 hover:bg-[#ff0033] border border-white/15 hover:border-[#ff0033] text-white text-xs font-mono font-bold uppercase text-center block transition-all">
-              Book With ${firstName} →
+               class="w-full py-2.5 bg-[#ff0033] hover:bg-white hover:text-black border border-[#ff0033] text-white text-xs font-mono font-bold uppercase text-center block transition-all shadow-md">
+              ⚡ Book 1-on-1 Trial With ${firstName} →
             </a>
           </div>
         </div>

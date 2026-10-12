@@ -201,3 +201,37 @@ CREATE TABLE IF NOT EXISTS public.biometrics (
 
 ALTER TABLE public.biometrics ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow full access for biometrics" ON public.biometrics FOR ALL USING (true);
+
+-- =========================================================================
+-- 8. TRAINERS & COACHES DIRECTORY
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.trainers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    specialty VARCHAR(150) NOT NULL,
+    bio TEXT,
+    phone VARCHAR(25),
+    photo_url TEXT,
+    badge VARCHAR(50) DEFAULT 'COACH',
+    badge_color VARCHAR(30) DEFAULT 'red',
+    per_session_rate DECIMAL(10, 2) DEFAULT 500.00,
+    classes_taught TEXT[],
+    is_active BOOLEAN DEFAULT true,
+    display_order INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.trainers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read for trainers" ON public.trainers FOR SELECT USING (true);
+CREATE POLICY "Allow full access for trainers" ON public.trainers FOR ALL USING (true);
+
+-- Member Table Columns for Trainer Roster & PT Sessions
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS assigned_trainer_id UUID;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS pt_sessions_total INT DEFAULT 0;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS pt_sessions_used INT DEFAULT 0;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS emergency_contact VARCHAR(150);
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS medical_alerts TEXT;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS blood_group VARCHAR(10);
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS workout_plan JSONB;
+
