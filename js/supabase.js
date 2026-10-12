@@ -114,6 +114,10 @@ class Fit24SupabaseClient {
       transformationPhotos: row.transformation_photos || null,
       weeklyCheckIns: row.weekly_check_ins || [],
       parq: row.parq || null,
+      calorieIntakeHistory: row.calorie_intake_history || (typeof defaultCalorieHistory === 'function' ? defaultCalorieHistory() : []),
+      todayMeals: row.today_meals || (typeof defaultTodayMeals === 'function' ? defaultTodayMeals() : []),
+      dayByDaySchedule: row.day_by_day_schedule || (typeof defaultDayByDaySchedule === 'function' ? defaultDayByDaySchedule() : []),
+      loggedWorkoutSets: row.logged_workout_sets || [],
       pauseHistory: []
     };
   }
@@ -157,7 +161,11 @@ class Fit24SupabaseClient {
       daily_habits: m.dailyHabits || null,
       circumferences: m.circumferences || null,
       diet_targets: m.dietTargets || null,
-      transformation_photos: m.transformationPhotos || null
+      transformation_photos: m.transformationPhotos || null,
+      calorie_intake_history: m.calorieIntakeHistory || null,
+      today_meals: m.todayMeals || null,
+      day_by_day_schedule: m.dayByDaySchedule || null,
+      logged_workout_sets: m.loggedWorkoutSets || null
     };
   }
 

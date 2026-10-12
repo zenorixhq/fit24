@@ -260,6 +260,8 @@ const FIT24_DATA = {
         ]
       },
       dailyHabits: {
+        caloriesBurntTarget: 650,
+        caloriesBurntDone: 520,
         stepsTarget: 10000,
         stepsDone: 8400,
         waterDone: 3.5,
@@ -267,6 +269,140 @@ const FIT24_DATA = {
         sleepDone: true,
         proteinDone: true
       },
+      calorieIntakeHistory: [
+        { day: "Mon", date: "2026-10-19", intakeKcal: 2380, burntKcal: 680, targetKcal: 2400, proteinGrams: 162, carbsGrams: 245, fatsGrams: 62 },
+        { day: "Tue", date: "2026-10-20", intakeKcal: 2420, burntKcal: 610, targetKcal: 2400, proteinGrams: 165, carbsGrams: 250, fatsGrams: 64 },
+        { day: "Wed", date: "2026-10-21", intakeKcal: 2350, burntKcal: 720, targetKcal: 2400, proteinGrams: 158, carbsGrams: 238, fatsGrams: 60 },
+        { day: "Thu", date: "2026-10-22", intakeKcal: 2400, burntKcal: 590, targetKcal: 2400, proteinGrams: 160, carbsGrams: 248, fatsGrams: 63 },
+        { day: "Fri", date: "2026-10-23", intakeKcal: 2450, burntKcal: 750, targetKcal: 2400, proteinGrams: 168, carbsGrams: 255, fatsGrams: 66 },
+        { day: "Sat", date: "2026-10-24", intakeKcal: 2390, burntKcal: 710, targetKcal: 2400, proteinGrams: 160, carbsGrams: 242, fatsGrams: 62 },
+        { day: "Sun", date: "2026-10-25", intakeKcal: 2350, burntKcal: 520, targetKcal: 2400, proteinGrams: 155, carbsGrams: 230, fatsGrams: 58 }
+      ],
+      todayMeals: [
+        { time: "08:00 AM", name: "Oatmeal, Banana & Whey Isolate (40g Protein)", kcal: 580, protein: 45 },
+        { time: "01:30 PM", name: "Grilled Chicken Breast, Brown Rice & Broccoli", kcal: 720, protein: 55 },
+        { time: "05:00 PM", name: "Pre-Workout FIT24 Fuel Espresso & Raw Almonds", kcal: 240, protein: 12 },
+        { time: "08:30 PM", name: "Salmon Fillet, Sweet Potato Mash & Asparagus", kcal: 680, protein: 48 }
+      ],
+      dayByDaySchedule: [
+        {
+          dayKey: "Mon",
+          dayName: "Monday",
+          status: "completed",
+          title: "Heavy Push & Chest Hypertrophy",
+          completedDate: "2026-10-19",
+          totalVolumeKg: 14200,
+          durationMins: 65,
+          coachCue: "Focus on 2-sec eccentric pause on bench. Squeeze pecs at lockout.",
+          exercises: [
+            { name: "Incline DB Press", sets: "4x8", targetWeight: "32kg", actualBest: "32kg × 8", completed: true },
+            { name: "Barbell Bench Press", sets: "4x6", targetWeight: "100kg", actualBest: "100kg × 6 🏆 PR", completed: true },
+            { name: "Weighted Dips", sets: "3x10", targetWeight: "BW+15kg", actualBest: "BW+15kg × 10", completed: true },
+            { name: "DB Lateral Raises", sets: "4x15", targetWeight: "12kg", actualBest: "12kg × 15", completed: true }
+          ],
+          coachFeedback: "Bench bar path was laser straight. Added +2.5kg to 1RM calculation."
+        },
+        {
+          dayKey: "Tue",
+          dayName: "Tuesday",
+          status: "completed",
+          title: "Conditioning & Core Engine",
+          completedDate: "2026-10-20",
+          totalVolumeKg: 6800,
+          durationMins: 50,
+          coachCue: "Assault bike intervals at 85% max HR. Keep core tight on carries.",
+          exercises: [
+            { name: "Farmer's Walk", sets: "4x50m", targetWeight: "32kg each", actualBest: "32kg × 50m", completed: true },
+            { name: "Hanging Leg Raises", sets: "3x15", targetWeight: "BW", actualBest: "BW × 15", completed: true },
+            { name: "Assault Bike Intervals", sets: "10x30s", targetWeight: "Zone 4", actualBest: "350 kcal burnt", completed: true }
+          ],
+          coachFeedback: "Heart rate recovery between intervals improved by 12 seconds."
+        },
+        {
+          dayKey: "Wed",
+          dayName: "Wednesday",
+          status: "completed",
+          title: "Back & Pull Engine",
+          completedDate: "2026-10-21",
+          totalVolumeKg: 16400,
+          durationMins: 70,
+          coachCue: "Maintain neutral spine on deadlifts. Retract scapula on lat pulldowns.",
+          exercises: [
+            { name: "Conventional Deadlifts", sets: "4x5", targetWeight: "140kg", actualBest: "140kg × 5", completed: true },
+            { name: "Lat Pulldowns", sets: "4x10", targetWeight: "75kg", actualBest: "75kg × 10", completed: true },
+            { name: "Chest Supported Rows", sets: "3x10", targetWeight: "30kg", actualBest: "30kg × 10", completed: true },
+            { name: "Facepulls", sets: "3x15", targetWeight: "25kg", actualBest: "25kg × 15", completed: true }
+          ],
+          coachFeedback: "Strong pull. Next week we attempt 145kg deadlift for 5 reps."
+        },
+        {
+          dayKey: "Thu",
+          dayName: "Thursday",
+          status: "today",
+          title: "Lower Body Power & Squats",
+          completedDate: null,
+          totalVolumeKg: 12600,
+          durationMins: 60,
+          coachCue: "Knees tracking over toes, explosive ascent out of the hole. Rest 90s between working sets.",
+          exercises: [
+            { name: "Barbell Back Squats", sets: "4x8", targetWeight: "105kg", previousBest: "100kg × 8", tempo: "3-0-1-0", restSeconds: 90, completed: false },
+            { name: "Romanian Deadlifts (RDL)", sets: "3x10", targetWeight: "90kg", previousBest: "85kg × 10", tempo: "3-1-1-0", restSeconds: 90, completed: false },
+            { name: "Bulgarian Split Squats", sets: "3x10/leg", targetWeight: "22kg DBs", previousBest: "20kg × 10", tempo: "2-0-1-0", restSeconds: 60, completed: false },
+            { name: "Standing Calf Raises", sets: "4x15", targetWeight: "70kg", previousBest: "65kg × 15", tempo: "2-1-1-1", restSeconds: 60, completed: false }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Fri",
+          dayName: "Friday",
+          status: "upcoming",
+          title: "Upper Body Hypertrophy & Arms",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 60,
+          coachCue: "Focus on mind-muscle connection. Drop sets on final arm exercises.",
+          exercises: [
+            { name: "Incline Barbell Press", sets: "4x8", targetWeight: "80kg", tempo: "3-0-1-0", restSeconds: 90 },
+            { name: "Seated Cable Rows", sets: "4x10", targetWeight: "70kg", tempo: "2-1-1-0", restSeconds: 75 },
+            { name: "Overhead Dumbbell Triceps Extension", sets: "3x12", targetWeight: "28kg", tempo: "2-0-1-0", restSeconds: 60 },
+            { name: "Incline Dumbbell Bicep Curls", sets: "3x12", targetWeight: "14kg", tempo: "2-1-1-0", restSeconds: 60 }
+          ],
+          coachFeedback: "Pack your elbow sleeves. We are testing a high-cadence superset."
+        },
+        {
+          dayKey: "Sat",
+          dayName: "Saturday",
+          status: "upcoming",
+          title: "Olympic Lifting & Combat Conditioning",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 55,
+          coachCue: "Triple extension on cleans. Heavy bag rounds with coach pads.",
+          exercises: [
+            { name: "Power Cleans", sets: "5x3", targetWeight: "70kg", tempo: "Explosive", restSeconds: 120 },
+            { name: "Kettlebell Snatches", sets: "4x10/arm", targetWeight: "20kg", tempo: "Continuous", restSeconds: 60 },
+            { name: "Boxing Heavy Bag Rounds", sets: "5x3 min", targetWeight: "High Cadence", tempo: "Combat", restSeconds: 60 },
+            { name: "Dry Sauna Thermal Recovery", sets: "1x15 min", targetWeight: "85°C", tempo: "Passive", restSeconds: 0 }
+          ],
+          coachFeedback: "Mouthguard and hand wraps required. Follow with 4°C ice plunge."
+        },
+        {
+          dayKey: "Sun",
+          dayName: "Sunday",
+          status: "upcoming",
+          title: "Active Recovery, Mobility & Weekly Check-In",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "Decompress spine, thoracic foam rolling, submit 5-minute Sunday Check-in on app.",
+          exercises: [
+            { name: "Full Body Foam Rolling", sets: "15 min", targetWeight: "Bodyweight", tempo: "Slow", restSeconds: 0 },
+            { name: "Thoracic & Hip Mobility Flow", sets: "20 min", targetWeight: "Bodyweight", tempo: "Static/Dynamic", restSeconds: 0 },
+            { name: "Guided 5-Min Sunday Check-In", sets: "1 submission", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+          ],
+          coachFeedback: "Submit wins and stress rating by 6:00 PM for Monday programming review."
+        }
+      ],
       parq: {
         heartCondition: false,
         chestPain: false,
@@ -857,10 +993,153 @@ const FIT24_DATA = {
   ]
 };
 
+function defaultCalorieHistory() {
+  return [
+    { day: "Mon", date: "2026-10-19", intakeKcal: 2380, burntKcal: 680, targetKcal: 2400, proteinGrams: 162, carbsGrams: 245, fatsGrams: 62 },
+    { day: "Tue", date: "2026-10-20", intakeKcal: 2420, burntKcal: 610, targetKcal: 2400, proteinGrams: 165, carbsGrams: 250, fatsGrams: 64 },
+    { day: "Wed", date: "2026-10-21", intakeKcal: 2350, burntKcal: 720, targetKcal: 2400, proteinGrams: 158, carbsGrams: 238, fatsGrams: 60 },
+    { day: "Thu", date: "2026-10-22", intakeKcal: 2400, burntKcal: 590, targetKcal: 2400, proteinGrams: 160, carbsGrams: 248, fatsGrams: 63 },
+    { day: "Fri", date: "2026-10-23", intakeKcal: 2450, burntKcal: 750, targetKcal: 2400, proteinGrams: 168, carbsGrams: 255, fatsGrams: 66 },
+    { day: "Sat", date: "2026-10-24", intakeKcal: 2390, burntKcal: 710, targetKcal: 2400, proteinGrams: 160, carbsGrams: 242, fatsGrams: 62 },
+    { day: "Sun", date: "2026-10-25", intakeKcal: 2350, burntKcal: 520, targetKcal: 2400, proteinGrams: 155, carbsGrams: 230, fatsGrams: 58 }
+  ];
+}
+
+function defaultTodayMeals() {
+  return [
+    { time: "08:00 AM", name: "Oatmeal, Banana & Whey Isolate (40g Protein)", kcal: 580, protein: 45 },
+    { time: "01:30 PM", name: "Grilled Chicken Breast, Brown Rice & Broccoli", kcal: 720, protein: 55 },
+    { time: "05:00 PM", name: "Pre-Workout FIT24 Fuel Espresso & Raw Almonds", kcal: 240, protein: 12 },
+    { time: "08:30 PM", name: "Salmon Fillet, Sweet Potato Mash & Asparagus", kcal: 680, protein: 48 }
+  ];
+}
+
+function defaultDayByDaySchedule() {
+  return [
+    {
+      dayKey: "Mon",
+      dayName: "Monday",
+      status: "completed",
+      title: "Heavy Push & Chest Hypertrophy",
+      completedDate: "2026-10-19",
+      totalVolumeKg: 14200,
+      durationMins: 65,
+      coachCue: "Focus on 2-sec eccentric pause on bench. Squeeze pecs at lockout.",
+      exercises: [
+        { name: "Incline DB Press", sets: "4x8", targetWeight: "32kg", actualBest: "32kg × 8", completed: true },
+        { name: "Barbell Bench Press", sets: "4x6", targetWeight: "100kg", actualBest: "100kg × 6 🏆 PR", completed: true },
+        { name: "Weighted Dips", sets: "3x10", targetWeight: "BW+15kg", actualBest: "BW+15kg × 10", completed: true },
+        { name: "DB Lateral Raises", sets: "4x15", targetWeight: "12kg", actualBest: "12kg × 15", completed: true }
+      ],
+      coachFeedback: "Bench bar path was laser straight. Added +2.5kg to 1RM calculation."
+    },
+    {
+      dayKey: "Tue",
+      dayName: "Tuesday",
+      status: "completed",
+      title: "Conditioning & Core Engine",
+      completedDate: "2026-10-20",
+      totalVolumeKg: 6800,
+      durationMins: 50,
+      coachCue: "Assault bike intervals at 85% max HR. Keep core tight on carries.",
+      exercises: [
+        { name: "Farmer's Walk", sets: "4x50m", targetWeight: "32kg each", actualBest: "32kg × 50m", completed: true },
+        { name: "Hanging Leg Raises", sets: "3x15", targetWeight: "BW", actualBest: "BW × 15", completed: true },
+        { name: "Assault Bike Intervals", sets: "10x30s", targetWeight: "Zone 4", actualBest: "350 kcal burnt", completed: true }
+      ],
+      coachFeedback: "Heart rate recovery between intervals improved by 12 seconds."
+    },
+    {
+      dayKey: "Wed",
+      dayName: "Wednesday",
+      status: "completed",
+      title: "Back & Pull Engine",
+      completedDate: "2026-10-21",
+      totalVolumeKg: 16400,
+      durationMins: 70,
+      coachCue: "Maintain neutral spine on deadlifts. Retract scapula on lat pulldowns.",
+      exercises: [
+        { name: "Conventional Deadlifts", sets: "4x5", targetWeight: "140kg", actualBest: "140kg × 5", completed: true },
+        { name: "Lat Pulldowns", sets: "4x10", targetWeight: "75kg", actualBest: "75kg × 10", completed: true },
+        { name: "Chest Supported Rows", sets: "3x10", targetWeight: "30kg", actualBest: "30kg × 10", completed: true },
+        { name: "Facepulls", sets: "3x15", targetWeight: "25kg", actualBest: "25kg × 15", completed: true }
+      ],
+      coachFeedback: "Strong pull. Next week we attempt 145kg deadlift for 5 reps."
+    },
+    {
+      dayKey: "Thu",
+      dayName: "Thursday",
+      status: "today",
+      title: "Lower Body Power & Squats",
+      completedDate: null,
+      totalVolumeKg: 12600,
+      durationMins: 60,
+      coachCue: "Knees tracking over toes, explosive ascent out of the hole. Rest 90s between working sets.",
+      exercises: [
+        { name: "Barbell Back Squats", sets: "4x8", targetWeight: "105kg", previousBest: "100kg × 8", tempo: "3-0-1-0", restSeconds: 90, completed: false },
+        { name: "Romanian Deadlifts (RDL)", sets: "3x10", targetWeight: "90kg", previousBest: "85kg × 10", tempo: "3-1-1-0", restSeconds: 90, completed: false },
+        { name: "Bulgarian Split Squats", sets: "3x10/leg", targetWeight: "22kg DBs", previousBest: "20kg × 10", tempo: "2-0-1-0", restSeconds: 60, completed: false },
+        { name: "Standing Calf Raises", sets: "4x15", targetWeight: "70kg", previousBest: "65kg × 15", tempo: "2-1-1-1", restSeconds: 60, completed: false }
+      ],
+      coachFeedback: null
+    },
+    {
+      dayKey: "Fri",
+      dayName: "Friday",
+      status: "upcoming",
+      title: "Upper Body Hypertrophy & Arms",
+      completedDate: null,
+      totalVolumeKg: 0,
+      durationMins: 60,
+      coachCue: "Focus on mind-muscle connection. Drop sets on final arm exercises.",
+      exercises: [
+        { name: "Incline Barbell Press", sets: "4x8", targetWeight: "80kg", tempo: "3-0-1-0", restSeconds: 90 },
+        { name: "Seated Cable Rows", sets: "4x10", targetWeight: "70kg", tempo: "2-1-1-0", restSeconds: 75 },
+        { name: "Overhead Dumbbell Triceps Extension", sets: "3x12", targetWeight: "28kg", tempo: "2-0-1-0", restSeconds: 60 },
+        { name: "Incline Dumbbell Bicep Curls", sets: "3x12", targetWeight: "14kg", tempo: "2-1-1-0", restSeconds: 60 }
+      ],
+      coachFeedback: "Pack your elbow sleeves. We are testing a high-cadence superset."
+    },
+    {
+      dayKey: "Sat",
+      dayName: "Saturday",
+      status: "upcoming",
+      title: "Olympic Lifting & Combat Conditioning",
+      completedDate: null,
+      totalVolumeKg: 0,
+      durationMins: 55,
+      coachCue: "Triple extension on cleans. Heavy bag rounds with coach pads.",
+      exercises: [
+        { name: "Power Cleans", sets: "5x3", targetWeight: "70kg", tempo: "Explosive", restSeconds: 120 },
+        { name: "Kettlebell Snatches", sets: "4x10/arm", targetWeight: "20kg", tempo: "Continuous", restSeconds: 60 },
+        { name: "Boxing Heavy Bag Rounds", sets: "5x3 min", targetWeight: "High Cadence", tempo: "Combat", restSeconds: 60 },
+        { name: "Dry Sauna Thermal Recovery", sets: "1x15 min", targetWeight: "85°C", tempo: "Passive", restSeconds: 0 }
+      ],
+      coachFeedback: "Mouthguard and hand wraps required. Follow with 4°C ice plunge."
+    },
+    {
+      dayKey: "Sun",
+      dayName: "Sunday",
+      status: "upcoming",
+      title: "Active Recovery, Mobility & Weekly Check-In",
+      completedDate: null,
+      totalVolumeKg: 0,
+      durationMins: 45,
+      coachCue: "Decompress spine, thoracic foam rolling, submit 5-minute Sunday Check-in on app.",
+      exercises: [
+        { name: "Full Body Foam Rolling", sets: "15 min", targetWeight: "Bodyweight", tempo: "Slow", restSeconds: 0 },
+        { name: "Thoracic & Hip Mobility Flow", sets: "20 min", targetWeight: "Bodyweight", tempo: "Static/Dynamic", restSeconds: 0 },
+        { name: "Guided 5-Min Sunday Check-In", sets: "1 submission", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+      ],
+      coachFeedback: "Submit wins and stress rating by 6:00 PM for Monday programming review."
+    }
+  ];
+}
+
 // Storage Management Helper for LocalStorage
 class Fit24Store {
   constructor() {
-    this.STORAGE_KEY = "FIT24_APP_STORAGE_v4";
+    this.STORAGE_KEY = "FIT24_APP_STORAGE_v5";
     this._memoryStore = null;
     this.init();
   }
@@ -961,7 +1240,41 @@ class Fit24Store {
   }
 
   getMember(id) {
-    return this.getMembers().find(m => m.id.toLowerCase() === id.toLowerCase() || m.phone.replace(/\s+/g, '').includes(id.replace(/\s+/g, '')));
+    const member = this.getMembers().find(m => m.id.toLowerCase() === id.toLowerCase() || m.phone.replace(/\s+/g, '').includes(id.replace(/\s+/g, '')));
+    if (!member) return null;
+    
+    // Auto-repair if missing new metabolic or 7-day schedule fields
+    let updated = false;
+    if (!member.dailyHabits) {
+      member.dailyHabits = {};
+      updated = true;
+    }
+    if (!member.dailyHabits.caloriesBurntTarget) {
+      member.dailyHabits.caloriesBurntTarget = 650;
+      member.dailyHabits.caloriesBurntDone = 520;
+      updated = true;
+    }
+    if (!member.calorieIntakeHistory || member.calorieIntakeHistory.length === 0) {
+      member.calorieIntakeHistory = defaultCalorieHistory();
+      updated = true;
+    }
+    if (!member.todayMeals || member.todayMeals.length === 0) {
+      member.todayMeals = defaultTodayMeals();
+      updated = true;
+    }
+    if (!member.dayByDaySchedule || member.dayByDaySchedule.length === 0) {
+      member.dayByDaySchedule = defaultDayByDaySchedule();
+      updated = true;
+    }
+    if (updated) {
+      const store = this.getStore();
+      const idx = store.members.findIndex(m => m.id === member.id);
+      if (idx !== -1) {
+        store.members[idx] = member;
+        this.saveStore(store);
+      }
+    }
+    return member;
   }
 
   addMember(memberData) {
@@ -1742,17 +2055,88 @@ class Fit24Store {
     return member;
   }
 
-  // --- DAILY HABITS (STEPS, WATER, SLEEP, FUEL) ---
+  // --- DAILY HABITS (STEPS, WATER, SLEEP, CALORIES BURNT, FUEL) ---
   updateDailyHabit(memberId, habitKey, value) {
     const store = this.getStore();
     const member = store.members.find(m => m.id === memberId);
     if (!member) return null;
 
     if (!member.dailyHabits) {
-      member.dailyHabits = { stepsTarget: 10000, stepsDone: 0, waterDone: 0, sleepHours: 7, sleepDone: false, proteinDone: false };
+      member.dailyHabits = { stepsTarget: 10000, stepsDone: 0, waterDone: 0, sleepHours: 7, sleepDone: false, proteinDone: false, caloriesBurntTarget: 650, caloriesBurntDone: 0 };
     }
 
     member.dailyHabits[habitKey] = value;
+    this.saveStore(store);
+    return member;
+  }
+
+  addCaloriesBurnt(memberId, kcal) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+    if (!member.dailyHabits) member.dailyHabits = {};
+    const burn = parseInt(kcal) || 100;
+    member.dailyHabits.caloriesBurntDone = (member.dailyHabits.caloriesBurntDone || 0) + burn;
+    if (!member.dailyHabits.caloriesBurntTarget) member.dailyHabits.caloriesBurntTarget = 650;
+    
+    // Also record on today's intake history entry
+    if (member.calorieIntakeHistory && member.calorieIntakeHistory.length > 0) {
+      const today = member.calorieIntakeHistory[member.calorieIntakeHistory.length - 1];
+      today.burntKcal = (today.burntKcal || 0) + burn;
+    }
+    this.saveStore(store);
+    return member;
+  }
+
+  logCalorieIntake(memberId, mealData) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+    if (!member.todayMeals) member.todayMeals = [];
+    const meal = {
+      time: mealData.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      name: mealData.name || "Clean Fuel Meal",
+      kcal: parseInt(mealData.kcal) || 450,
+      protein: parseInt(mealData.protein) || 35
+    };
+    member.todayMeals.push(meal);
+
+    // Update today's entry in calorie history
+    if (member.calorieIntakeHistory && member.calorieIntakeHistory.length > 0) {
+      const today = member.calorieIntakeHistory[member.calorieIntakeHistory.length - 1];
+      today.intakeKcal = (today.intakeKcal || 0) + meal.kcal;
+      today.proteinGrams = (today.proteinGrams || 0) + meal.protein;
+    }
+    this.saveStore(store);
+    return member;
+  }
+
+  // --- DAY-BY-DAY WORKOUT SPLITS (UPCOMING & PREVIOUS DAYS) ---
+  updateDayWorkoutSplit(memberId, dayKey, workoutData) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member || !member.dayByDaySchedule) return null;
+    const dayObj = member.dayByDaySchedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
+    if (!dayObj) return null;
+
+    if (workoutData.title) dayObj.title = workoutData.title;
+    if (workoutData.coachCue) dayObj.coachCue = workoutData.coachCue;
+    if (workoutData.exercises) dayObj.exercises = workoutData.exercises;
+    if (workoutData.status) dayObj.status = workoutData.status;
+    if (workoutData.durationMins) dayObj.durationMins = parseInt(workoutData.durationMins) || dayObj.durationMins;
+    if (workoutData.totalVolumeKg) dayObj.totalVolumeKg = parseInt(workoutData.totalVolumeKg) || dayObj.totalVolumeKg;
+
+    this.saveStore(store);
+    return member;
+  }
+
+  addTrainerWorkoutFeedback(memberId, dayKey, feedbackText) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member || !member.dayByDaySchedule) return null;
+    const dayObj = member.dayByDaySchedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
+    if (!dayObj) return null;
+    dayObj.coachFeedback = feedbackText;
     this.saveStore(store);
     return member;
   }
@@ -1764,16 +2148,31 @@ class Fit24Store {
     if (!member) return null;
 
     if (!member.loggedWorkoutSets) member.loggedWorkoutSets = [];
+    const weight = parseFloat(weightKg) || 0;
+    const repCount = parseInt(reps) || 0;
     const newSet = {
       date: new Date().toISOString().split('T')[0],
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       exercise: exerciseName,
       setNumber: parseInt(setNumber) || 1,
-      weightKg: parseFloat(weightKg) || 0,
-      reps: parseInt(reps) || 0
+      weightKg: weight,
+      reps: repCount
     };
 
     member.loggedWorkoutSets.unshift(newSet);
+
+    // Auto-burn +35 kcal per heavy compound set logged
+    if (!member.dailyHabits) member.dailyHabits = {};
+    member.dailyHabits.caloriesBurntDone = (member.dailyHabits.caloriesBurntDone || 0) + 35;
+
+    // Add to today's active day volume in dayByDaySchedule
+    if (member.dayByDaySchedule) {
+      const todayDay = member.dayByDaySchedule.find(d => d.status === 'today');
+      if (todayDay) {
+        todayDay.totalVolumeKg = (todayDay.totalVolumeKg || 0) + Math.round(weight * repCount);
+      }
+    }
+
     this.saveStore(store);
     return member;
   }
@@ -1812,7 +2211,8 @@ class Fit24Store {
       if (member.dailyHabits) {
         if (member.dailyHabits.proteinDone) score += 5;
         if (member.dailyHabits.sleepDone) score += 5;
-        if (member.dailyHabits.stepsDone >= (member.dailyHabits.stepsTarget || 10000)) score += 5;
+        if (member.dailyHabits.stepsDone >= (member.dailyHabits.stepsTarget || 10000)) score += 3;
+        if (member.dailyHabits.caloriesBurntDone >= (member.dailyHabits.caloriesBurntTarget || 650)) score += 2;
       }
 
       // Weekly check-in submission (up to +10)

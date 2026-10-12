@@ -48,13 +48,16 @@
     <!-- 1. Digital Card Container (Access Pass & Recovery Passbook) -->
     <div id="member-card-wrapper"></div>
 
-    <!-- 2. "Today's Plan" Mobile-First Daily Action Center -->
+    <!-- 2. "Today's Plan" Mobile-First Daily Action Center & 7-Day Split -->
     <div id="member-todays-plan-wrapper"></div>
 
     <!-- 3. Daily Habit Tracker Widget -->
     <div id="member-habits-wrapper"></div>
 
-    <!-- 4. Assigned Coach & 1-on-1 PT Passbook -->
+    <!-- 4. Calorie Intake Chart & Metabolic Engine -->
+    <div id="member-nutrition-chart-wrapper"></div>
+
+    <!-- 5. Assigned Coach & 1-on-1 PT Passbook -->
     <div id="member-coach-wrapper"></div>
 
     <!-- 5. Full Prescribed Weekly Blueprint & Macro Targets -->
@@ -232,6 +235,46 @@
     </div>
   </div>
 
+  <!-- ======================================================== -->
+  <!-- MODAL: QUICK FUEL & MEAL CALORIE LOG                     -->
+  <!-- ======================================================== -->
+  <div id="fuel-log-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-yellow-500 max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeFuelLogModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <span class="text-[9px] font-bold text-yellow-400 uppercase tracking-widest">// NUTRITION & FUEL TRACKER</span>
+        <h3 class="text-2xl font-gymbox text-white">LOG FUEL MEAL</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Record calorie and protein intake to track energy balance.</p>
+      </div>
+
+      <form id="fuel-log-form" onsubmit="handleFuelLogSubmit(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Meal Description:</label>
+          <input id="fuel-meal-name" type="text" required placeholder="e.g. Grilled Chicken Breast & Brown Rice"
+                 class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-yellow-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Calories (kcal):</label>
+            <input id="fuel-meal-kcal" type="number" required placeholder="e.g. 650"
+                   class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-yellow-500">
+          </div>
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Protein (grams):</label>
+            <input id="fuel-meal-protein" type="number" required placeholder="e.g. 50"
+                   class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-yellow-500">
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-yellow-500 hover:bg-white hover:text-black text-black font-gymbox text-xl uppercase tracking-wider transition-all">
+          CONFIRM FUEL LOG
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
@@ -265,6 +308,7 @@
       renderDigitalPass(member);
       renderTodaysPlan(member);
       renderHabitsSection(member);
+      renderNutritionChartSection(member);
       renderCoachSection(member);
       renderWorkoutSection(member);
       renderSundayCheckInSection(member);
@@ -346,76 +390,249 @@
       `;
     }
 
-    // 2. Mobile-First "Today's Plan" Action Center & Live Workout Logger
+    // Active selected day in the 7-day schedule
+    window.selectedWorkoutDayKey = 'Thu';
+
+    function selectWorkoutDay(dayKey) {
+      window.selectedWorkoutDayKey = dayKey;
+      const member = window.fit24Store.getMember(currentSelectedMemberId);
+      if (member) renderTodaysPlan(member);
+    }
+
+    // 2. Day-by-Day Workout Split: Previous Days Done vs Today Live vs Upcoming Days
     function renderTodaysPlan(member) {
       const wrapper = document.getElementById("member-todays-plan-wrapper");
       if (!wrapper) return;
 
-      const plan = member.workoutPlan;
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const currentDayName = days[new Date().getDay()];
+      const schedule = member.dayByDaySchedule || defaultDayByDaySchedule();
+      const currentSelectedKey = window.selectedWorkoutDayKey || 'Thu';
+      const activeDay = schedule.find(d => d.dayKey.toLowerCase() === currentSelectedKey.toLowerCase()) || schedule[3];
 
-      let todaysSplit = null;
-      if (plan && plan.split) {
-        todaysSplit = plan.split.find(s => s.day.includes(currentDayName)) || plan.split[0];
+      // Day buttons navigation pills
+      const dayPillsHtml = schedule.map(day => {
+        const isSelected = day.dayKey.toLowerCase() === currentSelectedKey.toLowerCase();
+        let statusBadge = "";
+        let borderClass = "border-white/10";
+        
+        if (day.status === "completed") {
+          statusBadge = `<span class="text-emerald-400 text-[8px] font-bold">✓ Done</span>`;
+          borderClass = isSelected ? "border-emerald-500 bg-emerald-950/30" : "border-emerald-500/30 bg-black/50";
+        } else if (day.status === "today") {
+          statusBadge = `<span class="text-[#ff0033] text-[8px] font-bold">⚡ Today</span>`;
+          borderClass = isSelected ? "border-[#ff0033] bg-[#ff0033]/20" : "border-[#ff0033]/50 bg-black/50";
+        } else {
+          statusBadge = `<span class="text-cyan-400 text-[8px] font-bold">📅 Plan</span>`;
+          borderClass = isSelected ? "border-cyan-500 bg-cyan-950/30" : "border-white/10 bg-black/50";
+        }
+
+        return `
+          <button onclick="selectWorkoutDay('${day.dayKey}')" 
+                  class="flex-1 min-w-[70px] p-2 rounded border ${borderClass} flex flex-col items-center justify-center transition-all ${isSelected ? 'ring-2 ring-white/20' : 'opacity-80 hover:opacity-100'}">
+            <span class="text-[10px] font-gymbox text-white uppercase">${day.dayKey}</span>
+            ${statusBadge}
+          </button>
+        `;
+      }).join('');
+
+      let dayContentHtml = "";
+
+      if (activeDay.status === "completed") {
+        // ============================================
+        // 1. PREVIOUS COMPLETED WORKOUT CARD
+        // ============================================
+        dayContentHtml = `
+          <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-2">
+              <div>
+                <span class="text-[9px] font-mono text-emerald-400 uppercase tracking-widest font-bold">// PREVIOUS SESSION COMPLETED</span>
+                <h4 class="text-2xl font-gymbox text-white uppercase tracking-wide">${activeDay.title}</h4>
+                <div class="text-xs text-zinc-400 font-mono mt-0.5">Finished: ${activeDay.completedDate || 'Earlier this week'} · Drillmaster Verified</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 bg-emerald-600/20 border border-emerald-500 text-emerald-400 font-mono text-xs font-bold uppercase rounded">
+                  ✓ COMPLETED
+                </span>
+              </div>
+            </div>
+
+            <!-- Volume & Metric Summary -->
+            <div class="grid grid-cols-3 gap-2 bg-black p-3 border border-white/10 font-mono text-center text-xs">
+              <div class="p-2 bg-white/5 border border-white/5">
+                <span class="text-[9px] text-zinc-500 uppercase block">VOLUME LIFTED</span>
+                <strong class="text-emerald-400 font-gymbox text-lg">${(activeDay.totalVolumeKg || 14200).toLocaleString()} KG</strong>
+              </div>
+              <div class="p-2 bg-white/5 border border-white/5">
+                <span class="text-[9px] text-zinc-500 uppercase block">DURATION</span>
+                <strong class="text-white font-gymbox text-lg">${activeDay.durationMins || 60} MINS</strong>
+              </div>
+              <div class="p-2 bg-white/5 border border-white/5">
+                <span class="text-[9px] text-zinc-500 uppercase block">EXERCISES</span>
+                <strong class="text-yellow-400 font-gymbox text-lg">${(activeDay.exercises || []).length} LOGGED</strong>
+              </div>
+            </div>
+
+            <!-- Completed Exercises List -->
+            <div class="space-y-2">
+              <div class="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">EXERCISES PERFORMED & PRS:</div>
+              ${(activeDay.exercises || []).map(ex => `
+                <div class="p-3 bg-black border border-white/10 flex items-center justify-between font-mono text-xs">
+                  <div>
+                    <strong class="text-white block">${ex.name}</strong>
+                    <span class="text-[10px] text-zinc-400">Prescribed: ${ex.sets} @ ${ex.targetWeight}</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-emerald-400 font-bold block">${ex.actualBest || 'Target Hit'}</span>
+                    <span class="text-[9px] text-zinc-500 uppercase">✓ Verified</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Coach Review Box -->
+            ${activeDay.coachFeedback ? `
+              <div class="p-3 bg-emerald-950/20 border border-emerald-500/30 rounded font-mono text-xs space-y-1">
+                <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-wider block">💬 DRILLMASTER FEEDBACK:</span>
+                <p class="text-zinc-200 italic">"${activeDay.coachFeedback}"</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      } else if (activeDay.status === "today") {
+        // ============================================
+        // 2. TODAY'S ACTIVE LIVE WORKOUT MISSION
+        // ============================================
+        dayContentHtml = `
+          <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-2">
+              <div>
+                <span class="text-[9px] font-mono text-[#ff0033] uppercase tracking-widest font-bold">// TODAY'S LIVE ACTIVE MISSION</span>
+                <h4 class="text-2xl font-gymbox text-white uppercase tracking-wide">${activeDay.title}</h4>
+                <div class="text-xs text-zinc-400 font-mono mt-0.5">Session Target: ${(activeDay.totalVolumeKg || 12600).toLocaleString()} kg volume · 60 Mins</div>
+              </div>
+              <span class="px-2.5 py-1 bg-[#ff0033] text-black font-gymbox text-xs uppercase font-bold self-start sm:self-auto">
+                ⚡ TODAY (LIVE)
+              </span>
+            </div>
+
+            <!-- Coach Cue -->
+            <div class="p-3 bg-red-950/20 border border-red-500/30 font-mono text-xs text-zinc-200">
+              <strong class="text-[#ff0033] text-[10px] uppercase block mb-0.5">💡 Drillmaster Coaching Cue:</strong>
+              ${activeDay.coachCue}
+            </div>
+
+            <!-- Built-in Rest Countdown Timer Widget -->
+            <div class="bg-black p-3.5 border border-white/10 flex items-center justify-between font-mono">
+              <div>
+                <span class="text-[9px] text-zinc-400 block uppercase font-bold">SET REST TIMER</span>
+                <span id="rest-timer-display" class="text-xl font-gymbox text-emerald-400 tracking-wider">00:00 READY</span>
+              </div>
+              <div class="flex gap-1.5">
+                <button onclick="startRestCountdown(60)" class="px-2.5 py-1 bg-white/10 hover:bg-[#ff0033] text-[10px] text-white uppercase font-bold">60s</button>
+                <button onclick="startRestCountdown(90)" class="px-2.5 py-1 bg-white/10 hover:bg-[#ff0033] text-[10px] text-white uppercase font-bold">90s</button>
+                <button onclick="startRestCountdown(120)" class="px-2.5 py-1 bg-white/10 hover:bg-[#ff0033] text-[10px] text-white uppercase font-bold">120s</button>
+              </div>
+            </div>
+
+            <!-- Live Workout Logger -->
+            <div class="space-y-2.5 pt-1">
+              <div class="flex justify-between items-center text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">
+                <span>LIVE EXERCISE LOGGER:</span>
+                <span class="text-[#ff0033]">+35 kcal burnt / set</span>
+              </div>
+
+              ${(activeDay.exercises || []).map((ex, exIdx) => `
+                <div class="bg-black p-3 border border-white/10 space-y-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-mono">
+                    <div>
+                      <strong class="text-white text-sm">${ex.name}</strong>
+                      <span class="text-zinc-400 text-[10px] block">Target: ${ex.sets} @ ${ex.targetWeight} · Tempo: ${ex.tempo || '3-0-1-0'}</span>
+                    </div>
+                    <div class="text-left sm:text-right">
+                      <span class="text-amber-400 text-[10px] block font-bold">Previous: ${ex.previousBest || '100kg × 8'}</span>
+                      <span class="text-zinc-500 text-[9px]">Rest: ${ex.restSeconds || 90}s</span>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-4 gap-1.5 text-center text-[10px] font-mono">
+                    ${[1, 2, 3, 4].map(setNum => `
+                      <div class="p-1.5 bg-white/5 border border-white/10 flex flex-col items-center">
+                        <span class="text-zinc-500 text-[8px]">SET ${setNum}</span>
+                        <input id="set-weight-${exIdx}-${setNum}" type="number" placeholder="kg" class="w-12 bg-black border border-white/20 text-center text-white text-xs my-0.5 focus:border-[#ff0033]">
+                        <button onclick="markSetComplete('${member.id}', '${ex.name.replace(/'/g, "")}', ${setNum}, ${exIdx})" 
+                                id="btn-set-${exIdx}-${setNum}"
+                                class="w-full mt-1 py-0.5 bg-zinc-800 hover:bg-emerald-600 text-zinc-300 hover:text-white font-bold text-[9px] uppercase">
+                          ✓ Log
+                        </button>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        // ============================================
+        // 3. UPCOMING DAY PRESCRIBED BY TRAINER
+        // ============================================
+        dayContentHtml = `
+          <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-2">
+              <div>
+                <span class="text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-bold">// UPCOMING WORKOUT — PRESCRIBED BY DRILLMASTER</span>
+                <h4 class="text-2xl font-gymbox text-white uppercase tracking-wide">${activeDay.title}</h4>
+                <div class="text-xs text-zinc-400 font-mono mt-0.5">Scheduled for: ${activeDay.dayName} · Est. Duration: ${activeDay.durationMins || 60} Mins</div>
+              </div>
+              <span class="px-2.5 py-1 bg-cyan-600/20 border border-cyan-500 text-cyan-400 font-mono text-xs font-bold uppercase rounded self-start sm:self-auto">
+                📅 UPCOMING
+              </span>
+            </div>
+
+            <!-- Coach Prep Instructions -->
+            <div class="p-3 bg-cyan-950/20 border border-cyan-500/30 rounded font-mono text-xs space-y-1">
+              <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider block">💬 DRILLMASTER PREPARATION NOTES:</span>
+              <p class="text-zinc-200 italic">"${activeDay.coachCue || activeDay.coachFeedback || 'Follow prescribed tempo and maintain proper hydration.'}"</p>
+            </div>
+
+            <!-- Prescribed Exercises Preview -->
+            <div class="space-y-2">
+              <div class="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">PRESCRIBED EXERCISE BLUEPRINT:</div>
+              ${(activeDay.exercises || []).map(ex => `
+                <div class="p-3 bg-black border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between font-mono text-xs gap-1">
+                  <div>
+                    <strong class="text-white block">${ex.name}</strong>
+                    <span class="text-[10px] text-zinc-400">Target Load: <strong class="text-yellow-400">${ex.targetWeight || 'Prescribed'}</strong> · Tempo: ${ex.tempo || '3-0-1-0'}</span>
+                  </div>
+                  <div class="text-left sm:text-right">
+                    <span class="text-[#ff0033] font-bold">${ex.sets || '4x8'}</span>
+                    <span class="text-[10px] text-zinc-500 block">Rest: ${ex.restSeconds || 90}s</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="p-3 bg-black border border-white/5 text-center text-xs text-zinc-500 font-mono">
+              💡 Routine unlocked by coach. You can study technique and prepare necessary gym gear in advance.
+            </div>
+          </div>
+        `;
       }
-
-      const exerciseList = todaysSplit ? todaysSplit.exercises.split(',').map(e => e.trim()) : ["Dynamic Warmup", "Olympic Barbell Compound", "Heavy Bag Boxing Rounds"];
 
       wrapper.innerHTML = `
         <div class="bg-[#0e0e12] border-2 border-[#ff0033] p-5 space-y-4">
-          <div class="flex items-center justify-between border-b border-white/10 pb-3">
-            <div>
-              <span class="text-[9px] font-mono text-[#ff0033] uppercase tracking-widest font-bold">// DAILY ACTION CENTER</span>
-              <h4 class="text-2xl font-gymbox text-white uppercase tracking-wide">TODAY'S MISSION: ${todaysSplit ? todaysSplit.title : 'ACTIVE RECOVERY'}</h4>
+          <!-- 7-Day Navigation Bar -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">7-DAY WORKOUT TIMELINE:</span>
+              <span class="text-[10px] text-zinc-500">Tap day to inspect</span>
             </div>
-            <span class="px-2 py-0.5 bg-[#ff0033] text-black font-gymbox text-xs uppercase font-bold">
-              ${currentDayName.toUpperCase()}
-            </span>
-          </div>
-
-          <p class="text-xs text-zinc-300 font-mono leading-relaxed">
-            ${todaysSplit ? todaysSplit.exercises : 'Light cardio, 15-min dry sauna flush & sub-zero ice bath.'}
-          </p>
-
-          <!-- Built-in Rest Countdown Timer Widget -->
-          <div class="bg-black p-3.5 border border-white/10 flex items-center justify-between font-mono">
-            <div>
-              <span class="text-[9px] text-zinc-400 block uppercase font-bold">SET REST TIMER</span>
-              <span id="rest-timer-display" class="text-xl font-gymbox text-emerald-400 tracking-wider">00:00 READY</span>
-            </div>
-            <div class="flex gap-1.5">
-              <button onclick="startRestCountdown(60)" class="px-2 py-1 bg-white/10 hover:bg-[#ff0033] text-[10px] text-white uppercase font-bold">60s</button>
-              <button onclick="startRestCountdown(90)" class="px-2 py-1 bg-white/10 hover:bg-[#ff0033] text-[10px] text-white uppercase font-bold">90s</button>
-              <button onclick="startRestCountdown(120)" class="px-2 py-1 bg-white/10 hover:bg-[#ff0033] text-[10px] text-white uppercase font-bold">120s</button>
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
+              ${dayPillsHtml}
             </div>
           </div>
 
-          <!-- Interactive Live Exercise Set Logger -->
-          <div class="space-y-2 pt-2">
-            <div class="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">LIVE WORKOUT LOGGER:</div>
-            ${exerciseList.map((ex, exIdx) => `
-              <div class="bg-black p-3 border border-white/10 space-y-2">
-                <div class="flex justify-between items-center text-xs">
-                  <strong class="text-white font-mono">${ex}</strong>
-                  <span class="text-[9px] text-zinc-500 font-mono">Tempo: 3-0-1-0</span>
-                </div>
-                <div class="grid grid-cols-4 gap-1.5 text-center text-[10px] font-mono">
-                  ${[1, 2, 3].map(setNum => `
-                    <div class="p-1.5 bg-white/5 border border-white/10 flex flex-col items-center">
-                      <span class="text-zinc-500 text-[8px]">SET ${setNum}</span>
-                      <input id="set-weight-${exIdx}-${setNum}" type="number" placeholder="kg" class="w-12 bg-black border border-white/20 text-center text-white text-xs my-0.5 focus:border-[#ff0033]">
-                      <button onclick="markSetComplete('${member.id}', '${ex.replace(/'/g, "")}', ${setNum}, ${exIdx})" 
-                              id="btn-set-${exIdx}-${setNum}"
-                              class="w-full mt-1 py-0.5 bg-zinc-800 hover:bg-emerald-600 text-zinc-300 hover:text-white font-bold text-[9px] uppercase">
-                        ✓ Log
-                      </button>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            `).join('')}
-          </div>
+          <!-- Active Day Split Content -->
+          ${dayContentHtml}
         </div>
       `;
     }
@@ -454,29 +671,75 @@
       }
 
       startRestCountdown(90);
+      
+      // Auto re-render habits to reflect newly burned calories (+35 kcal)
+      const member = window.fit24Store.getMember(memberId);
+      if (member) {
+        renderHabitsSection(member);
+        renderNutritionChartSection(member);
+      }
     }
 
-    // 3. Daily Habit Tracker
+    // 3. Daily Habit Tracker (Steps, Water, Sleep, Protein, Calories Burnt)
     function renderHabitsSection(member) {
       const wrapper = document.getElementById("member-habits-wrapper");
       if (!wrapper) return;
 
-      const habits = member.dailyHabits || { stepsTarget: 10000, stepsDone: 8000, waterDone: 3.0, sleepHours: 7.5, sleepDone: true, proteinDone: true };
+      const habits = member.dailyHabits || { 
+        stepsTarget: 10000, 
+        stepsDone: 8400, 
+        waterDone: 3.5, 
+        sleepHours: 7.5, 
+        sleepDone: true, 
+        proteinDone: true,
+        caloriesBurntTarget: 650,
+        caloriesBurntDone: 520
+      };
+
+      const burntPct = Math.min(100, Math.round(((habits.caloriesBurntDone || 0) / (habits.caloriesBurntTarget || 650)) * 100));
 
       wrapper.innerHTML = `
         <div class="bg-[#0e0e12] border-2 border-white/10 p-5 space-y-3 font-mono">
           <div class="flex items-center justify-between border-b border-white/10 pb-2">
             <div>
-              <span class="text-[9px] text-[#ff0033] uppercase tracking-widest font-bold">// DAILY HABIT TRACKER</span>
-              <h4 class="text-xl font-gymbox text-white uppercase">DISCIPLINE TARGETS</h4>
+              <span class="text-[9px] text-[#ff0033] uppercase tracking-widest font-bold">// DAILY ACTION & HABIT TRACKER</span>
+              <h4 class="text-xl font-gymbox text-white uppercase">DAILY EXPENDITURE & DISCIPLINE</h4>
             </div>
-            <span class="text-[10px] text-zinc-400">Today</span>
+            <span class="text-[10px] text-zinc-400">Live Today</span>
           </div>
 
+          <!-- Featured: Calories Burnt Card -->
+          <div class="p-3.5 bg-black border border-white/15 space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <div class="flex items-center gap-1.5">
+                <span class="text-base">🔥</span>
+                <span class="text-white font-bold uppercase text-xs">CALORIES BURNT TODAY:</span>
+              </div>
+              <strong class="text-yellow-400 font-gymbox text-lg">${habits.caloriesBurntDone || 0} / ${habits.caloriesBurntTarget || 650} KCAL</strong>
+            </div>
+            
+            <div class="w-full bg-zinc-800 h-2.5 rounded overflow-hidden">
+              <div class="bg-gradient-to-r from-yellow-500 to-[#ff0033] h-full transition-all duration-300" style="width: ${burntPct}%"></div>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] text-zinc-400 pt-1">
+              <span>${burntPct}% of Daily Burn Target Met</span>
+              <div class="flex gap-1.5">
+                <button onclick="addHabitCalories('${member.id}', 100)" class="px-2 py-0.5 bg-white/10 hover:bg-[#ff0033] text-white font-bold rounded">
+                  +100 kcal
+                </button>
+                <button onclick="addHabitCalories('${member.id}', 250)" class="px-2 py-0.5 bg-[#ff0033] hover:bg-red-700 text-white font-bold rounded">
+                  +250 kcal (Workout)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4-Pillar Discipline Habits Grid -->
           <div class="grid grid-cols-2 gap-2 text-xs">
             <button onclick="toggleHabit('${member.id}', 'stepsDone')" class="p-3 bg-black border ${habits.stepsDone >= habits.stepsTarget ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-white/10'} text-left transition-all">
               <span class="text-[9px] text-zinc-500 block uppercase">10,000 STEPS</span>
-              <strong class="${habits.stepsDone >= habits.stepsTarget ? 'text-emerald-400' : 'text-white'} text-sm">${habits.stepsDone} / ${habits.stepsTarget}</strong>
+              <strong class="${habits.stepsDone >= habits.stepsTarget ? 'text-emerald-400' : 'text-white'} text-sm">${habits.stepsDone.toLocaleString()} / ${(habits.stepsTarget || 10000).toLocaleString()}</strong>
               <span class="text-[10px] text-zinc-500 block mt-0.5">${habits.stepsDone >= habits.stepsTarget ? '✓ Target Crushed' : 'Tap to +1,000'}</span>
             </button>
 
@@ -502,22 +765,180 @@
       `;
     }
 
-    function toggleHabit(memberId, habitKey) {
+    function addHabitCalories(memberId, amount) {
+      window.fit24Store.addCaloriesBurnt(memberId, amount);
       const member = window.fit24Store.getMember(memberId);
-      if (!member || !member.dailyHabits) return;
-
-      if (habitKey === 'stepsDone') {
-        member.dailyHabits.stepsDone = (member.dailyHabits.stepsDone || 0) + 1000;
-      } else if (habitKey === 'waterDone') {
-        member.dailyHabits.waterDone = (member.dailyHabits.waterDone || 0) + 0.5;
-      } else if (habitKey === 'sleepDone') {
-        member.dailyHabits.sleepDone = !member.dailyHabits.sleepDone;
-      } else if (habitKey === 'proteinDone') {
-        member.dailyHabits.proteinDone = !member.dailyHabits.proteinDone;
+      if (member) {
+        renderHabitsSection(member);
+        renderNutritionChartSection(member);
       }
+    }
 
-      window.fit24Store.saveStore(window.fit24Store.getStore());
-      renderHabitsSection(member);
+    // 4. Calorie Intake Chart & Metabolic Engine
+    function renderNutritionChartSection(member) {
+      const wrapper = document.getElementById("member-nutrition-chart-wrapper");
+      if (!wrapper) return;
+
+      const history = member.calorieIntakeHistory || defaultCalorieHistory();
+      const targets = (member.workoutPlan && member.workoutPlan.dietTargets) ? member.workoutPlan.dietTargets : { calories: 2400, proteinGrams: 160, carbsGrams: 250, fatsGrams: 65 };
+      const habits = member.dailyHabits || {};
+
+      const todayEntry = history[history.length - 1] || { intakeKcal: 2350, burntKcal: 520, targetKcal: 2400 };
+      const todayIntake = todayEntry.intakeKcal || 2350;
+      const todayBurnt = habits.caloriesBurntDone || todayEntry.burntKcal || 520;
+      const netKcal = todayIntake - todayBurnt;
+
+      const maxKcalScale = 3000;
+
+      // 7-Day Bars
+      const barsHtml = history.map((day, idx) => {
+        const heightPct = Math.min(100, Math.round((day.intakeKcal / maxKcalScale) * 100));
+        const isToday = idx === history.length - 1;
+        const barColor = isToday ? 'bg-[#ff0033]' : (day.intakeKcal >= (day.targetKcal - 100) && day.intakeKcal <= (day.targetKcal + 100)) ? 'bg-emerald-500' : 'bg-zinc-600';
+
+        return `
+          <div class="flex-1 flex flex-col items-center gap-1 group relative">
+            <div class="text-[9px] font-mono text-zinc-400 font-bold">${day.intakeKcal}</div>
+            <div class="w-full bg-zinc-900 h-32 rounded-t flex items-end justify-center p-1 relative">
+              <div class="w-full ${barColor} rounded-t transition-all duration-300" style="height: ${heightPct}%"></div>
+            </div>
+            <span class="text-[10px] font-mono font-bold ${isToday ? 'text-[#ff0033]' : 'text-zinc-400'}">${day.day}</span>
+            <span class="text-[8px] font-mono text-yellow-400 font-bold">🔥 ${day.burntKcal || 600}</span>
+          </div>
+        `;
+      }).join('');
+
+      const meals = member.todayMeals || defaultTodayMeals();
+
+      wrapper.innerHTML = `
+        <div class="bg-[#0e0e12] border-2 border-white/10 p-5 space-y-4 font-mono">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div>
+              <span class="text-[9px] text-yellow-400 uppercase tracking-widest font-bold">// METABOLIC ENGINE & ENERGY BALANCE</span>
+              <h4 class="text-xl font-gymbox text-white uppercase">CALORIE INTAKE & EXPENDITURE</h4>
+            </div>
+            <button onclick="openFuelLogModal()" class="px-2.5 py-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-[10px] uppercase transition-all">
+              + Log Fuel Meal
+            </button>
+          </div>
+
+          <!-- Energy Balance Tiles -->
+          <div class="grid grid-cols-3 gap-2 bg-black p-3 border border-white/10 text-center text-xs">
+            <div class="p-2 bg-white/5 border border-white/5">
+              <span class="text-[9px] text-zinc-500 uppercase block">INTAKE TODAY</span>
+              <strong class="text-yellow-400 font-gymbox text-lg">${todayIntake.toLocaleString()} KCAL</strong>
+              <span class="text-[9px] text-zinc-500 block">Target: ${targets.calories}</span>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/5">
+              <span class="text-[9px] text-zinc-500 uppercase block">BURNT TODAY</span>
+              <strong class="text-[#ff0033] font-gymbox text-lg">${todayBurnt.toLocaleString()} KCAL</strong>
+              <span class="text-[9px] text-zinc-500 block">Target: ${habits.caloriesBurntTarget || 650}</span>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/5">
+              <span class="text-[9px] text-zinc-500 uppercase block">NET ENERGY</span>
+              <strong class="${netKcal < targets.calories ? 'text-emerald-400' : 'text-cyan-400'} font-gymbox text-lg">${netKcal.toLocaleString()} KCAL</strong>
+              <span class="text-[9px] font-bold ${netKcal < targets.calories ? 'text-emerald-400' : 'text-cyan-400'} block">
+                ${netKcal < targets.calories ? '🔥 DEFICIT (SHRED)' : '🥩 SURPLUS (BUILD)'}
+              </span>
+            </div>
+          </div>
+
+          <!-- Visual 7-Day Calorie Intake Chart -->
+          <div class="bg-black p-4 border border-white/10 space-y-2">
+            <div class="flex justify-between items-center text-[10px] text-zinc-400 border-b border-white/10 pb-1">
+              <span>7-DAY INTAKE VS EXPENDITURE TREND</span>
+              <span class="text-zinc-500">Target Line: 2,400 kcal</span>
+            </div>
+
+            <div class="flex items-end gap-2 pt-2">
+              ${barsHtml}
+            </div>
+
+            <div class="flex items-center justify-between text-[9px] text-zinc-500 pt-2 border-t border-white/5">
+              <span>Bars: Calorie Intake (kcal)</span>
+              <span>🔥 Badge: Calories Burnt (kcal)</span>
+            </div>
+          </div>
+
+          <!-- Macro Breakdown Bars -->
+          <div class="bg-black p-3.5 border border-white/10 space-y-2 text-xs">
+            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">TODAY'S MACRONUTRIENT DISTRIBUTION:</div>
+            
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-[#ff0033] font-bold">PROTEIN TARGET:</span>
+                <strong class="text-white">${todayEntry.proteinGrams || 160}g / ${targets.proteinGrams || 160}g (100%)</strong>
+              </div>
+              <div class="w-full bg-zinc-800 h-2 rounded overflow-hidden">
+                <div class="bg-[#ff0033] h-full" style="width: 100%"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-cyan-400 font-bold">CARBOHYDRATES:</span>
+                <strong class="text-white">${todayEntry.carbsGrams || 240}g / ${targets.carbsGrams || 250}g (96%)</strong>
+              </div>
+              <div class="w-full bg-zinc-800 h-2 rounded overflow-hidden">
+                <div class="bg-cyan-400 h-full" style="width: 96%"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-amber-400 font-bold">HEALTHY FATS:</span>
+                <strong class="text-white">${todayEntry.fatsGrams || 58}g / ${targets.fatsGrams || 65}g (89%)</strong>
+              </div>
+              <div class="w-full bg-zinc-800 h-2 rounded overflow-hidden">
+                <div class="bg-amber-400 h-full" style="width: 89%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Logged Meals Feed -->
+          <div class="space-y-2">
+            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">TODAY'S LOGGED FUEL:</div>
+            ${meals.map(m => `
+              <div class="p-2.5 bg-black border border-white/10 flex items-center justify-between text-xs">
+                <div>
+                  <strong class="text-white block">${m.name}</strong>
+                  <span class="text-[10px] text-zinc-500">${m.time} · FIT24 Clean Fuel</span>
+                </div>
+                <div class="text-right">
+                  <strong class="text-yellow-400 font-bold">${m.kcal} kcal</strong>
+                  <span class="text-[10px] text-[#ff0033] block">${m.protein}g protein</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function openFuelLogModal() {
+      document.getElementById("fuel-log-modal")?.classList.remove("hidden");
+    }
+
+    function closeFuelLogModal() {
+      document.getElementById("fuel-log-modal")?.classList.add("hidden");
+    }
+
+    function handleFuelLogSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("fuel-meal-name")?.value || "Clean Fuel Meal";
+      const kcal = document.getElementById("fuel-meal-kcal")?.value || 500;
+      const protein = document.getElementById("fuel-meal-protein")?.value || 40;
+
+      window.fit24Store.logCalorieIntake(currentSelectedMemberId, {
+        name: name,
+        kcal: parseInt(kcal),
+        protein: parseInt(protein)
+      });
+
+      closeFuelLogModal();
+      playAudioChime();
+      alert(`✅ Logged ${name} (${kcal} kcal, ${protein}g protein)!`);
+      loadMember(currentSelectedMemberId);
     }
 
     // 4. Assigned Drillmaster & PT Passbook

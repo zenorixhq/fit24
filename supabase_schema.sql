@@ -238,6 +238,10 @@ ALTER TABLE public.members ADD COLUMN IF NOT EXISTS daily_habits JSONB;
 ALTER TABLE public.members ADD COLUMN IF NOT EXISTS circumferences JSONB;
 ALTER TABLE public.members ADD COLUMN IF NOT EXISTS diet_targets JSONB;
 ALTER TABLE public.members ADD COLUMN IF NOT EXISTS transformation_photos JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS calorie_intake_history JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS today_meals JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS day_by_day_schedule JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS logged_workout_sets JSONB;
 
 -- =========================================================================
 -- 9. ATHLETE SUNDAY CHECK-INS & COACH REVIEWS

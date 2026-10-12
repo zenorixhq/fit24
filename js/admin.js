@@ -2376,22 +2376,26 @@ window.openMemberDossier = function(id) {
             <span class="text-[10px] text-[#ff0033] font-bold uppercase tracking-wider">// DAILY ACTION ADHERENCE</span>
             <span class="text-[10px] text-zinc-400">Live Today</span>
           </div>
-          <div class="grid grid-cols-2 gap-2 pt-1">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
             <div class="p-2 bg-white/5 border border-white/10">
-              <div class="text-[10px] text-zinc-400">👣 Steps:</div>
+              <div class="text-[9px] text-yellow-400 font-bold">🔥 Calories Burnt:</div>
+              <div class="text-sm font-bold text-yellow-300">${habits.caloriesBurntDone || 520} / ${habits.caloriesBurntTarget || 650} kcal</div>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10">
+              <div class="text-[9px] text-zinc-400">👣 Steps:</div>
               <div class="text-sm font-bold text-white">${habits.stepsDone ? habits.stepsDone.toLocaleString() : '0'} / ${(habits.stepsTarget || 10000).toLocaleString()}</div>
             </div>
             <div class="p-2 bg-white/5 border border-white/10">
-              <div class="text-[10px] text-zinc-400">💧 Hydration:</div>
-              <div class="text-sm font-bold text-cyan-400">${habits.waterDone || 0} / 3.5 Liters</div>
+              <div class="text-[9px] text-zinc-400">💧 Hydration:</div>
+              <div class="text-sm font-bold text-cyan-400">${habits.waterDone || 0} / 3.5 L</div>
             </div>
             <div class="p-2 bg-white/5 border border-white/10">
-              <div class="text-[10px] text-zinc-400">😴 Sleep:</div>
+              <div class="text-[9px] text-zinc-400">😴 Sleep:</div>
               <div class="text-sm font-bold text-purple-400">${habits.sleepHours || 0} Hours</div>
             </div>
-            <div class="p-2 bg-white/5 border border-white/10">
-              <div class="text-[10px] text-zinc-400">🥩 Protein Target:</div>
-              <div class="text-sm font-bold ${habits.proteinDone ? 'text-emerald-400' : 'text-amber-400'}">${habits.proteinDone ? '✓ COMPLETED' : 'Pending'}</div>
+            <div class="p-2 bg-white/5 border border-white/10 col-span-2">
+              <div class="text-[9px] text-zinc-400">🥩 Protein Target:</div>
+              <div class="text-sm font-bold ${habits.proteinDone ? 'text-emerald-400' : 'text-amber-400'}">${habits.proteinDone ? '✓ COMPLETED (160g)' : 'Pending'}</div>
             </div>
           </div>
         </div>
@@ -2420,6 +2424,102 @@ window.openMemberDossier = function(id) {
               <strong class="text-white text-sm font-gymbox">${circ.thighsCm || '--'} cm</strong>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Coach Metabolic & Calorie Intake Monitor -->
+      <div class="bg-black border border-white/10 p-4 space-y-3 font-mono">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+          <div>
+            <span class="text-[10px] text-yellow-400 font-bold uppercase tracking-widest">// METABOLIC INTAKE & ENERGY BALANCE MONITOR</span>
+            <h4 class="text-base font-gymbox text-white uppercase">NUTRITION & EXPENDITURE AUDIT</h4>
+          </div>
+          <span class="text-xs text-zinc-400">Target: ${workoutPlan && workoutPlan.dietTargets ? workoutPlan.dietTargets.calories : 2400} kcal</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-xs">
+          <div class="p-2.5 bg-white/5 border border-white/5">
+            <span class="text-[9px] text-zinc-400 uppercase block">INTAKE TODAY</span>
+            <strong class="text-yellow-400 font-gymbox text-lg">${(member.calorieIntakeHistory && member.calorieIntakeHistory.length > 0) ? member.calorieIntakeHistory[member.calorieIntakeHistory.length - 1].intakeKcal : 2350} kcal</strong>
+          </div>
+          <div class="p-2.5 bg-white/5 border border-white/5">
+            <span class="text-[9px] text-zinc-400 uppercase block">BURNT TODAY</span>
+            <strong class="text-[#ff0033] font-gymbox text-lg">${habits.caloriesBurntDone || 520} kcal</strong>
+          </div>
+          <div class="p-2.5 bg-white/5 border border-white/5">
+            <span class="text-[9px] text-zinc-400 uppercase block">ENERGY BALANCE</span>
+            <strong class="text-emerald-400 font-gymbox text-lg">-450 kcal Deficit</strong>
+            <span class="text-[9px] text-emerald-400 block font-bold">✓ Lean Hypertrophy Track</span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-white/[0.02] border border-white/5 text-xs space-y-1.5">
+          <span class="text-[10px] text-zinc-400 uppercase font-bold block">Logged Fuel Meals Today:</span>
+          ${(member.todayMeals || [
+            { time: "08:00 AM", name: "Oatmeal, Banana & Whey Isolate", kcal: 580, protein: 45 },
+            { time: "01:30 PM", name: "Grilled Chicken, Brown Rice & Broccoli", kcal: 720, protein: 55 }
+          ]).map(m => `
+            <div class="flex justify-between items-center text-[11px] p-1.5 bg-black border border-white/5 rounded">
+              <span class="text-zinc-300">${m.time} · ${m.name}</span>
+              <span class="text-yellow-400 font-bold">${m.kcal} kcal (${m.protein}g P)</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Coach 7-Day Day-by-Day Workout Split Planner & Audit -->
+      <div class="bg-black border border-white/10 p-4 space-y-3 font-mono">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-2 gap-2">
+          <div>
+            <span class="text-[10px] text-[#ff0033] font-bold uppercase tracking-widest">// 7-DAY WORKOUT SPLIT PLANNER & LOG AUDIT</span>
+            <h4 class="text-base font-gymbox text-white uppercase">ATHLETE TRAINING TIMELINE (MON–SUN)</h4>
+          </div>
+          <span class="text-xs text-zinc-400">Coach can prescribe upcoming & review completed</span>
+        </div>
+
+        <div class="space-y-2.5">
+          ${(member.dayByDaySchedule || defaultDayByDaySchedule()).map(day => `
+            <div class="p-3 bg-white/[0.02] border ${day.status === 'completed' ? 'border-emerald-500/30' : day.status === 'today' ? 'border-[#ff0033]/40 bg-red-950/10' : 'border-white/10'} rounded text-xs space-y-1.5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-white/5 pb-1.5">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 ${day.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : day.status === 'today' ? 'bg-red-600 text-white' : 'bg-cyan-600/20 text-cyan-400 border border-cyan-500/30'} font-bold text-[10px] rounded">
+                    ${day.dayKey} (${day.status.toUpperCase()})
+                  </span>
+                  <strong class="text-white text-sm font-gymbox">${day.title}</strong>
+                </div>
+                <div class="flex items-center gap-2">
+                  ${day.status === 'completed' ? `
+                    <span class="text-emerald-400 text-[10px] font-bold">✓ ${(day.totalVolumeKg || 14200).toLocaleString()} kg Volume Lifted</span>
+                    <button onclick="window.promptWorkoutCoachFeedback('${member.id}', '${day.dayKey}')" class="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold text-[10px] rounded border border-white/10">
+                      💬 Coach Note
+                    </button>
+                  ` : `
+                    <span class="text-zinc-400 text-[10px]">${day.durationMins || 60} Mins</span>
+                    <button onclick="window.openEditWorkoutModal('${member.id}', '${day.dayKey}')" class="px-2.5 py-0.5 bg-[#ff0033] hover:bg-red-600 text-white font-bold text-[10px] rounded">
+                      ✏️ Edit Day's Split
+                    </button>
+                  `}
+                </div>
+              </div>
+
+              <div class="text-[11px] text-zinc-300">
+                <span class="text-[9px] uppercase text-zinc-500 font-bold block">Prescription:</span>
+                ${Array.isArray(day.exercises) ? day.exercises.map(e => `${e.name} (${e.sets || '4x8'})`).join(' · ') : day.exercises}
+              </div>
+
+              ${day.coachCue ? `
+                <div class="text-[10px] text-amber-400 italic">
+                  💡 Cue: ${day.coachCue}
+                </div>
+              ` : ''}
+
+              ${day.coachFeedback ? `
+                <div class="p-2 bg-emerald-950/20 border border-emerald-500/30 rounded text-[10px] text-emerald-300">
+                  <strong class="text-emerald-400 uppercase">Coach Feedback:</strong> "${day.coachFeedback}"
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
         </div>
       </div>
 
@@ -2843,3 +2943,140 @@ window.closeCameraScanner = function() {
     window.fit24Scanner.stopCamera();
   }
 };
+
+// ==========================================
+// 17. TRAINER DAY-BY-DAY WORKOUT SPLIT MANAGEMENT & COACH FEEDBACK
+// ==========================================
+window.promptWorkoutCoachFeedback = function(memberId, dayKey) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+  const schedule = member.dayByDaySchedule || defaultDayByDaySchedule();
+  const dayObj = schedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
+  const currentFeedback = dayObj ? (dayObj.coachFeedback || "") : "";
+
+  const feedback = prompt(`Enter Coach Debrief / Drillmaster Note for ${member.name} (${dayKey}):`, currentFeedback);
+  if (feedback !== null) {
+    window.fit24Store.addTrainerWorkoutFeedback(memberId, dayKey, feedback.trim());
+    window.openMemberDossier(memberId);
+  }
+};
+
+window.openEditWorkoutModal = function(memberId, dayKey) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+  const schedule = member.dayByDaySchedule || defaultDayByDaySchedule();
+  const dayObj = schedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
+  if (!dayObj) return;
+
+  const modal = document.getElementById("trainer-edit-workout-modal");
+  const content = document.getElementById("trainer-edit-workout-content");
+  if (!modal || !content) return;
+
+  // Format exercise list for the textarea
+  let exercisesFormatted = "";
+  if (Array.isArray(dayObj.exercises)) {
+    exercisesFormatted = dayObj.exercises.map(e => {
+      const parts = [e.name, e.sets || '4x8', e.targetWeight || '—', e.tempo || '2-0-1-0', (e.restSeconds || 90) + 's'];
+      return parts.join(' | ');
+    }).join('\n');
+  } else if (typeof dayObj.exercises === 'string') {
+    exercisesFormatted = dayObj.exercises;
+  }
+
+  content.innerHTML = `
+    <div class="border-b border-[#ff0033]/30 pb-3 mb-4">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] tracking-widest text-[#ff0033] uppercase font-bold">Trainer Split Builder</span>
+        <span class="px-2 py-0.5 bg-red-600/20 text-[#ff0033] border border-red-500/30 text-[10px] font-bold rounded uppercase">${dayObj.dayName || dayObj.dayKey} (${dayObj.status.toUpperCase()})</span>
+      </div>
+      <h3 class="text-xl font-gymbox text-white tracking-wide uppercase mt-1">Prescribe Workout: ${member.name}</h3>
+      <p class="text-zinc-400 text-xs mt-0.5">Customise day-by-day training mission, target volume, and drillmaster cues.</p>
+    </div>
+
+    <form id="trainer-split-edit-form" onsubmit="event.preventDefault(); window.saveTrainerDayWorkout('${member.id}', '${dayObj.dayKey}');" class="space-y-4">
+      <div>
+        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1">Mission / Workout Focus Title</label>
+        <input type="text" id="edit-workout-title" required value="${(dayObj.title || '').replace(/"/g, '&quot;')}" placeholder="e.g. Lower Body Power & Squats" class="w-full bg-black/60 border border-white/20 focus:border-[#ff0033] px-3 py-2 text-white text-xs rounded outline-none" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1">Target Duration (Mins)</label>
+          <input type="number" id="edit-workout-duration" min="15" max="180" value="${dayObj.durationMins || 60}" class="w-full bg-black/60 border border-white/20 focus:border-[#ff0033] px-3 py-2 text-white text-xs rounded outline-none" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1">Split Status</label>
+          <select id="edit-workout-status" class="w-full bg-black/60 border border-white/20 focus:border-[#ff0033] px-3 py-2 text-white text-xs rounded outline-none">
+            <option value="upcoming" ${dayObj.status === 'upcoming' ? 'selected' : ''}>Upcoming (Prescribed)</option>
+            <option value="today" ${dayObj.status === 'today' ? 'selected' : ''}>Today's Active Mission</option>
+            <option value="completed" ${dayObj.status === 'completed' ? 'selected' : ''}>Completed & Audited</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1">Coach / Drillmaster Cue</label>
+        <textarea id="edit-workout-cue" rows="2" placeholder="e.g. Focus on 2-sec eccentric pause on bench. Squeeze pecs at lockout." class="w-full bg-black/60 border border-white/20 focus:border-[#ff0033] px-3 py-2 text-white text-xs rounded outline-none">${(dayObj.coachCue || '').replace(/</g, '&lt;')}</textarea>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-300">Prescribed Exercises</label>
+          <span class="text-[9px] text-zinc-500 font-mono">Format: Name | Sets | Target | Tempo | Rest</span>
+        </div>
+        <textarea id="edit-workout-exercises" rows="5" class="w-full bg-black/60 border border-white/20 focus:border-[#ff0033] px-3 py-2 text-white font-mono text-[11px] rounded outline-none leading-relaxed" placeholder="Barbell Back Squats | 4x8 | 105kg | 3-0-1-0 | 90s&#10;Romanian Deadlifts | 3x10 | 90kg | 3-1-1-0 | 90s">${exercisesFormatted.replace(/</g, '&lt;')}</textarea>
+        <p class="text-[10px] text-zinc-500 mt-1">💡 Enter 1 exercise per line with pipe separator (|) for precise sets, weight, tempo, and rest intervals.</p>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-2 border-t border-white/10">
+        <button type="button" onclick="document.getElementById('trainer-edit-workout-modal').classList.add('hidden')" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold uppercase rounded">Cancel</button>
+        <button type="submit" class="px-5 py-2 bg-[#ff0033] hover:bg-red-600 text-white text-xs font-gymbox tracking-wider uppercase rounded shadow-lg shadow-red-900/40">Save & Prescribe Split</button>
+      </div>
+    </form>
+  `;
+
+  modal.classList.remove("hidden");
+};
+
+window.saveTrainerDayWorkout = function(memberId, dayKey) {
+  const title = (document.getElementById("edit-workout-title")?.value || "").trim();
+  const durationMins = parseInt(document.getElementById("edit-workout-duration")?.value) || 60;
+  const status = document.getElementById("edit-workout-status")?.value || "upcoming";
+  const coachCue = (document.getElementById("edit-workout-cue")?.value || "").trim();
+  const exercisesRaw = (document.getElementById("edit-workout-exercises")?.value || "").trim();
+
+  if (!title) {
+    alert("Please enter a workout title.");
+    return;
+  }
+
+  // Parse lines into exercises array
+  const exercises = exercisesRaw.split('\n').map(line => line.trim()).filter(Boolean).map(line => {
+    const parts = line.split('|').map(p => p.trim());
+    return {
+      name: parts[0] || "Exercise",
+      sets: parts[1] || "4x8",
+      targetWeight: parts[2] || "—",
+      tempo: parts[3] || "2-0-1-0",
+      restSeconds: parseInt(parts[4]) || 90,
+      completed: status === 'completed'
+    };
+  });
+
+  const updatedMember = window.fit24Store.updateDayWorkoutSplit(memberId, dayKey, {
+    title,
+    durationMins,
+    status,
+    coachCue,
+    exercises: exercises.length > 0 ? exercises : [{ name: title, sets: "4x10", targetWeight: "—" }]
+  });
+
+  if (updatedMember) {
+    document.getElementById("trainer-edit-workout-modal")?.classList.add("hidden");
+    window.openMemberDossier(memberId);
+    alert(`✓ Workout split for ${dayKey} successfully updated and pushed to athlete's daily timeline!`);
+  } else {
+    alert("Could not update workout split. Please check the member details.");
+  }
+};
+
