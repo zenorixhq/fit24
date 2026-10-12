@@ -33,11 +33,22 @@
       </div>
     </div>
 
-    <!-- Quick Switcher for Demo -->
-    <div class="bg-[#0e0e12] p-3 border border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-      <span class="text-zinc-400 text-[11px]">Demo Athlete:</span>
-      <div class="flex flex-wrap gap-1">
-        <button onclick="loadMember('F24-1001')" class="px-2 py-0.5 bg-yellow-400 text-black text-[10px] font-bold uppercase hover:opacity-90">Rahul (Elite PT)</button>
+    <!-- Quick Switcher & Direct Member Search -->
+    <div class="bg-[#0e0e12] p-3 border border-white/10 space-y-2 text-xs font-mono">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <span class="text-zinc-400 text-[11px] font-bold">// ATHLETE LOGIN & SELECTOR</span>
+        <div class="flex items-center gap-1.5">
+          <input id="custom-member-search-input" type="text" placeholder="Member ID or Phone (e.g. F24-1006)"
+                 onkeydown="if(event.key === 'Enter') handleCustomMemberSearch()"
+                 class="bg-black border border-white/20 px-2.5 py-1 text-[11px] text-white focus:border-[#ff0033] focus:outline-none w-48 font-mono">
+          <button onclick="handleCustomMemberSearch()" class="px-2.5 py-1 bg-[#ff0033] hover:bg-red-600 text-white font-bold text-[10px] uppercase">
+            Open
+          </button>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-1 pt-1.5 border-t border-white/5">
+        <span class="text-zinc-500 text-[10px] mr-1">Quick Switcher:</span>
+        <button onclick="loadMember('F24-1001')" class="px-2 py-0.5 bg-yellow-400 text-black text-[10px] font-bold uppercase hover:opacity-90">Rahul (1-on-1 PT)</button>
         <button onclick="loadMember('F24-1006')" class="px-2 py-0.5 bg-cyan-400 text-black text-[10px] font-bold uppercase hover:opacity-90 ring-1 ring-white/50">Kavya (Self-Guided / No PT)</button>
         <button onclick="loadMember('F24-1002')" class="px-2 py-0.5 bg-[#ff0033] text-white text-[10px] font-bold uppercase hover:opacity-90">Anjali (Prime)</button>
         <button onclick="loadMember('F24-1003')" class="px-2 py-0.5 bg-zinc-200 text-black text-[10px] font-bold uppercase hover:opacity-90">Shafi (Pro)</button>
@@ -404,6 +415,19 @@
         osc.start();
         osc.stop(ctx.currentTime + 0.35);
       } catch (e) {}
+    }
+
+    function handleCustomMemberSearch() {
+      const query = (document.getElementById("custom-member-search-input")?.value || "").trim();
+      if (!query) return;
+      const member = window.fit24Store.getMember(query);
+      if (member) {
+        loadMember(member.id);
+        const searchInput = document.getElementById("custom-member-search-input");
+        if (searchInput) searchInput.value = "";
+      } else {
+        alert("Athlete not found with ID or Phone: " + query + "\nTry demo IDs: F24-1001 (Rahul) or F24-1006 (Kavya)");
+      }
     }
 
     function loadMember(id) {
@@ -1585,7 +1609,9 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      loadMember("F24-1001");
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestedId = urlParams.get("id") || urlParams.get("member");
+      loadMember(requestedId || "F24-1001");
 
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
