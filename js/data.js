@@ -251,13 +251,60 @@ const FIT24_DATA = {
       workoutPlan: {
         title: "Hypertrophy & Biomechanics Split",
         phase: "Phase 2: Strength Block (Week 4 of 12)",
-        dietTargets: { calories: 2400, proteinGrams: 160, waterLiters: 4.0 },
+        dietTargets: { calories: 2400, proteinGrams: 160, carbsGrams: 250, fatsGrams: 65, waterLiters: 4.0 },
         split: [
-          { day: "Day 1 (Mon)", title: "Heavy Push & Chest", exercises: "Incline DB Press 4x8, Barbell Bench 4x6, Dips 3x10, DB Lateral Raises 4x15", notes: "Focus on 2-sec eccentric pause on bench" },
-          { day: "Day 2 (Wed)", title: "Back & Pull Engine", exercises: "Conventional Deadlifts 4x5, Lat Pulldowns 4x10, Facepulls 3x15, Heavy Bag 4 rounds", notes: "Wrap wrists and maintain neutral spine" },
-          { day: "Day 3 (Fri)", title: "Lower Body Power", exercises: "Barbell Back Squats 4x8, Romanian Deadlifts 3x10, Standing Calves 4x15", notes: "Knees tracking toes, explosive ascent" },
-          { day: "Day 4 (Sat)", title: "Olympic / Conditioning", exercises: "Power Cleans 5x3, Farmer's Carries 4x50m, Assault Bike intervals", notes: "Follow with 85°C dry sauna recovery" }
+          { day: "Mon", title: "Heavy Push & Chest", exercises: "Incline DB Press 4x8, Barbell Bench 4x6, Dips 3x10, DB Lateral Raises 4x15", notes: "Focus on 2-sec eccentric pause on bench" },
+          { day: "Wed", title: "Back & Pull Engine", exercises: "Conventional Deadlifts 4x5, Lat Pulldowns 4x10, Facepulls 3x15, Heavy Bag 4 rounds", notes: "Wrap wrists and maintain neutral spine" },
+          { day: "Fri", title: "Lower Body Power", exercises: "Barbell Back Squats 4x8, Romanian Deadlifts 3x10, Standing Calves 4x15", notes: "Knees tracking toes, explosive ascent" },
+          { day: "Sat", title: "Olympic / Conditioning", exercises: "Power Cleans 5x3, Farmer's Carries 4x50m, Assault Bike intervals", notes: "Follow with 85°C dry sauna recovery" }
         ]
+      },
+      dailyHabits: {
+        stepsTarget: 10000,
+        stepsDone: 8400,
+        waterDone: 3.5,
+        sleepHours: 7.5,
+        sleepDone: true,
+        proteinDone: true
+      },
+      parq: {
+        heartCondition: false,
+        chestPain: false,
+        dizziness: false,
+        boneOrJoint: true,
+        boneDetails: "Mild left shoulder impingement on high incline bench",
+        medications: false,
+        fitnessGoal: "Hypertrophy, 100kg+ clean bench press & athletic combat stamina",
+        dietaryRestrictions: "High protein, no heavy dairy post 8 PM",
+        signedDate: "2026-10-18"
+      },
+      circumferences: {
+        waistCm: 82.5,
+        chestCm: 107.0,
+        armsCm: 39.5,
+        thighsCm: 61.0
+      },
+      weeklyCheckIns: [
+        {
+          date: "2026-10-25",
+          energyRating: 4,
+          stressRating: 2,
+          adherencePct: 92,
+          wins: "Hit 100kg bench press for 5 clean reps without shoulder pain!",
+          coachQuestion: "Should I keep protein at 160g on active recovery days?",
+          coachFeedback: "Phenomenal bench mechanics! Yes, maintain 160g protein 7 days a week for nitrogen balance."
+        }
+      ],
+      loggedWorkoutSets: [
+        { date: "2026-10-24", exercise: "Incline DB Press", setNumber: 1, weightKg: 32, reps: 8 },
+        { date: "2026-10-24", exercise: "Incline DB Press", setNumber: 2, weightKg: 32, reps: 8 },
+        { date: "2026-10-24", exercise: "Barbell Bench", setNumber: 1, weightKg: 95, reps: 6 },
+        { date: "2026-10-24", exercise: "Barbell Bench", setNumber: 2, weightKg: 100, reps: 5 }
+      ],
+      transformationPhotos: {
+        baseline: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=600&q=80",
+        current: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80",
+        weeksTrained: 4
       },
       emergencyContact: "Anitha Nambiar (+91 98470 99887)",
       medicalAlerts: "Mild shoulder impingement (left)",
@@ -301,13 +348,53 @@ const FIT24_DATA = {
       workoutPlan: {
         title: "Postural Alignment & Athletic Mobility",
         phase: "Spine & Core Stability (Week 2 of 8)",
-        dietTargets: { calories: 1900, proteinGrams: 120, waterLiters: 3.5 },
+        dietTargets: { calories: 1900, proteinGrams: 120, carbsGrams: 190, fatsGrams: 50, waterLiters: 3.5 },
         split: [
-          { day: "Day 1 (Mon)", title: "Thoracic & Core Flow", exercises: "Cat-Cow 3x10, Bird-Dog 3x12, Deadbugs 3x15, Cable Woodchops 3x12", notes: "Activate deep transverse abdominis" },
-          { day: "Day 2 (Wed)", title: "Glute & Hip Decompression", exercises: "Hip Thrusts 4x10, Bulgarian Split Squats 3x10, Banded Lateral Walks", notes: "Full hip extension at top" },
-          { day: "Day 3 (Fri)", title: "Full Body Functional", exercises: "Kettlebell Deadlifts 4x10, Dumbbell Overhead Press 3x10, Row Machine 2000m", notes: "Finish with 4°C ice bath contrast therapy" }
+          { day: "Mon", title: "Thoracic & Core Flow", exercises: "Cat-Cow 3x10, Bird-Dog 3x12, Deadbugs 3x15, Cable Woodchops 3x12", notes: "Activate deep transverse abdominis" },
+          { day: "Wed", title: "Glute & Hip Decompression", exercises: "Hip Thrusts 4x10, Bulgarian Split Squats 3x10, Banded Lateral Walks", notes: "Full hip extension at top" },
+          { day: "Fri", title: "Full Body Functional", exercises: "Kettlebell Deadlifts 4x10, Dumbbell Overhead Press 3x10, Row Machine 2000m", notes: "Finish with 4°C ice bath contrast therapy" }
         ]
       },
+      dailyHabits: {
+        stepsTarget: 8000,
+        stepsDone: 8200,
+        waterDone: 3.5,
+        sleepHours: 7.0,
+        sleepDone: true,
+        proteinDone: true
+      },
+      parq: {
+        heartCondition: false,
+        chestPain: false,
+        dizziness: false,
+        boneOrJoint: true,
+        boneDetails: "Past lumbar L4-L5 disc strain",
+        medications: false,
+        fitnessGoal: "Spinal decompression, core stability and postural endurance",
+        dietaryRestrictions: "Vegetarian with eggs",
+        signedDate: "2026-10-18"
+      },
+      circumferences: {
+        waistCm: 74.0,
+        chestCm: 92.0,
+        armsCm: 28.5,
+        thighsCm: 54.0
+      },
+      weeklyCheckIns: [
+        {
+          date: "2026-10-25",
+          energyRating: 5,
+          stressRating: 2,
+          adherencePct: 95,
+          wins: "Zero lumbar stiffness during 12-hour hospital shifts this week!",
+          coachQuestion: "Can I increase ice bath duration from 3 mins to 4 mins?",
+          coachFeedback: "Yes, increase to 4 mins at 6°C followed immediately by thoracic extension."
+        }
+      ],
+      loggedWorkoutSets: [
+        { date: "2026-10-24", exercise: "Hip Thrusts", setNumber: 1, weightKg: 50, reps: 10 },
+        { date: "2026-10-24", exercise: "Hip Thrusts", setNumber: 2, weightKg: 60, reps: 10 }
+      ],
       emergencyContact: "Suresh Menon (+91 94470 11223)",
       medicalAlerts: "Past lumbar L4-L5 disc strain",
       bloodGroup: "B+",
@@ -350,12 +437,36 @@ const FIT24_DATA = {
       workoutPlan: {
         title: "Fight Conditioning & Striking Endurance",
         phase: "Speed & Power Rounds",
-        dietTargets: { calories: 2200, proteinGrams: 140, waterLiters: 4.0 },
+        dietTargets: { calories: 2200, proteinGrams: 140, carbsGrams: 230, fatsGrams: 60, waterLiters: 4.0 },
         split: [
-          { day: "Day 1 (Tue)", title: "Combat Footwork & Jab-Cross", exercises: "Footwork ladder drills 15m, 1-2 Combo on pads 5x3min, Jump rope 1000 skips", notes: "Keep chin tucked, recover hands to cheek" },
-          { day: "Day 2 (Thu)", title: "Heavy Bag Power Rounds", exercises: "Hooks & uppercuts 6x3min, Med ball slams 4x15, Burpees 4x12", notes: "Explosive hip rotation on left hook" },
-          { day: "Day 3 (Sat)", title: "Sparring & Strength", exercises: "Controlled ring sparring 4 rounds, Hex bar deadlift 4x6, Pullups 4x8", notes: "Mouthguard mandatory" }
+          { day: "Tue", title: "Combat Footwork & Jab-Cross", exercises: "Footwork ladder drills 15m, 1-2 Combo on pads 5x3min, Jump rope 1000 skips", notes: "Keep chin tucked, recover hands to cheek" },
+          { day: "Thu", title: "Heavy Bag Power Rounds", exercises: "Hooks & uppercuts 6x3min, Med ball slams 4x15, Burpees 4x12", notes: "Explosive hip rotation on left hook" },
+          { day: "Sat", title: "Sparring & Strength", exercises: "Controlled ring sparring 4 rounds, Hex bar deadlift 4x6, Pullups 4x8", notes: "Mouthguard mandatory" }
         ]
+      },
+      dailyHabits: {
+        stepsTarget: 12000,
+        stepsDone: 11200,
+        waterDone: 4.0,
+        sleepHours: 8.0,
+        sleepDone: true,
+        proteinDone: true
+      },
+      parq: {
+        heartCondition: false,
+        chestPain: false,
+        dizziness: false,
+        boneOrJoint: false,
+        medications: false,
+        fitnessGoal: "Boxing ring speed, counter punch accuracy & stamina",
+        dietaryRestrictions: "Halal only",
+        signedDate: "2026-10-18"
+      },
+      circumferences: {
+        waistCm: 80.0,
+        chestCm: 102.0,
+        armsCm: 37.0,
+        thighsCm: 58.0
       },
       emergencyContact: "Kareem (+91 97450 44556)",
       medicalAlerts: "None reported",
@@ -398,11 +509,30 @@ const FIT24_DATA = {
       workoutPlan: {
         title: "Ladies Functional Tone & HIIT Sculpt",
         phase: "Core & Metabolic Conditioning",
-        dietTargets: { calories: 1750, proteinGrams: 110, waterLiters: 3.0 },
+        dietTargets: { calories: 1750, proteinGrams: 110, carbsGrams: 180, fatsGrams: 45, waterLiters: 3.0 },
         split: [
-          { day: "Day 1 (Mon)", title: "Kettlebell Flow & Glutes", exercises: "KB Swings 4x15, Goblet Squats 4x12, Glute Bridges 4x20", notes: "Hips back, snap glutes at lock" },
-          { day: "Day 2 (Wed)", title: "Cardio Rave & Core", exercises: "Zumba interval rhythm, Battle ropes 4x30s, Plank holds 3x60s", notes: "Keep heart rate in zone 3-4" }
+          { day: "Mon", title: "Kettlebell Flow & Glutes", exercises: "KB Swings 4x15, Goblet Squats 4x12, Glute Bridges 4x20", notes: "Hips back, snap glutes at lock" },
+          { day: "Wed", title: "Cardio Rave & Core", exercises: "Zumba interval rhythm, Battle ropes 4x30s, Plank holds 3x60s", notes: "Keep heart rate in zone 3-4" }
         ]
+      },
+      dailyHabits: {
+        stepsTarget: 10000,
+        stepsDone: 6500,
+        waterDone: 2.5,
+        sleepHours: 7.0,
+        sleepDone: false,
+        proteinDone: false
+      },
+      parq: {
+        heartCondition: false,
+        chestPain: false,
+        dizziness: false,
+        boneOrJoint: false,
+        medications: true,
+        boneDetails: "Mild asthma inhaler in gym bag",
+        fitnessGoal: "Weight loss & functional tone",
+        dietaryRestrictions: "None",
+        signedDate: "2026-10-18"
       },
       emergencyContact: "Mahesh Rao (+91 96330 99881)",
       medicalAlerts: "Asthma inhaler in gym bag",
@@ -448,12 +578,36 @@ const FIT24_DATA = {
       workoutPlan: {
         title: "VIP Executive Power & Hypertrophy",
         phase: "Volume Overload (Week 6)",
-        dietTargets: { calories: 2600, proteinGrams: 175, waterLiters: 4.5 },
+        dietTargets: { calories: 2600, proteinGrams: 175, carbsGrams: 280, fatsGrams: 70, waterLiters: 4.5 },
         split: [
-          { day: "Day 1 (Mon)", title: "Heavy Bench & Overhead", exercises: "Barbell Flat Bench 5x5, Overhead Press 4x6, Dips 4x12", notes: "Track bar speed with coach" },
-          { day: "Day 2 (Tue)", title: "Back & Trap Density", exercises: "Barbell Rows 4x8, Single Arm DB Rows 4x10, Shrugs 4x15", notes: "Full lat stretch at bottom" },
-          { day: "Day 3 (Thu)", title: "Leg Annihilation", exercises: "Front Squats 4x6, Leg Press 4x15, Walking Lunges 3x20m", notes: "Follow with 85°C sauna flush" }
+          { day: "Mon", title: "Heavy Bench & Overhead", exercises: "Barbell Flat Bench 5x5, Overhead Press 4x6, Dips 4x12", notes: "Track bar speed with coach" },
+          { day: "Tue", title: "Back & Trap Density", exercises: "Barbell Rows 4x8, Single Arm DB Rows 4x10, Shrugs 4x15", notes: "Full lat stretch at bottom" },
+          { day: "Thu", title: "Leg Annihilation", exercises: "Front Squats 4x6, Leg Press 4x15, Walking Lunges 3x20m", notes: "Follow with 85°C sauna flush" }
         ]
+      },
+      dailyHabits: {
+        stepsTarget: 10000,
+        stepsDone: 9500,
+        waterDone: 4.5,
+        sleepHours: 7.5,
+        sleepDone: true,
+        proteinDone: true
+      },
+      parq: {
+        heartCondition: false,
+        chestPain: false,
+        dizziness: false,
+        boneOrJoint: false,
+        medications: false,
+        fitnessGoal: "Peak executive vitality, maximum hypertrophy & compound lift PRs",
+        dietaryRestrictions: "Gluten sensitive",
+        signedDate: "2026-10-18"
+      },
+      circumferences: {
+        waistCm: 84.0,
+        chestCm: 112.0,
+        armsCm: 41.5,
+        thighsCm: 63.5
       },
       emergencyContact: "Deepa Balakrishnan (+91 94000 33445)",
       medicalAlerts: "None",
@@ -674,13 +828,39 @@ const FIT24_DATA = {
       itemsDescription: "PRO Essential Membership (12 Months)",
       status: "PAID"
     }
+  ],
+
+  // 12. Initial 1-on-1 PT Session Bookings & Schedule
+  initialBookings: [
+    {
+      id: "bk-1",
+      memberId: "F24-1001",
+      memberName: "Rahul Nambiar",
+      trainerId: "ba89f66e-c912-4e11-a7bb-a7b6e5731384",
+      trainerName: "Rahul Menon",
+      sessionDate: "2026-10-28",
+      timeSlot: "07:00 AM",
+      sessionType: "1-on-1 Biomechanics & Heavy Squat",
+      status: "CONFIRMED"
+    },
+    {
+      id: "bk-2",
+      memberId: "F24-1003",
+      memberName: "Mohammed Shafi",
+      trainerId: "8f56efb9-fbe9-4556-91e8-78c66a4bc4d9",
+      trainerName: "Vikram Das",
+      sessionDate: "2026-10-29",
+      timeSlot: "06:30 PM",
+      sessionType: "Combat Ring Sparring & Counter Drills",
+      status: "CONFIRMED"
+    }
   ]
 };
 
 // Storage Management Helper for LocalStorage
 class Fit24Store {
   constructor() {
-    this.STORAGE_KEY = "FIT24_APP_STORAGE_v3";
+    this.STORAGE_KEY = "FIT24_APP_STORAGE_v4";
     this._memoryStore = null;
     this.init();
   }
@@ -743,7 +923,8 @@ class Fit24Store {
       trainers: FIT24_DATA.initialTrainers,
       classes: FIT24_DATA.initialClasses,
       blogPosts: FIT24_DATA.initialBlogPosts,
-      invoices: (FIT24_DATA.initialInvoices || []).slice()
+      invoices: (FIT24_DATA.initialInvoices || []).slice(),
+      bookings: (FIT24_DATA.initialBookings || []).slice()
     };
     this._memoryStore = JSON.parse(JSON.stringify(data));
     try {
@@ -1488,6 +1669,170 @@ class Fit24Store {
       card,
       invoiceCount: dayInvoices.length,
       invoices: dayInvoices
+    };
+  }
+
+  // --- 1-ON-1 PT BOOKINGS & CALENDAR ---
+  getBookings() {
+    const store = this.getStore();
+    if (!store.bookings) {
+      store.bookings = (FIT24_DATA.initialBookings || []).slice();
+      this.saveStore(store);
+    }
+    return store.bookings;
+  }
+
+  addBooking(bookingData) {
+    const store = this.getStore();
+    const newBooking = {
+      id: `bk-${Date.now()}`,
+      memberId: bookingData.memberId,
+      memberName: bookingData.memberName,
+      trainerId: bookingData.trainerId,
+      trainerName: bookingData.trainerName,
+      sessionDate: bookingData.sessionDate || new Date().toISOString().split('T')[0],
+      timeSlot: bookingData.timeSlot || "07:00 AM",
+      sessionType: bookingData.sessionType || "1-on-1 PT Coaching",
+      status: "CONFIRMED"
+    };
+    if (!store.bookings) store.bookings = [];
+    store.bookings.unshift(newBooking);
+    this.saveStore(store);
+    return newBooking;
+  }
+
+  cancelBooking(id) {
+    const store = this.getStore();
+    if (!store.bookings) return;
+    const bk = store.bookings.find(b => b.id === id);
+    if (bk) {
+      bk.status = "CANCELLED";
+      this.saveStore(store);
+    }
+  }
+
+  // --- WEEKLY SUNDAY CHECK-IN & SUBJECTIVE FEEDBACK ---
+  submitWeeklyCheckIn(memberId, checkInData) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    if (!member.weeklyCheckIns) member.weeklyCheckIns = [];
+    const newEntry = {
+      date: new Date().toISOString().split('T')[0],
+      energyRating: parseInt(checkInData.energyRating) || 5,
+      stressRating: parseInt(checkInData.stressRating) || 2,
+      adherencePct: parseInt(checkInData.adherencePct) || 90,
+      wins: checkInData.wins || "Maintained routine workouts",
+      coachQuestion: checkInData.coachQuestion || "",
+      coachFeedback: ""
+    };
+
+    member.weeklyCheckIns.unshift(newEntry);
+    this.saveStore(store);
+    return member;
+  }
+
+  replyWeeklyCheckIn(memberId, checkInIndex, feedbackText) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member || !member.weeklyCheckIns || !member.weeklyCheckIns[checkInIndex]) return null;
+    member.weeklyCheckIns[checkInIndex].coachFeedback = feedbackText;
+    this.saveStore(store);
+    return member;
+  }
+
+  // --- DAILY HABITS (STEPS, WATER, SLEEP, FUEL) ---
+  updateDailyHabit(memberId, habitKey, value) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    if (!member.dailyHabits) {
+      member.dailyHabits = { stepsTarget: 10000, stepsDone: 0, waterDone: 0, sleepHours: 7, sleepDone: false, proteinDone: false };
+    }
+
+    member.dailyHabits[habitKey] = value;
+    this.saveStore(store);
+    return member;
+  }
+
+  // --- LIVE WORKOUT SET LOGGER & PROGRESSIVE OVERLOAD ---
+  logWorkoutExerciseSet(memberId, exerciseName, setNumber, weightKg, reps) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    if (!member.loggedWorkoutSets) member.loggedWorkoutSets = [];
+    const newSet = {
+      date: new Date().toISOString().split('T')[0],
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      exercise: exerciseName,
+      setNumber: parseInt(setNumber) || 1,
+      weightKg: parseFloat(weightKg) || 0,
+      reps: parseInt(reps) || 0
+    };
+
+    member.loggedWorkoutSets.unshift(newSet);
+    this.saveStore(store);
+    return member;
+  }
+
+  // --- PAR-Q HEALTH INTAKE & CIRCUMFERENCES ---
+  updatePARQ(memberId, parqData) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+    member.parq = parqData;
+    this.saveStore(store);
+    return member;
+  }
+
+  updateCircumferences(memberId, circData) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+    member.circumferences = circData;
+    this.saveStore(store);
+    return member;
+  }
+
+  // --- CLIENT COMPLIANCE SCORE (0 - 100%) ---
+  calculateComplianceScore(memberId) {
+    const member = this.getMember(memberId);
+    let score = 50; // base score
+
+    if (member) {
+      // Attendance adherence (up to +25)
+      if (member.totalVisits >= 10) score += 25;
+      else if (member.totalVisits >= 5) score += 15;
+      else score += 5;
+
+      // Habits adherence (up to +15)
+      if (member.dailyHabits) {
+        if (member.dailyHabits.proteinDone) score += 5;
+        if (member.dailyHabits.sleepDone) score += 5;
+        if (member.dailyHabits.stepsDone >= (member.dailyHabits.stepsTarget || 10000)) score += 5;
+      }
+
+      // Weekly check-in submission (up to +10)
+      if (member.weeklyCheckIns && member.weeklyCheckIns.length > 0) {
+        score += 10;
+      }
+    } else {
+      score = 85;
+    }
+
+    const finalScore = Math.min(100, Math.max(20, score));
+    const color = finalScore >= 80 ? 'emerald' : finalScore >= 60 ? 'amber' : 'red';
+    const level = finalScore >= 80 ? 'HIGH COMPLIANCE' : finalScore >= 60 ? 'MODERATE ADHERENCE' : 'ATTENTION REQUIRED';
+
+    return {
+      score: finalScore,
+      color: color,
+      level: level,
+      valueOf: () => finalScore,
+      toString: () => `${finalScore}`
     };
   }
 }

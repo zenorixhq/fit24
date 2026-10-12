@@ -1539,6 +1539,16 @@
     </div>
   </div>
 
+  <!-- 6. PAR-Q HEALTH & INTAKE QUESTIONNAIRE MODAL -->
+  <div id="parq-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-red-500 max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="document.getElementById('parq-modal').classList.add('hidden')" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      <div id="parq-modal-content">
+        <!-- Rendered dynamically by admin.js -->
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>

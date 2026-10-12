@@ -101,6 +101,19 @@ class Fit24SupabaseClient {
       currentPauseStart: row.current_pause_start,
       totalVisits: parseInt(row.total_visits) || 0,
       lastCheckIn: row.last_checkin,
+      assignedTrainerId: row.assigned_trainer_id || null,
+      ptSessionsTotal: parseInt(row.pt_sessions_total) || 0,
+      ptSessionsUsed: parseInt(row.pt_sessions_used) || 0,
+      emergencyContact: row.emergency_contact || "",
+      medicalAlerts: row.medical_alerts || "",
+      bloodGroup: row.blood_group || "O+",
+      workoutPlan: row.workout_plan || null,
+      dailyHabits: row.daily_habits || null,
+      circumferences: row.circumferences || null,
+      dietTargets: row.diet_targets || null,
+      transformationPhotos: row.transformation_photos || null,
+      weeklyCheckIns: row.weekly_check_ins || [],
+      parq: row.parq || null,
       pauseHistory: []
     };
   }
@@ -133,7 +146,18 @@ class Fit24SupabaseClient {
       is_paused: Boolean(m.isPaused),
       current_pause_start: m.currentPauseStart || null,
       total_visits: m.totalVisits || 0,
-      last_checkin: m.lastCheckIn || null
+      last_checkin: m.lastCheckIn || null,
+      assigned_trainer_id: m.assignedTrainerId || null,
+      pt_sessions_total: m.ptSessionsTotal || 0,
+      pt_sessions_used: m.ptSessionsUsed || 0,
+      emergency_contact: m.emergencyContact || null,
+      medical_alerts: m.medicalAlerts || null,
+      blood_group: m.bloodGroup || null,
+      workout_plan: m.workoutPlan || null,
+      daily_habits: m.dailyHabits || null,
+      circumferences: m.circumferences || null,
+      diet_targets: m.dietTargets || null,
+      transformation_photos: m.transformationPhotos || null
     };
   }
 

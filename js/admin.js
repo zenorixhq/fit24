@@ -2187,11 +2187,19 @@ window.openMemberDossier = function(id) {
   const biometrics = member.biometrics || [];
   const trainers = window.fit24Store.getTrainers() || [];
   const workoutPlan = member.workoutPlan;
+  const compliance = window.fit24Store.calculateComplianceScore ? window.fit24Store.calculateComplianceScore(member.id) : { score: 85, level: 'HIGH COMPLIANCE', color: 'emerald' };
+  const habits = member.dailyHabits || { stepsTarget: 10000, stepsDone: 7200, waterDone: 2.5, sleepHours: 7.5 };
+  const circ = member.circumferences || { waistCm: 82, chestCm: 102, armsCm: 37, thighsCm: 58 };
+  const checkIns = member.weeklyCheckIns || [];
+  const parq = member.parq || {};
+  const hasParqFlags = parq.heartCondition || parq.chestPainActivity || parq.dizziness || parq.boneJointProblem || parq.bloodPressureMeds;
+
+  const compBadgeColor = compliance.color === 'emerald' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : compliance.color === 'amber' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'bg-red-500/20 text-red-400 border border-red-500/40';
 
   content.innerHTML = `
     <div class="space-y-6">
       <!-- Dossier Header -->
-      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
         <div>
           <span class="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest">// ATHLETE 360° DOSSIER</span>
           <h3 class="text-3xl font-gymbox text-white">${member.name.toUpperCase()}</h3>
@@ -2199,9 +2207,18 @@ window.openMemberDossier = function(id) {
             Member Code: <strong class="text-white">${member.id}</strong> · Joined: ${member.startDate} · Expiry: ${member.endDate}
           </p>
         </div>
-        <span class="px-3 py-1 font-gymbox text-lg rounded ${member.tier === 'ELITE' ? 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/40' : member.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/40' : 'bg-red-500/20 text-red-400 border border-red-500/40'}">
-          ${member.tier} TIER
-        </span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="px-2.5 py-1 rounded text-center ${compBadgeColor}">
+            <span class="text-[9px] font-mono uppercase block">Compliance</span>
+            <span class="text-base font-gymbox font-bold">${compliance.score}%</span>
+          </div>
+          <button onclick="window.viewMemberPARQ('${member.id}')" class="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 border border-red-500/40 text-red-300 hover:text-white text-xs font-bold uppercase transition-all font-mono">
+            📋 PAR-Q Form
+          </button>
+          <span class="px-3 py-1 font-gymbox text-lg rounded ${member.tier === 'ELITE' ? 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/40' : member.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/40' : 'bg-red-500/20 text-red-400 border border-red-500/40'}">
+            ${member.tier} TIER
+          </span>
+        </div>
       </div>
 
       <!-- 3-Column Dossier Breakdown -->
@@ -2219,6 +2236,13 @@ window.openMemberDossier = function(id) {
                 <option value="">-- No Coach Assigned --</option>
                 ${trainers.map(t => `<option value="${t.id}" ${t.id === member.assignedTrainerId ? 'selected' : ''}>${t.name} (${t.title || t.badge})</option>`).join("")}
               </select>
+            </div>
+            <div class="p-2 ${hasParqFlags ? 'bg-red-500/15 border border-red-500/40 text-red-300' : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'} flex justify-between items-center">
+              <div>
+                <span class="text-[9px] uppercase font-bold block text-zinc-400">PAR-Q Clinical Status:</span>
+                <strong>${hasParqFlags ? '⚠️ Restricted / Review Needed' : '✓ Cleared for Training'}</strong>
+              </div>
+              <button onclick="window.viewMemberPARQ('${member.id}')" class="text-[10px] underline hover:text-white">View</button>
             </div>
             <div class="p-2 bg-red-500/10 border border-red-500/30">
               <span class="text-red-400 font-bold block text-[10px]">⚠️ Medical Alert:</span>
@@ -2321,13 +2345,135 @@ window.openMemberDossier = function(id) {
               </div>
             `).join("")}
           </div>
-          <div class="flex items-center gap-4 text-[10px] text-zinc-400 pt-2 border-t border-white/10">
-            <span>🔥 Calories: <strong class="text-yellow-400">${workoutPlan.dietTargets ? workoutPlan.dietTargets.calories : 2200} kcal</strong></span>
-            <span>🥩 Protein: <strong class="text-[#ff0033]">${workoutPlan.dietTargets ? workoutPlan.dietTargets.proteinGrams : 140}g</strong></span>
-            <span>💧 Hydration: <strong class="text-cyan-400">${workoutPlan.dietTargets ? workoutPlan.dietTargets.waterLiters : 3.5}L</strong></span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-white/10 text-xs font-mono">
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[10px] text-zinc-500 block uppercase">Calories</span>
+              <strong class="text-yellow-400 font-gymbox text-base">${member.dietTargets ? member.dietTargets.calories : (workoutPlan.dietTargets ? workoutPlan.dietTargets.calories : 2200)} kcal</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[10px] text-zinc-500 block uppercase">Protein</span>
+              <strong class="text-[#ff0033] font-gymbox text-base">${member.dietTargets ? member.dietTargets.proteinGrams : 140}g</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[10px] text-zinc-500 block uppercase">Carbohydrates</span>
+              <strong class="text-cyan-400 font-gymbox text-base">${member.dietTargets ? member.dietTargets.carbsGrams : 220}g</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[10px] text-zinc-500 block uppercase">Healthy Fats</span>
+              <strong class="text-amber-400 font-gymbox text-base">${member.dietTargets ? member.dietTargets.fatsGrams : 65}g</strong>
+            </div>
           </div>
         ` : `
           <div class="text-zinc-500 text-xs italic py-2">Click one of the preset buttons above to assign a training split to this member.</div>
+        `}
+      </div>
+
+      <!-- Habits & Circumference Status -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Daily Habits Card -->
+        <div class="bg-black border border-white/10 p-4 space-y-2 font-mono text-xs">
+          <div class="flex justify-between items-center border-b border-white/10 pb-2">
+            <span class="text-[10px] text-[#ff0033] font-bold uppercase tracking-wider">// DAILY ACTION ADHERENCE</span>
+            <span class="text-[10px] text-zinc-400">Live Today</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div class="p-2 bg-white/5 border border-white/10">
+              <div class="text-[10px] text-zinc-400">👣 Steps:</div>
+              <div class="text-sm font-bold text-white">${habits.stepsDone ? habits.stepsDone.toLocaleString() : '0'} / ${(habits.stepsTarget || 10000).toLocaleString()}</div>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10">
+              <div class="text-[10px] text-zinc-400">💧 Hydration:</div>
+              <div class="text-sm font-bold text-cyan-400">${habits.waterDone || 0} / 3.5 Liters</div>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10">
+              <div class="text-[10px] text-zinc-400">😴 Sleep:</div>
+              <div class="text-sm font-bold text-purple-400">${habits.sleepHours || 0} Hours</div>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10">
+              <div class="text-[10px] text-zinc-400">🥩 Protein Target:</div>
+              <div class="text-sm font-bold ${habits.proteinDone ? 'text-emerald-400' : 'text-amber-400'}">${habits.proteinDone ? '✓ COMPLETED' : 'Pending'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body Circumferences -->
+        <div class="bg-black border border-white/10 p-4 space-y-2 font-mono text-xs">
+          <div class="flex justify-between items-center border-b border-white/10 pb-2">
+            <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">// BODY METRIC CIRCUMFERENCES</span>
+            <button onclick="window.promptUpdateCircumferences('${member.id}')" class="text-[10px] text-zinc-400 hover:text-white underline">Edit</button>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[9px] text-zinc-500 uppercase block">Waist</span>
+              <strong class="text-white text-sm font-gymbox">${circ.waistCm || '--'} cm</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[9px] text-zinc-500 uppercase block">Chest</span>
+              <strong class="text-white text-sm font-gymbox">${circ.chestCm || '--'} cm</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[9px] text-zinc-500 uppercase block">Arms</span>
+              <strong class="text-white text-sm font-gymbox">${circ.armsCm || '--'} cm</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 text-center">
+              <span class="text-[9px] text-zinc-500 uppercase block">Thighs</span>
+              <strong class="text-white text-sm font-gymbox">${circ.thighsCm || '--'} cm</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sunday Check-In & Athlete Reviews -->
+      <div class="bg-black border border-white/10 p-4 space-y-3 font-mono">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+          <div>
+            <span class="text-[10px] text-[#ff0033] font-bold uppercase tracking-widest">// SUNDAY CHECK-INS & COACH REVIEWS</span>
+            <h4 class="text-base font-gymbox text-white uppercase">WEEKLY ATHLETE REFLECTIONS (${checkIns.length})</h4>
+          </div>
+        </div>
+
+        ${checkIns.length === 0 ? `
+          <div class="text-zinc-500 text-xs italic py-3 text-center">No weekly check-ins submitted by this athlete yet. Athlete can submit Sunday check-ins in Athlete Portal.</div>
+        ` : `
+          <div class="space-y-3">
+            ${checkIns.map((ci, idx) => `
+              <div class="p-3 bg-white/[0.02] border border-white/10 space-y-2 text-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-white/5 pb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-red-600/20 text-[#ff0033] font-bold text-[10px] border border-red-500/30">${ci.date}</span>
+                    <span class="text-zinc-300 text-xs">⚡ Energy: <strong class="text-yellow-400">${ci.energy}/5</strong></span>
+                    <span class="text-zinc-300 text-xs">🧠 Stress: <strong class="text-purple-400">${ci.stress}/5</strong></span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-zinc-400 text-[11px]">Adherence: <strong class="text-emerald-400 font-gymbox text-sm">${ci.adherencePercent}%</strong></span>
+                    <button onclick="window.replySundayCheckIn('${member.id}', ${idx})" class="px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded">
+                      💬 Reply to Athlete
+                    </button>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                  <div class="p-2 bg-black border border-white/5">
+                    <span class="text-[9px] uppercase text-zinc-500 font-bold block mb-0.5">🏆 Weekly Wins & Highlights:</span>
+                    <p class="text-zinc-300 italic">"${ci.wins || 'Completed all scheduled training sessions.'}"</p>
+                  </div>
+                  <div class="p-2 bg-black border border-white/5">
+                    <span class="text-[9px] uppercase text-zinc-500 font-bold block mb-0.5">❓ Questions / Obstacles for Coach:</span>
+                    <p class="text-amber-300 italic">"${ci.questionsForTrainer || 'None this week.'}"</p>
+                  </div>
+                </div>
+
+                ${ci.coachFeedback ? `
+                  <div class="p-2.5 bg-red-500/10 border border-red-500/30 text-[11px] rounded">
+                    <span class="text-[9px] font-bold uppercase tracking-wider text-red-400 block mb-0.5">💬 COACH RESPONSE:</span>
+                    <p class="text-white">${ci.coachFeedback}</p>
+                  </div>
+                ` : `
+                  <div class="text-[10px] text-zinc-500 italic">Awaiting coach feedback. Click "Reply to Athlete" above to send instructions.</div>
+                `}
+              </div>
+            `).join("")}
+          </div>
         `}
       </div>
     </div>
@@ -2440,6 +2586,139 @@ window.applyWorkoutPreset = function(memberId, presetKey) {
   window.openMemberDossier(memberId);
 };
 
+window.viewMemberPARQ = function(memberId) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+  const modal = document.getElementById("parq-modal");
+  const content = document.getElementById("parq-modal-content");
+  if (!modal || !content) return;
+
+  const p = member.parq || {};
+  const hasFlags = p.heartCondition || p.chestPainActivity || p.dizziness || p.boneJointProblem || p.bloodPressureMeds;
+
+  content.innerHTML = `
+    <div class="space-y-4 font-mono">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div>
+          <span class="text-[10px] font-mono text-red-400 font-bold uppercase tracking-wider">// MEDICAL CLEARANCE & HEALTH INTAKE</span>
+          <h3 class="text-2xl font-gymbox text-white uppercase">${member.name}</h3>
+          <p class="text-xs text-zinc-400 font-mono">Member ID: <strong class="text-white">${member.id}</strong> · Signed: ${p.completedDate || 'On Registration'}</p>
+        </div>
+        <span class="px-2.5 py-1 text-xs font-mono font-bold uppercase ${hasFlags ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'}">
+          ${hasFlags ? '⚠️ RESTRICTED / CAUTION' : '✓ CLEARED FOR MAX INTENSITY'}
+        </span>
+      </div>
+
+      <div class="p-3 bg-black/60 border border-white/10 text-xs space-y-2">
+        <div class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold">Physical Activity Readiness Questionnaire (PAR-Q)</div>
+        
+        <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5">
+          <span class="text-zinc-300">1. Has your doctor ever said that you have a heart condition?</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.heartCondition ? 'bg-red-500/30 text-red-400 border border-red-500/40' : 'bg-emerald-500/20 text-emerald-400'}">${p.heartCondition ? 'YES' : 'NO'}</span>
+        </div>
+
+        <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5">
+          <span class="text-zinc-300">2. Do you feel pain in your chest when performing physical activity?</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.chestPainActivity ? 'bg-red-500/30 text-red-400 border border-red-500/40' : 'bg-emerald-500/20 text-emerald-400'}">${p.chestPainActivity ? 'YES' : 'NO'}</span>
+        </div>
+
+        <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5">
+          <span class="text-zinc-300">3. Do you lose your balance because of dizziness or lose consciousness?</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.dizziness ? 'bg-red-500/30 text-red-400 border border-red-500/40' : 'bg-emerald-500/20 text-emerald-400'}">${p.dizziness ? 'YES' : 'NO'}</span>
+        </div>
+
+        <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5">
+          <span class="text-zinc-300">4. Do you have a bone, joint, or spinal injury that could worsen with exercise?</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.boneJointProblem ? 'bg-red-500/30 text-red-400 border border-red-500/40' : 'bg-emerald-500/20 text-emerald-400'}">${p.boneJointProblem ? 'YES' : 'NO'}</span>
+        </div>
+
+        <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5">
+          <span class="text-zinc-300">5. Are you currently prescribed medication for blood pressure or heart condition?</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.bloodPressureMeds ? 'bg-red-500/30 text-red-400 border border-red-500/40' : 'bg-emerald-500/20 text-emerald-400'}">${p.bloodPressureMeds ? 'YES' : 'NO'}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 bg-black/60 border border-white/10">
+          <div class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Primary Fitness Objective</div>
+          <div class="text-white font-bold">${p.primaryGoal || 'General Fitness & Hypertrophy'}</div>
+        </div>
+        <div class="p-3 bg-black/60 border border-white/10">
+          <div class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Dietary Restrictions & Allergies</div>
+          <div class="text-yellow-400 font-bold">${p.dietaryRestrictions || 'None Reported'}</div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center pt-2">
+        <button onclick="window.editMemberPARQ('${member.id}')" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase">
+          ✏️ Edit Questionnaire
+        </button>
+        <button onclick="document.getElementById('parq-modal').classList.add('hidden')" class="px-4 py-1.5 bg-[#ff0033] hover:bg-red-700 text-white text-xs font-bold uppercase">
+          Close Inspection
+        </button>
+      </div>
+    </div>
+  `;
+
+  modal.classList.remove("hidden");
+};
+
+window.editMemberPARQ = function(memberId) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+  const p = member.parq || {};
+  const goal = prompt("Enter Primary Fitness Goal:", p.primaryGoal || "Hypertrophy / Fat Loss");
+  if (goal === null) return;
+  const diet = prompt("Enter Dietary Restrictions / Allergies:", p.dietaryRestrictions || "None");
+  if (diet === null) return;
+  const injury = confirm("Does the athlete have an active joint, bone, or heart concern? (Click OK for Yes / Flagged, Cancel for No)");
+  
+  window.fit24Store.updatePARQ(memberId, {
+    ...p,
+    primaryGoal: goal,
+    dietaryRestrictions: diet,
+    boneJointProblem: injury,
+    completedDate: new Date().toISOString().split("T")[0]
+  });
+  window.viewMemberPARQ(memberId);
+  if (document.getElementById("member-dossier-modal") && !document.getElementById("member-dossier-modal").classList.contains("hidden")) {
+    window.openMemberDossier(memberId);
+  }
+};
+
+window.replySundayCheckIn = function(memberId, checkInIndex) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+  const ci = (member.weeklyCheckIns || [])[checkInIndex];
+  const defaultMsg = ci && ci.coachFeedback ? ci.coachFeedback : "Great adherence! Let's maintain caloric targets and progress load on compound lifts.";
+  const feedback = prompt("Enter Coach Feedback / Action Plan for Athlete:", defaultMsg);
+  if (feedback === null) return;
+  window.fit24Store.replyWeeklyCheckIn(memberId, checkInIndex, feedback);
+  window.openMemberDossier(memberId);
+};
+
+window.promptUpdateCircumferences = function(memberId) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+  const c = member.circumferences || {};
+  const waist = prompt("Waist circumference (cm):", c.waistCm || "82");
+  if (waist === null) return;
+  const chest = prompt("Chest circumference (cm):", c.chestCm || "102");
+  if (chest === null) return;
+  const arms = prompt("Arms circumference (cm):", c.armsCm || "37");
+  if (arms === null) return;
+  const thighs = prompt("Thighs circumference (cm):", c.thighsCm || "58");
+  if (thighs === null) return;
+
+  window.fit24Store.updateCircumferences(memberId, {
+    waistCm: parseFloat(waist) || 0,
+    chestCm: parseFloat(chest) || 0,
+    armsCm: parseFloat(arms) || 0,
+    thighsCm: parseFloat(thighs) || 0
+  });
+  window.openMemberDossier(memberId);
+};
+
 window.viewTrainerClients = function(trainerId) {
   const trainer = window.fit24Store.getTrainer(trainerId);
   if (!trainer) return;
@@ -2450,7 +2729,7 @@ window.viewTrainerClients = function(trainerId) {
   if (!modal || !content) return;
 
   content.innerHTML = `
-    <div class="space-y-5">
+    <div class="space-y-5 font-mono">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <div class="flex items-center gap-3">
           <img src="${trainer.photoUrl}" class="w-12 h-12 object-cover border border-[#ff0033]">
@@ -2474,6 +2753,7 @@ window.viewTrainerClients = function(trainerId) {
             <tr class="border-b border-white/10 text-[10px] text-zinc-500 uppercase">
               <th class="py-2.5 px-3">Athlete</th>
               <th class="py-2.5 px-3">Tier</th>
+              <th class="py-2.5 px-3">Compliance</th>
               <th class="py-2.5 px-3">PT Sessions Balance</th>
               <th class="py-2.5 px-3">Status</th>
               <th class="py-2.5 px-3 text-right">Actions</th>
@@ -2481,8 +2761,11 @@ window.viewTrainerClients = function(trainerId) {
           </thead>
           <tbody>
             ${clients.length === 0 ? `
-              <tr><td colspan="5" class="py-6 text-center text-zinc-500 italic">No athletes assigned to this coach yet.</td></tr>
-            ` : clients.map(c => `
+              <tr><td colspan="6" class="py-6 text-center text-zinc-500 italic">No athletes assigned to this coach yet.</td></tr>
+            ` : clients.map(c => {
+              const compliance = window.fit24Store.calculateComplianceScore ? window.fit24Store.calculateComplianceScore(c.id) : { score: 85, color: 'emerald' };
+              const compColor = compliance.color === 'emerald' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : compliance.color === 'amber' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30';
+              return `
               <tr class="border-b border-white/5 hover:bg-white/[0.02]">
                 <td class="py-2.5 px-3">
                   <strong class="text-white block">${c.name}</strong>
@@ -2492,13 +2775,19 @@ window.viewTrainerClients = function(trainerId) {
                   <span class="px-2 py-0.5 text-[10px] uppercase font-bold border ${c.tier === 'ELITE' ? 'border-yellow-400/40 text-yellow-400' : c.tier === 'PRIME' ? 'border-orange-400/40 text-orange-400' : 'border-white/20 text-white'}">${c.tier}</span>
                 </td>
                 <td class="py-2.5 px-3">
+                  <span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded ${compColor}">${compliance.score}%</span>
+                </td>
+                <td class="py-2.5 px-3">
                   <strong class="text-[#ff0033]">${Math.max(0, (c.ptSessionsTotal || 0) - (c.ptSessionsUsed || 0))} / ${c.ptSessionsTotal || 0} Left</strong>
                   <span class="text-[10px] text-zinc-500 block">(${c.ptSessionsUsed || 0} used)</span>
                 </td>
                 <td class="py-2.5 px-3">
                   <span class="${c.status === 'ACTIVE' ? 'text-emerald-400' : 'text-amber-400'} text-[10px] uppercase font-bold">● ${c.status}</span>
                 </td>
-                <td class="py-2.5 px-3 text-right space-x-1.5">
+                <td class="py-2.5 px-3 text-right space-x-1">
+                  <button onclick="window.viewMemberPARQ('${c.id}')" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-[10px] font-bold uppercase rounded border border-white/10" title="View PAR-Q Health Intake">
+                    PAR-Q
+                  </button>
                   <button onclick="window.deductMemberPT('${c.id}'); window.viewTrainerClients('${trainer.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded">
                     -1 PT
                   </button>
@@ -2507,7 +2796,7 @@ window.viewTrainerClients = function(trainerId) {
                   </button>
                 </td>
               </tr>
-            `).join("")}
+            `}).join("")}
           </tbody>
         </table>
       </div>

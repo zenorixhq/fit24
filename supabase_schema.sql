@@ -234,4 +234,91 @@ ALTER TABLE public.members ADD COLUMN IF NOT EXISTS emergency_contact VARCHAR(15
 ALTER TABLE public.members ADD COLUMN IF NOT EXISTS medical_alerts TEXT;
 ALTER TABLE public.members ADD COLUMN IF NOT EXISTS blood_group VARCHAR(10);
 ALTER TABLE public.members ADD COLUMN IF NOT EXISTS workout_plan JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS daily_habits JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS circumferences JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS diet_targets JSONB;
+ALTER TABLE public.members ADD COLUMN IF NOT EXISTS transformation_photos JSONB;
+
+-- =========================================================================
+-- 9. ATHLETE SUNDAY CHECK-INS & COACH REVIEWS
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.check_ins (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id VARCHAR(50) NOT NULL,
+    member_code VARCHAR(50),
+    check_in_date DATE DEFAULT CURRENT_DATE,
+    energy INT CHECK (energy BETWEEN 1 AND 5),
+    stress INT CHECK (stress BETWEEN 1 AND 5),
+    adherence_percent INT CHECK (adherence_percent BETWEEN 0 AND 100),
+    wins TEXT,
+    questions_for_trainer TEXT,
+    coach_feedback TEXT,
+    photo_urls TEXT[],
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.check_ins ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow full access for check_ins" ON public.check_ins FOR ALL USING (true);
+
+-- =========================================================================
+-- 10. PERSONAL TRAINING & 1-ON-1 COACHING BOOKINGS
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    booking_code VARCHAR(50) UNIQUE,
+    member_id VARCHAR(50) NOT NULL,
+    member_name VARCHAR(100),
+    trainer_id VARCHAR(50) NOT NULL,
+    trainer_name VARCHAR(100),
+    session_date DATE NOT NULL,
+    session_time VARCHAR(20) NOT NULL,
+    focus_area VARCHAR(100),
+    status VARCHAR(30) DEFAULT 'CONFIRMED' CHECK (status IN ('CONFIRMED', 'COMPLETED', 'CANCELLED', 'RESCHEDULED')),
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow full access for bookings" ON public.bookings FOR ALL USING (true);
+
+-- =========================================================================
+-- 11. LIVE WORKOUT LOGS & PROGRESSIVE OVERLOAD TRACKER
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.workout_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id VARCHAR(50) NOT NULL,
+    log_date DATE DEFAULT CURRENT_DATE,
+    exercise_name VARCHAR(150) NOT NULL,
+    set_number INT NOT NULL,
+    weight_kg DECIMAL(6, 2) NOT NULL,
+    reps INT NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.workout_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow full access for workout_logs" ON public.workout_logs FOR ALL USING (true);
+
+-- =========================================================================
+-- 12. PAR-Q HEALTH & INTAKE QUESTIONNAIRES
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.parq_intakes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id VARCHAR(50) NOT NULL UNIQUE,
+    heart_condition BOOLEAN DEFAULT FALSE,
+    chest_pain_activity BOOLEAN DEFAULT FALSE,
+    dizziness BOOLEAN DEFAULT FALSE,
+    bone_joint_problem BOOLEAN DEFAULT FALSE,
+    blood_pressure_meds BOOLEAN DEFAULT FALSE,
+    primary_goal TEXT,
+    dietary_restrictions TEXT,
+    physician_clearance_status VARCHAR(50) DEFAULT 'CLEARED',
+    completed_date DATE DEFAULT CURRENT_DATE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.parq_intakes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow full access for parq_intakes" ON public.parq_intakes FOR ALL USING (true);
+
 
