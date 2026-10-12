@@ -159,3 +159,45 @@ INSERT INTO public.members (
 ('F24-1004', 'Sneha Rao', '+91 96330 11223', 'sneha.rao@design.in', 'Female', 'PRIME', 3, '2026-10-18', '2027-01-25', 'PAUSED', 9699.00, 6, 1, 6, 1, 2, 0, 900.00, 10, 10, 15, 7, 1, true, 4),
 ('F24-1005', 'Arjun Balakrishnan', '+91 94001 77665', 'arjun.b@techkasaragod.com', 'Male', 'ELITE', 24, '2026-10-18', '2028-10-18', 'ACTIVE', 77999.00, 12, 1, 12, 2, 3, 0, 2000.00, 15, 15, 60, 0, 0, false, 22)
 ON CONFLICT (member_code) DO NOTHING;
+
+-- =========================================================================
+-- 6. GST TAX INVOICES TABLE
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.invoices (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    invoice_number VARCHAR(50) UNIQUE NOT NULL,
+    member_code VARCHAR(20),
+    member_name VARCHAR(150) NOT NULL,
+    tier VARCHAR(50) DEFAULT 'PRO',
+    duration_months INT DEFAULT 1,
+    gross_amount DECIMAL(10, 2) NOT NULL,
+    base_amount DECIMAL(10, 2) NOT NULL,
+    cgst DECIMAL(10, 2) NOT NULL,
+    sgst DECIMAL(10, 2) NOT NULL,
+    paid_via VARCHAR(50) DEFAULT 'UPI',
+    payment_ref VARCHAR(100),
+    issued_date DATE DEFAULT CURRENT_DATE,
+    items_description TEXT,
+    status VARCHAR(30) DEFAULT 'PAID',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow full access for invoices" ON public.invoices FOR ALL USING (true);
+
+-- =========================================================================
+-- 7. BIOMETRICS LOG TABLE
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.biometrics (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_code VARCHAR(20),
+    recorded_date DATE DEFAULT CURRENT_DATE,
+    weight_kg DECIMAL(5, 2) NOT NULL,
+    body_fat_percentage DECIMAL(5, 2),
+    muscle_mass_kg DECIMAL(5, 2),
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.biometrics ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow full access for biometrics" ON public.biometrics FOR ALL USING (true);

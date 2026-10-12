@@ -1,0 +1,24 @@
+{
+  "name": "FIT24 Premium Fitness Club Pass",
+  "short_name": "FIT24 Pass",
+  "description": "Digital Membership Pass, Access QR & Facility Quota Card for FIT24 Kanhangad",
+  "start_url": "./member.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#ff0033",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=192&q=80",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=512&q=80",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

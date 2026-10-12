@@ -508,6 +508,58 @@ const FIT24_DATA = {
       isPublished: true,
       createdAt: "3 days ago"
     }
+  ],
+
+  // 11. Initial GST Tax Invoices
+  initialInvoices: [
+    {
+      id: "F24-INV-2026-0001",
+      memberId: "F24-1001",
+      memberName: "Rahul Nambiar",
+      tier: "ELITE",
+      durationMonths: 12,
+      grossAmount: 42999,
+      baseAmount: 36439.83,
+      cgst: 3279.59,
+      sgst: 3279.59,
+      paidVia: "UPI (GPay)",
+      paymentRef: "UPI/384920/AXIS",
+      issuedDate: "2026-10-18",
+      itemsDescription: "ELITE Annual VIP Membership (12 Months)",
+      status: "PAID"
+    },
+    {
+      id: "F24-INV-2026-0002",
+      memberId: "F24-1002",
+      memberName: "Dr. Anjali Menon",
+      tier: "PRIME",
+      durationMonths: 6,
+      grossAmount: 17299,
+      baseAmount: 14660.17,
+      cgst: 1319.42,
+      sgst: 1319.42,
+      paidVia: "Card Machine POS",
+      paymentRef: "POS/MID-9921/HDFC",
+      issuedDate: "2026-10-18",
+      itemsDescription: "PRIME Semi-Annual Membership (6 Months)",
+      status: "PAID"
+    },
+    {
+      id: "F24-INV-2026-0003",
+      memberId: "F24-1003",
+      memberName: "Mohammed Shafi",
+      tier: "PRO",
+      durationMonths: 12,
+      grossAmount: 19999,
+      baseAmount: 16948.31,
+      cgst: 1525.35,
+      sgst: 1525.35,
+      paidVia: "Cash Reception Drawer",
+      paymentRef: "CASH-REC-003",
+      issuedDate: "2026-10-18",
+      itemsDescription: "PRO Essential Membership (12 Months)",
+      status: "PAID"
+    }
   ]
 };
 
@@ -548,6 +600,7 @@ class Fit24Store {
         if (cloudData.trainers && cloudData.trainers.length > 0) store.trainers = cloudData.trainers;
         if (cloudData.classes && cloudData.classes.length > 0) store.classes = cloudData.classes;
         if (cloudData.blogPosts && cloudData.blogPosts.length > 0) store.blogPosts = cloudData.blogPosts;
+        if (cloudData.invoices && cloudData.invoices.length > 0) store.invoices = cloudData.invoices;
         this.saveStore(store);
         console.log("☁ FIT24 Local state synchronized with Supabase cloud database!");
         if (typeof renderAllData === 'function') {
@@ -575,7 +628,8 @@ class Fit24Store {
       leads: FIT24_DATA.initialLeads,
       trainers: FIT24_DATA.initialTrainers,
       classes: FIT24_DATA.initialClasses,
-      blogPosts: FIT24_DATA.initialBlogPosts
+      blogPosts: FIT24_DATA.initialBlogPosts,
+      invoices: (FIT24_DATA.initialInvoices || []).slice()
     };
     this._memoryStore = JSON.parse(JSON.stringify(data));
     try {
@@ -1094,6 +1148,175 @@ class Fit24Store {
     if (window.fit24Supabase) {
       window.fit24Supabase.deleteBlogPost(id);
     }
+  }
+
+  // --- GST INVOICES & BILLING ---
+  getInvoices() {
+    const store = this.getStore();
+    if (!store.invoices || store.invoices.length === 0) {
+      store.invoices = (FIT24_DATA.initialInvoices || []).slice();
+      this.saveStore(store);
+    }
+    return store.invoices;
+  }
+
+  addInvoice(data) {
+    const store = this.getStore();
+    const gross = parseFloat(data.grossAmount) || 0;
+    const base = parseFloat((gross / 1.18).toFixed(2));
+    const gstSplit = parseFloat(((gross - base) / 2).toFixed(2));
+    const invId = data.id || `F24-INV-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`;
+
+    const newInvoice = {
+      id: invId,
+      memberId: data.memberId || "",
+      memberName: data.memberName || "Guest Member",
+      tier: data.tier || "PRO",
+      durationMonths: data.durationMonths || 1,
+      grossAmount: gross,
+      baseAmount: base,
+      cgst: gstSplit,
+      sgst: gstSplit,
+      paidVia: data.paidVia || "UPI (GPay)",
+      paymentRef: data.paymentRef || `REF-${Date.now()}`,
+      issuedDate: data.issuedDate || new Date().toISOString().split('T')[0],
+      itemsDescription: data.itemsDescription || `${data.tier || 'PRO'} Membership Plan`,
+      status: data.status || "PAID"
+    };
+
+    if (!store.invoices) store.invoices = [];
+    store.invoices.unshift(newInvoice);
+    this.saveStore(store);
+
+    if (window.fit24Supabase && typeof window.fit24Supabase.createInvoice === 'function') {
+      window.fit24Supabase.createInvoice(newInvoice);
+    }
+    return newInvoice;
+  }
+
+  deleteInvoice(id) {
+    const store = this.getStore();
+    if (!store.invoices) return;
+    store.invoices = store.invoices.filter(item => item.id !== id);
+    this.saveStore(store);
+  }
+
+  // --- MEMBER 360° DOSSIER & BIOMETRICS ---
+  logBiometric(memberId, entry) {
+    const store = this.getStore();
+    if (!store.members) return null;
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    if (!member.biometrics) member.biometrics = [];
+    const newEntry = {
+      date: entry.date || new Date().toISOString().split('T')[0],
+      weight: parseFloat(entry.weight) || 0,
+      bodyFat: entry.bodyFat ? parseFloat(entry.bodyFat) : null,
+      muscleMass: entry.muscleMass ? parseFloat(entry.muscleMass) : null,
+      notes: entry.notes || "Weigh-in"
+    };
+    member.biometrics.unshift(newEntry);
+    this.saveStore(store);
+    return member;
+  }
+
+  updateMemberMedical(memberId, updates) {
+    const store = this.getStore();
+    if (!store.members) return null;
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    if (updates.emergencyContact !== undefined) member.emergencyContact = updates.emergencyContact;
+    if (updates.medicalAlerts !== undefined) member.medicalAlerts = updates.medicalAlerts;
+    if (updates.bloodGroup !== undefined) member.bloodGroup = updates.bloodGroup;
+    this.saveStore(store);
+    return member;
+  }
+
+  // --- PT (PERSONAL TRAINING) QUOTA ---
+  deductPTSession(memberId) {
+    const store = this.getStore();
+    if (!store.members) return { success: false, message: "Member not found" };
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return { success: false, message: "Member not found" };
+
+    const total = member.ptSessionsTotal || 0;
+    const used = member.ptSessionsUsed || 0;
+    if (used >= total) {
+      return { success: false, message: "No PT sessions remaining in member package." };
+    }
+
+    member.ptSessionsUsed = used + 1;
+    this.saveStore(store);
+
+    // Also record facility log
+    this.recordFacilityUsage(memberId, "PT Session", "Head Coach / Floor Trainer");
+
+    return {
+      success: true,
+      member,
+      remaining: `${total - (used + 1)} / ${total} remaining`
+    };
+  }
+
+  // --- FINANCIAL & EXPIRING REPORTS ---
+  getExpiringMembers(withinDays = 14) {
+    const store = this.getStore();
+    const members = store.members || [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return members
+      .filter(m => m.status === "ACTIVE" && m.endDate)
+      .map(m => {
+        const exp = new Date(m.endDate);
+        exp.setHours(0, 0, 0, 0);
+        const diffTime = exp.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return {
+          ...m,
+          daysRemaining: diffDays
+        };
+      })
+      .filter(m => m.daysRemaining >= 0 && m.daysRemaining <= withinDays)
+      .sort((a, b) => a.daysRemaining - b.daysRemaining);
+  }
+
+  getDailyRevenue(dateStr = null) {
+    const invoices = this.getInvoices();
+    const targetDate = dateStr || new Date().toISOString().split('T')[0];
+    const dayInvoices = invoices.filter(inv => inv.issuedDate === targetDate);
+
+    let gross = 0;
+    let upi = 0;
+    let cash = 0;
+    let card = 0;
+
+    dayInvoices.forEach(inv => {
+      const amt = parseFloat(inv.grossAmount) || 0;
+      gross += amt;
+      const method = (inv.paidVia || "").toUpperCase();
+      if (method.includes("UPI") || method.includes("GPAY") || method.includes("PHONEPE")) {
+        upi += amt;
+      } else if (method.includes("CASH")) {
+        cash += amt;
+      } else if (method.includes("CARD") || method.includes("POS")) {
+        card += amt;
+      } else {
+        upi += amt;
+      }
+    });
+
+    return {
+      date: targetDate,
+      gross,
+      upi,
+      cash,
+      card,
+      invoiceCount: dayInvoices.length,
+      invoices: dayInvoices
+    };
   }
 }
 

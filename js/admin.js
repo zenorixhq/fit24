@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTrainerManagement();
   initClassTimetableManagement();
   initBlogManagement();
+  initInvoicesModule();
   initDataBackup();
   renderAllData();
 });
@@ -45,6 +46,8 @@ function initAdminTabs() {
           renderClassesTable();
         } else if (targetId === "tab-blog") {
           renderBlogTable();
+        } else if (targetId === "tab-invoices") {
+          renderInvoicesTable();
         }
       }
     });
@@ -54,6 +57,7 @@ function initAdminTabs() {
 // Master refresh
 function renderAllData() {
   renderDashboardMetrics();
+  renderCashbookAndChurnRadar();
   renderAttendanceTable();
   renderMemberTable();
   renderLeadsTable();
@@ -63,6 +67,7 @@ function renderAllData() {
   renderTrainersTable();
   renderClassesTable();
   renderBlogTable();
+  renderInvoicesTable();
   populateMemberSelectDropdowns();
 }
 
@@ -380,9 +385,11 @@ function renderMemberTable(searchQuery = "", filterTier = "ALL", filterStatus = 
             : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">ACTIVE</span>`
           }
         </td>
-        <td class="py-3 px-4 text-xs text-right space-x-1">
+        <td class="py-3 px-4 text-xs text-right space-x-1 whitespace-nowrap">
+          <button onclick="window.openMemberDossier('${m.id}')" class="px-2 py-1 rounded bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white text-[11px]" title="360° Health & Biometrics Dossier">Dossier</button>
+          <button onclick="window.issueInvoiceForMember('${m.id}')" class="px-2 py-1 rounded bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-[11px]" title="GST Tax Receipt">Receipt</button>
           <button onclick="viewMemberPass('${m.id}')" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-[11px] text-white">Pass</button>
-          <button onclick="openQuotaModal('${m.id}')" class="px-2 py-1 rounded bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[11px]">Use Quota</button>
+          <button onclick="openQuotaModal('${m.id}')" class="px-2 py-1 rounded bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[11px]">Quota</button>
         </td>
       </tr>
     `;
@@ -923,7 +930,7 @@ function renderCafeLogs() {
 // 7. Populate Dropdowns for Quick selection
 function populateMemberSelectDropdowns() {
   const members = window.fit24Store.getMembers();
-  const dropdownIds = ["facility-member-select", "pause-member-select", "cafe-member-select"];
+  const dropdownIds = ["facility-member-select", "pause-member-select", "cafe-member-select", "invoice-form-member"];
 
   dropdownIds.forEach(id => {
     const el = document.getElementById(id);
@@ -1791,5 +1798,571 @@ window.deleteBlogRecord = function(id) {
     if (typeof renderDynamicBlog === "function") {
       renderDynamicBlog();
     }
+  }
+};
+
+// ==========================================
+// 13. GST TAX INVOICES & BILLING ENGINE
+// ==========================================
+function initInvoicesModule() {
+  const openBtn = document.getElementById("open-add-invoice-btn");
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      window.openAddInvoiceModal();
+    });
+  }
+
+  const searchInput = document.getElementById("invoice-search-input");
+  const payFilter = document.getElementById("invoice-payment-filter");
+  const tierFilter = document.getElementById("invoice-tier-filter");
+
+  if (searchInput) searchInput.addEventListener("input", () => renderInvoicesTable());
+  if (payFilter) payFilter.addEventListener("change", () => renderInvoicesTable());
+  if (tierFilter) tierFilter.addEventListener("change", () => renderInvoicesTable());
+
+  // Form submit
+  const form = document.getElementById("new-invoice-form");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const memberSelect = document.getElementById("invoice-form-member");
+      const memberId = memberSelect ? memberSelect.value : "";
+      const member = window.fit24Store.getMember(memberId);
+      const tier = document.getElementById("invoice-form-tier").value;
+      const durationMonths = parseInt(document.getElementById("invoice-form-duration").value, 10) || 12;
+      const grossAmount = parseFloat(document.getElementById("invoice-form-amount").value) || 0;
+      const paidVia = document.getElementById("invoice-form-method").value;
+      const paymentRef = document.getElementById("invoice-form-ref").value.trim() || `REF-${Date.now()}`;
+
+      const newInv = window.fit24Store.addInvoice({
+        memberId: member ? member.id : memberId,
+        memberName: member ? member.name : "Member",
+        tier,
+        durationMonths,
+        grossAmount,
+        paidVia,
+        paymentRef,
+        itemsDescription: `${tier} Membership Plan (${durationMonths} Months)`
+      });
+
+      alert(`🧾 GST Tax Invoice generated! Invoice #: ${newInv.id}`);
+      document.getElementById("new-invoice-modal").classList.add("hidden");
+      renderInvoicesTable();
+      renderCashbookAndChurnRadar();
+
+      // Automatically open printable thermal receipt
+      window.openInvoiceReceipt(newInv.id);
+    });
+  }
+}
+
+function renderInvoicesTable() {
+  const tbody = document.getElementById("invoices-table-tbody");
+  if (!tbody) return;
+
+  const invoices = window.fit24Store.getInvoices() || [];
+  const q = (document.getElementById("invoice-search-input")?.value || "").toLowerCase().trim();
+  const payFilter = document.getElementById("invoice-payment-filter")?.value || "ALL";
+  const tierFilter = document.getElementById("invoice-tier-filter")?.value || "ALL";
+
+  // KPIs
+  const totalCount = invoices.length;
+  let totalGross = 0;
+  let totalTaxable = 0;
+  let totalGST = 0;
+
+  invoices.forEach(inv => {
+    totalGross += parseFloat(inv.grossAmount) || 0;
+    totalTaxable += parseFloat(inv.baseAmount) || 0;
+    totalGST += (parseFloat(inv.cgst) || 0) + (parseFloat(inv.sgst) || 0);
+  });
+
+  const elTotal = document.getElementById("metric-total-invoiced");
+  const elTaxable = document.getElementById("metric-taxable-invoiced");
+  const elGST = document.getElementById("metric-gst-invoiced");
+  const elCount = document.getElementById("metric-invoices-count");
+  const elTableCount = document.getElementById("invoice-table-count");
+
+  if (elTotal) elTotal.innerText = `₹${totalGross.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+  if (elTaxable) elTaxable.innerText = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+  if (elGST) elGST.innerText = `₹${totalGST.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+  if (elCount) elCount.innerText = totalCount;
+
+  // Filter
+  const filtered = invoices.filter(inv => {
+    const matchQuery = !q ||
+      (inv.id && inv.id.toLowerCase().includes(q)) ||
+      (inv.memberName && inv.memberName.toLowerCase().includes(q)) ||
+      (inv.memberId && inv.memberId.toLowerCase().includes(q));
+
+    const matchPay = payFilter === "ALL" || (inv.paidVia && inv.paidVia.toLowerCase().includes(payFilter.toLowerCase()));
+    const matchTier = tierFilter === "ALL" || inv.tier === tierFilter;
+
+    return matchQuery && matchPay && matchTier;
+  });
+
+  if (elTableCount) elTableCount.innerText = `${filtered.length} of ${totalCount} invoices`;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" class="text-center py-10 text-zinc-500 text-xs font-mono">
+          No GST tax invoices found matching filter criteria.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(inv => {
+    return `
+      <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+        <!-- Invoice # & Date -->
+        <td class="py-3 px-4">
+          <div class="font-bold text-white text-xs">${inv.id}</div>
+          <div class="text-[10px] text-zinc-500 font-mono">${inv.issuedDate}</div>
+        </td>
+
+        <!-- Member Info -->
+        <td class="py-3 px-4">
+          <div class="font-bold text-zinc-200 text-xs">${inv.memberName}</div>
+          <div class="text-[10px] text-zinc-400 font-mono">${inv.memberId}</div>
+        </td>
+
+        <!-- Plan Description -->
+        <td class="py-3 px-4">
+          <span class="inline-block px-2 py-0.5 text-[10px] uppercase font-bold border border-white/10 bg-white/5 text-zinc-300">
+            ${inv.itemsDescription || inv.tier}
+          </span>
+        </td>
+
+        <!-- Base Taxable -->
+        <td class="py-3 px-4 text-xs font-mono text-zinc-300">
+          ₹${parseFloat(inv.baseAmount).toFixed(2)}
+        </td>
+
+        <!-- Total GST (18%) -->
+        <td class="py-3 px-4 text-xs font-mono text-cyan-400">
+          ₹${((parseFloat(inv.cgst) || 0) + (parseFloat(inv.sgst) || 0)).toFixed(2)}
+          <span class="text-[9px] text-zinc-500 block">CGST ₹${inv.cgst} + SGST ₹${inv.sgst}</span>
+        </td>
+
+        <!-- Gross Total -->
+        <td class="py-3 px-4 font-mono font-bold text-emerald-400 text-xs">
+          ₹${parseFloat(inv.grossAmount).toFixed(2)}
+        </td>
+
+        <!-- Paid Via -->
+        <td class="py-3 px-4 text-xs font-mono">
+          <span class="text-zinc-300">${inv.paidVia || 'Cash'}</span>
+          <span class="text-[9px] text-zinc-500 block truncate max-w-[120px]">${inv.paymentRef || ''}</span>
+        </td>
+
+        <!-- Actions -->
+        <td class="py-3 px-4 text-right">
+          <div class="inline-flex items-center gap-1.5 justify-end">
+            <button onclick="window.openInvoiceReceipt('${inv.id}')"
+                    class="px-2.5 py-1 text-[10px] uppercase font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded transition-all flex items-center gap-1">
+              <span>🖨️</span> Slip
+            </button>
+            <button onclick="window.deleteInvoiceRecord('${inv.id}')"
+                    class="px-2 py-1 text-[10px] uppercase font-bold text-red-500 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all">
+              🗑
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+window.openAddInvoiceModal = function(defaultMemberId = null) {
+  const modal = document.getElementById("new-invoice-modal");
+  const form = document.getElementById("new-invoice-form");
+  if (form) form.reset();
+
+  populateMemberSelectDropdowns();
+
+  if (defaultMemberId) {
+    const memberSelect = document.getElementById("invoice-form-member");
+    if (memberSelect) memberSelect.value = defaultMemberId;
+    const member = window.fit24Store.getMember(defaultMemberId);
+    if (member) {
+      const tierSelect = document.getElementById("invoice-form-tier");
+      const durationSelect = document.getElementById("invoice-form-duration");
+      const amountInput = document.getElementById("invoice-form-amount");
+
+      if (tierSelect) tierSelect.value = member.tier;
+      if (durationSelect) durationSelect.value = member.durationMonths || 12;
+      if (amountInput) amountInput.value = member.amountPaid || 19999;
+    }
+  }
+
+  if (modal) modal.classList.remove("hidden");
+};
+
+window.issueInvoiceForMember = function(memberId) {
+  window.openAddInvoiceModal(memberId);
+};
+
+window.openInvoiceReceipt = function(invoiceId) {
+  const invoices = window.fit24Store.getInvoices() || [];
+  const inv = invoices.find(i => i.id === invoiceId);
+  if (!inv) return;
+
+  const modal = document.getElementById("invoice-receipt-modal");
+  const container = document.getElementById("thermal-receipt-content");
+  if (!modal || !container) return;
+
+  container.innerHTML = `
+    <div class="text-center pb-3 border-b border-dashed border-zinc-400">
+      <div class="text-2xl font-black tracking-widest uppercase font-gymbox text-black">FIT24 CLUB</div>
+      <div class="text-[11px] font-bold text-zinc-700">PREMIUM FITNESS & COMBAT CLUB</div>
+      <div class="text-[10px] text-zinc-600 mt-0.5">TB Road, Hosdurg, Kanhangad, Kerala</div>
+      <div class="text-[10px] text-zinc-600">GSTIN: 32AABCF1234K1ZV</div>
+      <div class="text-[11px] font-bold mt-1 text-black">TAX INVOICE / CASH MEMO</div>
+    </div>
+
+    <div class="py-2.5 border-b border-dashed border-zinc-400 space-y-1 text-[11px]">
+      <div class="flex justify-between">
+        <span>Invoice No: <strong>${inv.id}</strong></span>
+        <span>Date: <strong>${inv.issuedDate}</strong></span>
+      </div>
+      <div>Athlete: <strong>${inv.memberName.toUpperCase()}</strong> (${inv.memberId || 'GUEST'})</div>
+      <div>Payment Mode: <strong>${inv.paidVia}</strong> (${inv.paymentRef || 'Verified'})</div>
+    </div>
+
+    <table class="w-full py-2 my-2 border-b border-dashed border-zinc-400 text-left text-[11px]">
+      <thead>
+        <tr class="font-bold border-b border-zinc-300">
+          <th class="py-1">DESCRIPTION</th>
+          <th class="py-1 text-center">QTY</th>
+          <th class="py-1 text-right">AMT (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="py-1.5">${inv.itemsDescription || inv.tier + ' Plan'}</td>
+          <td class="py-1.5 text-center">1</td>
+          <td class="py-1.5 text-right font-bold">${parseFloat(inv.baseAmount).toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="space-y-1 border-b border-dashed border-zinc-400 pb-2 text-[11px]">
+      <div class="flex justify-between">
+        <span>Taxable Base Value:</span>
+        <span>₹${parseFloat(inv.baseAmount).toFixed(2)}</span>
+      </div>
+      <div class="flex justify-between text-zinc-600">
+        <span>CGST (9.0%):</span>
+        <span>₹${parseFloat(inv.cgst).toFixed(2)}</span>
+      </div>
+      <div class="flex justify-between text-zinc-600">
+        <span>SGST (9.0%):</span>
+        <span>₹${parseFloat(inv.sgst).toFixed(2)}</span>
+      </div>
+    </div>
+
+    <div class="py-2.5 border-b-2 border-black flex justify-between items-center">
+      <span class="text-sm font-bold">GRAND TOTAL:</span>
+      <span class="text-xl font-bold font-gymbox">₹${parseFloat(inv.grossAmount).toFixed(2)}</span>
+    </div>
+
+    <div class="py-2 text-[10px] text-zinc-600 space-y-1 text-center pt-2">
+      <div class="font-bold text-black uppercase">ANYTHING GOES. NO BORING WORKOUTS.</div>
+      <div>WhatsApp Support: +91 62389 20442</div>
+      <div>* Keep receipt for locker allocation & guest pass entry *</div>
+    </div>
+  `;
+
+  modal.classList.remove("hidden");
+};
+
+window.printThermalReceipt = function() {
+  window.print();
+};
+
+window.deleteInvoiceRecord = function(id) {
+  if (confirm(`Are you sure you want to delete invoice record "${id}"?`)) {
+    window.fit24Store.deleteInvoice(id);
+    renderInvoicesTable();
+    renderCashbookAndChurnRadar();
+  }
+};
+
+// ==========================================
+// 14. DAILY CASHBOOK & CHURN RADAR
+// ==========================================
+function renderCashbookAndChurnRadar() {
+  // 1. Daily Cashbook
+  const rev = window.fit24Store.getDailyRevenue();
+  const elGross = document.getElementById("cashbook-today-gross");
+  const elUpi = document.getElementById("cashbook-today-upi");
+  const elCash = document.getElementById("cashbook-today-cash");
+  const elCard = document.getElementById("cashbook-today-card");
+
+  if (elGross) elGross.innerText = `₹${rev.gross.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+  if (elUpi) elUpi.innerText = `₹${rev.upi.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+  if (elCash) elCash.innerText = `₹${rev.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+  if (elCard) elCard.innerText = `₹${rev.card.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+  // 2. Churn Radar (Expiring within 14 days)
+  const expiringMembers = window.fit24Store.getExpiringMembers(14) || [];
+  const elCount = document.getElementById("expiring-members-count");
+  const tbody = document.getElementById("expiring-members-tbody");
+
+  if (elCount) elCount.innerText = `${expiringMembers.length} athletes expiring soon`;
+  if (!tbody) return;
+
+  if (expiringMembers.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center py-6 text-zinc-500 text-xs font-mono">
+          No memberships expiring in the next 14 days. Retention is strong!
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = expiringMembers.map(m => {
+    const cleanPhone = (m.phone || "").replace(/[^0-9]/g, "");
+    const renewText = encodeURIComponent(
+      `Hi ${m.name}! Greetings from FIT24 Kanhangad.\n\nYour ${m.tier} Membership expires on ${m.endDate} (${m.daysRemaining} days remaining).\n\nRenew today at the front desk to lock in your existing rate and retain all accrued perks!`
+    );
+
+    let daysBadge = "text-amber-400";
+    if (m.daysRemaining <= 3) daysBadge = "text-red-500 font-bold animate-pulse";
+
+    return `
+      <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+        <td class="py-2.5 px-3">
+          <div class="font-bold text-white text-xs">${m.name}</div>
+          <div class="text-[10px] text-zinc-500 font-mono">${m.phone}</div>
+        </td>
+        <td class="py-2.5 px-3">
+          <span class="inline-block px-1.5 py-0.5 text-[10px] font-bold uppercase rounded ${m.tier === 'ELITE' ? 'bg-yellow-400/20 text-yellow-400' : m.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">
+            ${m.tier}
+          </span>
+        </td>
+        <td class="py-2.5 px-3 text-xs text-zinc-300 font-mono">
+          ${m.endDate}
+        </td>
+        <td class="py-2.5 px-3 text-xs font-mono ${daysBadge}">
+          ⚠️ ${m.daysRemaining} Days
+        </td>
+        <td class="py-2.5 px-3 text-right">
+          <a href="https://wa.me/${cleanPhone}?text=${renewText}" target="_blank"
+             class="px-2.5 py-1 text-[10px] font-mono font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded inline-flex items-center gap-1 transition-all">
+            <span>💬</span> Send Renewal Reminder
+          </a>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+// ==========================================
+// 15. MEMBER 360° DOSSIER & BIOMETRICS
+// ==========================================
+window.openMemberDossier = function(id) {
+  const member = window.fit24Store.getMember(id);
+  if (!member) return;
+
+  const modal = document.getElementById("member-dossier-modal");
+  const content = document.getElementById("member-dossier-content");
+  if (!modal || !content) return;
+
+  const saunaRem = member.saunaTotal - member.saunaUsed;
+  const iceBathRem = member.iceBathTotal - member.iceBathUsed;
+  const ptTotal = member.ptSessionsTotal || 0;
+  const ptUsed = member.ptSessionsUsed || 0;
+  const ptRem = ptTotal - ptUsed;
+  const biometrics = member.biometrics || [];
+
+  content.innerHTML = `
+    <div class="space-y-6">
+      <!-- Dossier Header -->
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div>
+          <span class="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest">// ATHLETE 360° DOSSIER</span>
+          <h3 class="text-3xl font-gymbox text-white">${member.name.toUpperCase()}</h3>
+          <p class="text-xs text-zinc-400 font-mono mt-0.5">
+            Member Code: <strong class="text-white">${member.id}</strong> · Joined: ${member.startDate} · Expiry: ${member.endDate}
+          </p>
+        </div>
+        <span class="px-3 py-1 font-gymbox text-lg rounded ${member.tier === 'ELITE' ? 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/40' : member.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/40' : 'bg-red-500/20 text-red-400 border border-red-500/40'}">
+          ${member.tier} TIER
+        </span>
+      </div>
+
+      <!-- 3-Column Dossier Breakdown -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Health & Safety -->
+        <div class="bg-black border border-white/10 p-4 space-y-3 rounded-none">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-red-500 uppercase tracking-wider font-mono">HEALTH & MEDICAL</h4>
+            <button onclick="window.promptEditMedical('${member.id}')" class="text-[10px] text-zinc-400 hover:text-white underline">Edit</button>
+          </div>
+          <div class="space-y-2 text-xs font-mono">
+            <div class="p-2 bg-red-500/10 border border-red-500/30">
+              <span class="text-red-400 font-bold block text-[10px]">⚠️ Medical Alert / Limitation:</span>
+              <span class="text-zinc-200 text-xs">${member.medicalAlerts || 'None recorded'}</span>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10">
+              <span class="text-zinc-400 block text-[10px]">Emergency Contact:</span>
+              <strong class="text-white text-xs">${member.emergencyContact || 'Not recorded'}</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 flex justify-between">
+              <span class="text-zinc-400 text-[10px]">Blood Group:</span>
+              <strong class="text-white">${member.bloodGroup || 'O+'}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quotas & Personal Training -->
+        <div class="bg-black border border-white/10 p-4 space-y-3 rounded-none">
+          <h4 class="text-xs font-bold text-cyan-400 uppercase tracking-wider font-mono">FACILITY & PT QUOTAS</h4>
+          <div class="space-y-2 text-xs font-mono">
+            <div class="p-2 bg-white/5 border border-white/10 flex justify-between">
+              <span class="text-zinc-400">🧖 Sauna:</span>
+              <strong class="text-orange-400">${saunaRem} / ${member.saunaTotal} Left</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 flex justify-between">
+              <span class="text-zinc-400">🧊 Ice Bath:</span>
+              <strong class="text-cyan-400">${iceBathRem} / ${member.iceBathTotal} Left</strong>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 flex justify-between items-center">
+              <div>
+                <span class="text-zinc-400 block">🥊 Personal Training:</span>
+                <strong class="text-red-400">${ptRem} / ${ptTotal} Sessions</strong>
+              </div>
+              <button onclick="window.deductMemberPT('${member.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded">
+                -1 PT
+              </button>
+            </div>
+            <div class="p-2 bg-white/5 border border-white/10 flex justify-between">
+              <span class="text-zinc-400">☕ Café Wallet:</span>
+              <strong class="text-amber-400">₹${member.cafeCredit.toFixed(2)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biometrics & Weigh-in History -->
+        <div class="bg-black border border-white/10 p-4 space-y-3 rounded-none">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono">BIOMETRICS LOG</h4>
+            <button onclick="window.logMemberWeighIn('${member.id}')" class="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold rounded">
+              + Weigh-in
+            </button>
+          </div>
+
+          <div class="space-y-2 max-h-48 overflow-y-auto font-mono text-xs" id="dossier-biometrics-list">
+            ${biometrics.length === 0 ? `
+              <div class="text-zinc-500 text-[11px] italic p-3 text-center">No weigh-ins logged yet. Click "+ Weigh-in" above!</div>
+            ` : biometrics.map(b => `
+              <div class="p-2 bg-white/5 border border-white/10 flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-white text-xs">${b.date}</div>
+                  <div class="text-[10px] text-zinc-400">${b.notes || 'Routine weigh-in'}</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold text-emerald-400 font-gymbox text-base">${b.weight} kg</div>
+                  ${b.bodyFat ? `<div class="text-[9px] text-zinc-500">${b.bodyFat}% Fat</div>` : ''}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.classList.remove("hidden");
+};
+
+window.promptEditMedical = function(memberId) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+
+  const alerts = prompt("Medical Alerts / Physical Limitations:", member.medicalAlerts || "None");
+  if (alerts === null) return;
+  const emergency = prompt("Emergency Contact (Name & Phone):", member.emergencyContact || "");
+  if (emergency === null) return;
+  const blood = prompt("Blood Group (e.g. O+, B+, A+):", member.bloodGroup || "O+");
+  if (blood === null) return;
+
+  window.fit24Store.updateMemberMedical(memberId, {
+    medicalAlerts: alerts,
+    emergencyContact: emergency,
+    bloodGroup: blood
+  });
+
+  window.openMemberDossier(memberId);
+};
+
+window.logMemberWeighIn = function(memberId) {
+  const weight = prompt("Enter athlete's weight in kg (e.g. 78.4):", "78.0");
+  if (!weight) return;
+  const bodyFat = prompt("Body Fat % (optional, e.g. 15.2):", "");
+  const notes = prompt("Coach Notes / Workout PR (e.g. Squat PR 140kg):", "Monthly assessment");
+
+  window.fit24Store.logBiometric(memberId, {
+    weight: parseFloat(weight) || 0,
+    bodyFat: bodyFat ? parseFloat(bodyFat) : null,
+    notes: notes || "Weigh-in"
+  });
+
+  window.openMemberDossier(memberId);
+};
+
+window.deductMemberPT = function(memberId) {
+  const res = window.fit24Store.deductPTSession(memberId);
+  if (!res.success) {
+    alert(res.message);
+    return;
+  }
+  alert(`🥊 PT Session Deducted! ${res.remaining}`);
+  window.openMemberDossier(memberId);
+  renderAllData();
+};
+
+// ==========================================
+// 16. HARDWARE SCANNER & WEBRTC CAMERA INTEGRATION
+// ==========================================
+window.executeScanCheckIn = function(code) {
+  if (!code) return;
+  const cleanCode = code.trim();
+  const res = window.fit24Store.checkInMember(cleanCode, "Barcode / QR Laser");
+
+  if (!res.success) {
+    if (window.fit24Scanner) window.fit24Scanner.playWarningBeep();
+    alert(`⚠️ Cannot Check In: ${res.message}`);
+  } else {
+    if (window.fit24Scanner) window.fit24Scanner.playSuccessBeep();
+    alert(`✓ CHECK-IN APPROVED: ${res.member.name} (${res.member.tier}) at ${res.record.time}`);
+    renderAllData();
+  }
+};
+
+window.openCameraScanner = function() {
+  const modal = document.getElementById("camera-scanner-modal");
+  if (!modal) return;
+  modal.classList.remove("hidden");
+
+  if (window.fit24Scanner) {
+    window.fit24Scanner.startCamera("camera-scanner-video", (scannedValue) => {
+      window.closeCameraScanner();
+      window.executeScanCheckIn(scannedValue);
+    });
+  }
+};
+
+window.closeCameraScanner = function() {
+  const modal = document.getElementById("camera-scanner-modal");
+  if (modal) modal.classList.add("hidden");
+  if (window.fit24Scanner) {
+    window.fit24Scanner.stopCamera();
   }
 };

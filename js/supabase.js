@@ -568,6 +568,30 @@ class Fit24SupabaseClient {
       console.warn("Cloud log cafe sale failed:", e);
     }
   }
+
+  async createInvoice(invoice) {
+    if (!this.client) return;
+    try {
+      await this.client.from('invoices').insert([{
+        invoice_number: invoice.id,
+        member_code: invoice.memberId,
+        member_name: invoice.memberName,
+        tier: invoice.tier,
+        duration_months: invoice.durationMonths,
+        gross_amount: invoice.grossAmount,
+        base_amount: invoice.baseAmount,
+        cgst: invoice.cgst,
+        sgst: invoice.sgst,
+        paid_via: invoice.paidVia,
+        payment_ref: invoice.paymentRef,
+        issued_date: invoice.issuedDate,
+        items_description: invoice.itemsDescription,
+        status: invoice.status
+      }]);
+    } catch (e) {
+      // Offline fallback is active
+    }
+  }
 }
 
 window.fit24Supabase = new Fit24SupabaseClient();
