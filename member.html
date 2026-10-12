@@ -37,7 +37,8 @@
     <div class="bg-[#0e0e12] p-3 border border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
       <span class="text-zinc-400 text-[11px]">Demo Athlete:</span>
       <div class="flex flex-wrap gap-1">
-        <button onclick="loadMember('F24-1001')" class="px-2 py-0.5 bg-yellow-400 text-black text-[10px] font-bold uppercase hover:opacity-90">Rahul (Elite)</button>
+        <button onclick="loadMember('F24-1001')" class="px-2 py-0.5 bg-yellow-400 text-black text-[10px] font-bold uppercase hover:opacity-90">Rahul (Elite PT)</button>
+        <button onclick="loadMember('F24-1006')" class="px-2 py-0.5 bg-cyan-400 text-black text-[10px] font-bold uppercase hover:opacity-90 ring-1 ring-white/50">Kavya (Self-Guided / No PT)</button>
         <button onclick="loadMember('F24-1002')" class="px-2 py-0.5 bg-[#ff0033] text-white text-[10px] font-bold uppercase hover:opacity-90">Anjali (Prime)</button>
         <button onclick="loadMember('F24-1003')" class="px-2 py-0.5 bg-zinc-200 text-black text-[10px] font-bold uppercase hover:opacity-90">Shafi (Pro)</button>
         <button onclick="loadMember('F24-1004')" class="px-2 py-0.5 bg-amber-500 text-black text-[10px] font-bold uppercase hover:opacity-90">Sneha (Paused)</button>
@@ -270,6 +271,111 @@
 
         <button type="submit" class="w-full py-3.5 bg-yellow-500 hover:bg-white hover:text-black text-black font-gymbox text-xl uppercase tracking-wider transition-all">
           CONFIRM FUEL LOG
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: SELECT / SWITCH GENERIC WORKOUT PROGRAM             -->
+  <!-- ======================================================== -->
+  <div id="select-program-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-cyan-500 max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeProgramSelectionModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-widest">// FIT24 SELF-GUIDED BLUEPRINT</span>
+        <h3 class="text-2xl font-gymbox text-white">SELECT TRAINING SPLIT</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Activate a pre-built split to populate your weekly 7-day timeline.</p>
+      </div>
+
+      <div id="program-templates-list" class="space-y-3">
+        <!-- Rendered dynamically by renderProgramTemplates() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: SMART NUTRITION & CALORIE CALCULATOR              -->
+  <!-- ======================================================== -->
+  <div id="smart-nutrition-calc-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-yellow-500 max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeSmartNutritionCalcModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <span class="text-[9px] font-bold text-yellow-400 uppercase tracking-widest">// AUTOMATED METABOLIC TARGETS</span>
+        <h3 class="text-2xl font-gymbox text-white">CALORIE & MACRO CALCULATOR</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Automated dietary targets based on body weight and fitness goal.</p>
+      </div>
+
+      <form id="smart-nutrition-form" onsubmit="handleSmartNutritionCalcSubmit(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Current Body Weight (kg):</label>
+          <input id="calc-weight" type="number" required value="72" min="40" max="180"
+                 class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-yellow-500">
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Gender:</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="p-2 border border-white/20 flex items-center gap-2 cursor-pointer has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-950/20">
+              <input type="radio" name="calc-gender" value="Male" checked class="accent-yellow-400">
+              <span class="text-white">Male</span>
+            </label>
+            <label class="p-2 border border-white/20 flex items-center gap-2 cursor-pointer has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-950/20">
+              <input type="radio" name="calc-gender" value="Female" class="accent-yellow-400">
+              <span class="text-white">Female</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Primary Fitness Goal:</label>
+          <select id="calc-goal" class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-yellow-500">
+            <option value="fat_loss">📉 Fat Loss / Cutting (-20% Calorie Deficit)</option>
+            <option value="recomp">⚖️ Maintenance & Athletic Recomposition</option>
+            <option value="muscle_gain">📈 Muscle Hypertrophy / Clean Bulk (+15% Surplus)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-yellow-500 hover:bg-white hover:text-black text-black font-gymbox text-xl uppercase tracking-wider transition-all">
+          CALCULATE & SET TARGETS
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: REQUEST 1-ON-1 PERSONAL TRAINER UPGRADE           -->
+  <!-- ======================================================== -->
+  <div id="request-pt-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeRequestPTModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <span class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">// 1-ON-1 COACHING APPLICATION</span>
+        <h3 class="text-2xl font-gymbox text-white">UPGRADE TO PERSONAL COACH</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Book a free 1-on-1 movement & goals assessment with a certified coach.</p>
+      </div>
+
+      <form id="request-pt-form" onsubmit="handleRequestPTSubmit(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Target Milestone / Focus:</label>
+          <input id="pt-req-focus" type="text" required placeholder="e.g. 100kg Bench Press form check, or 8-week Fat Loss"
+                 class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033]">
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Preferred Time of Day:</label>
+          <select id="pt-req-time" class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033]">
+            <option value="Morning (06:00 AM - 09:00 AM)">Morning (06:00 AM - 09:00 AM)</option>
+            <option value="Ladies-Only Hours (11:00 AM - 03:00 PM)">Ladies-Only Hours (11:00 AM - 03:00 PM)</option>
+            <option value="Evening Prime (05:00 PM - 09:00 PM)">Evening Prime (05:00 PM - 09:00 PM)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-xl uppercase tracking-wider transition-all">
+          TRANSMIT COACH REQUEST
         </button>
       </form>
     </div>
@@ -618,8 +724,27 @@
         `;
       }
 
+      const hasTrainer = Boolean(member.assignedTrainerId && (member.ptSessionsTotal > 0));
+      const programTitle = member.workoutPlan ? member.workoutPlan.title : "FIT24 Standard Split";
+
       wrapper.innerHTML = `
         <div class="bg-[#0e0e12] border-2 border-[#ff0033] p-5 space-y-4">
+          <!-- Timeline & Program Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3 font-mono">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[9px] text-[#ff0033] font-bold uppercase tracking-widest block">${hasTrainer ? 'COACH-PRESCRIBED TIMELINE' : 'FIT24 SELF-GUIDED SYSTEM'}</span>
+                <span class="px-1.5 py-0.2 bg-white/10 text-[9px] font-bold uppercase text-zinc-300 rounded">${hasTrainer ? '1-on-1 PT' : 'Floor Program'}</span>
+              </div>
+              <h4 class="text-xl font-gymbox text-white uppercase mt-0.5">${programTitle}</h4>
+            </div>
+            ${!hasTrainer ? `
+              <button onclick="openProgramSelectionModal()" class="self-start sm:self-auto px-2.5 py-1.5 bg-white/10 hover:bg-[#ff0033] hover:text-white text-zinc-200 text-[10px] font-bold rounded uppercase border border-white/20 transition-all flex items-center gap-1.5 shadow">
+                <span>🔄</span> <span>Switch Routine</span>
+              </button>
+            ` : ''}
+          </div>
+
           <!-- 7-Day Navigation Bar -->
           <div class="space-y-2">
             <div class="flex items-center justify-between text-xs font-mono">
@@ -817,9 +942,14 @@
               <span class="text-[9px] text-yellow-400 uppercase tracking-widest font-bold">// METABOLIC ENGINE & ENERGY BALANCE</span>
               <h4 class="text-xl font-gymbox text-white uppercase">CALORIE INTAKE & EXPENDITURE</h4>
             </div>
-            <button onclick="openFuelLogModal()" class="px-2.5 py-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-[10px] uppercase transition-all">
-              + Log Fuel Meal
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button onclick="openSmartNutritionCalcModal()" class="px-2 py-1 bg-white/10 hover:bg-white/20 text-zinc-300 font-bold text-[10px] uppercase transition-all rounded border border-white/20">
+                ⚙️ Goal Calc
+              </button>
+              <button onclick="openFuelLogModal()" class="px-2.5 py-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-[10px] uppercase transition-all">
+                + Log Fuel Meal
+              </button>
+            </div>
           </div>
 
           <!-- Energy Balance Tiles -->
@@ -941,11 +1071,103 @@
       loadMember(currentSelectedMemberId);
     }
 
-    // 4. Assigned Drillmaster & PT Passbook
+    // 4. Assigned Drillmaster & PT Passbook (Dual Track: 1-on-1 Coach vs Self-Guided Floor Support)
     function renderCoachSection(member) {
       const wrapper = document.getElementById("member-coach-wrapper");
       if (!wrapper) return;
 
+      const hasTrainer = Boolean(member.assignedTrainerId && (member.ptSessionsTotal > 0));
+
+      if (!hasTrainer) {
+        // ============================================
+        // GENERIC / SELF-GUIDED CLIENT: GYM FLOOR SUPPORT & DUTY COACHES
+        // ============================================
+        const compliance = window.fit24Store.calculateComplianceScore ? window.fit24Store.calculateComplianceScore(member.id) : { score: 90 };
+        const progTitle = member.workoutPlan ? member.workoutPlan.title : "FIT24 Standard Split";
+
+        wrapper.innerHTML = `
+          <div class="bg-[#0e0e12] border-2 border-cyan-500/30 p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <span class="text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-bold">GYM FLOOR SUPPORT // ACTIVE</span>
+                <h4 class="text-xl font-gymbox text-white uppercase tracking-wide">FLOOR COACHES & DUTY DESK</h4>
+              </div>
+              <span class="px-2 py-0.5 bg-cyan-600/20 border border-cyan-500 text-cyan-400 text-[10px] font-mono font-bold uppercase">
+                Self-Guided Athlete
+              </span>
+            </div>
+
+            <!-- Floor Duty Desk Info -->
+            <div class="flex items-center gap-3.5 bg-black p-3.5 border border-white/10">
+              <div class="w-14 h-14 bg-cyan-950/40 border-2 border-cyan-500/50 flex items-center justify-center text-2xl">
+                🏋️
+              </div>
+              <div class="flex-1 min-w-0 font-mono">
+                <div class="flex items-center gap-2">
+                  <strong class="text-white font-gymbox text-base tracking-wide truncate">FIT24 Floor Coaches on Duty</strong>
+                  <span class="px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 text-[9px] font-bold uppercase rounded">ON-FLOOR</span>
+                </div>
+                <div class="text-[11px] text-zinc-300 mt-0.5">Assistance with machine setup, safety spotting, and basic technique guidance.</div>
+                <div class="text-[10px] text-zinc-500 mt-0.5">Floor Hours: 06:00 AM – 10:00 PM Daily</div>
+              </div>
+            </div>
+
+            <!-- Active Routine & Floor Help Shortcuts -->
+            <div class="p-3 bg-black border border-white/10 font-mono text-xs space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-zinc-400 text-[11px]">Active Training Split:</span>
+                <strong class="text-cyan-400 font-bold">${progTitle}</strong>
+              </div>
+              <div class="flex gap-2 pt-1">
+                <button onclick="openProgramSelectionModal()" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-zinc-200 text-center text-xs font-bold uppercase rounded border border-white/10">
+                  🔄 Switch Routine
+                </button>
+                <a href="https://wa.me/916238920442?text=Hi%20FIT24%20Desk,%20I%20am%20${member.name}%20(${member.id}).%20I%20have%20a%20question%20for%20the%20Floor%20Trainer." target="_blank"
+                   class="flex-1 py-2 bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-300 text-center text-xs font-bold uppercase rounded flex items-center justify-center gap-1">
+                  <span>💬 Ask Floor Desk</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 1-on-1 PT Coaching Upgrade Showcase -->
+            <div class="bg-gradient-to-r from-red-950/40 to-black border border-[#ff0033]/40 p-4 rounded space-y-2.5 font-mono">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold text-[#ff0033] uppercase tracking-wider">// WANT 1-ON-1 COACHING?</span>
+                <span class="px-2 py-0.2 bg-[#ff0033] text-white text-[9px] font-bold uppercase rounded">PT UPGRADE</span>
+              </div>
+              <h5 class="text-lg font-gymbox text-white">UPGRADE TO 1-ON-1 DEDICATED COACH</h5>
+              <p class="text-zinc-400 text-[11px] leading-relaxed">
+                Work directly with a certified CSCS/MPT coach for personalized progressive overload periodization, custom macro coaching, form video analysis, and weekly debriefs.
+              </p>
+
+              <div class="grid grid-cols-3 gap-1.5 text-center pt-1 text-[10px]">
+                <div class="p-2 bg-black/60 border border-white/10 rounded">
+                  <span class="text-zinc-400 block">6 Sessions</span>
+                  <strong class="text-white text-xs block">₹3,000</strong>
+                  <span class="text-[8px] text-zinc-500">₹500/session</span>
+                </div>
+                <div class="p-2 bg-red-950/40 border border-[#ff0033]/50 rounded">
+                  <span class="text-[#ff0033] block font-bold">12 Sessions</span>
+                  <strong class="text-white text-xs block">₹5,500</strong>
+                  <span class="text-[8px] text-emerald-400">Save ₹500</span>
+                </div>
+                <div class="p-2 bg-black/60 border border-white/10 rounded">
+                  <span class="text-zinc-400 block">24 Sessions</span>
+                  <strong class="text-white text-xs block">₹10,000</strong>
+                  <span class="text-[8px] text-emerald-400">Save ₹2,000</span>
+                </div>
+              </div>
+
+              <button onclick="openRequestPTModal()" class="w-full py-2.5 bg-[#ff0033] hover:bg-red-600 text-white font-gymbox text-base uppercase tracking-wider transition-all shadow-lg shadow-red-900/30">
+                ⚡ REQUEST FREE 1-ON-1 FITNESS ASSESSMENT
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Dedicated PT Client branch
       const trainer = window.fit24Store.getTrainer(member.assignedTrainerId) || window.fit24Store.getTrainers()[0];
       const ptTotal = member.ptSessionsTotal || 0;
       const ptUsed = member.ptSessionsUsed || 0;
@@ -1243,6 +1465,123 @@
       playAudioChime();
       alert(`✅ 1-on-1 PT Slot Reserved for ${dateVal} at ${slotVal}!`);
       loadMember(currentSelectedMemberId);
+    }
+
+    // --- GENERIC WORKOUT PROGRAMS (SELF-GUIDED CLIENTS) ---
+    function openProgramSelectionModal() {
+      const modal = document.getElementById("select-program-modal");
+      if (!modal) return;
+      renderProgramTemplates();
+      modal.classList.remove("hidden");
+    }
+
+    function closeProgramSelectionModal() {
+      document.getElementById("select-program-modal")?.classList.add("hidden");
+    }
+
+    function renderProgramTemplates() {
+      const listEl = document.getElementById("program-templates-list");
+      if (!listEl) return;
+
+      const programs = window.fit24Store.getStandardWorkoutPrograms();
+      const member = window.fit24Store.getMember(currentSelectedMemberId);
+      const activeProgId = member ? (member.activeProgramId || 'ppl-6day') : 'ppl-6day';
+
+      listEl.innerHTML = programs.map(prog => {
+        const isActive = prog.id === activeProgId;
+        return `
+          <div class="p-4 bg-black/60 border ${isActive ? 'border-[#ff0033] bg-red-950/15' : 'border-white/10 hover:border-white/30'} rounded-xl space-y-2.5 transition-all">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 text-[9px] font-bold rounded uppercase">${prog.daysPerWeek} DAYS/WK</span>
+                  <span class="px-2 py-0.5 bg-white/10 text-zinc-300 text-[9px] font-bold rounded uppercase">${prog.difficulty}</span>
+                </div>
+                <h4 class="text-base font-gymbox text-white uppercase tracking-wide mt-1">${prog.title}</h4>
+              </div>
+              ${isActive ? `
+                <span class="px-2 py-1 bg-red-600 text-white font-bold text-[9px] uppercase tracking-wider rounded">ACTIVE SPLIT</span>
+              ` : `
+                <button onclick="selectProgramTemplate('${prog.id}')" class="px-3 py-1.5 bg-[#ff0033] hover:bg-red-600 text-white font-bold text-[10px] uppercase rounded transition-all shadow">
+                  ACTIVATE
+                </button>
+              `}
+            </div>
+
+            <p class="text-[11px] text-zinc-400 leading-relaxed">${prog.tagline}</p>
+
+            <div class="p-2.5 bg-white/[0.02] border border-white/5 rounded text-[10px] text-zinc-300 space-y-1">
+              <span class="text-[9px] font-bold text-zinc-500 uppercase block">Weekly Split Breakdown:</span>
+              <div class="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                ${prog.schedule.map(s => `
+                  <div><strong class="text-white">${s.dayKey}:</strong> <span class="text-zinc-400">${s.title}</span></div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectProgramTemplate(progId) {
+      window.fit24Store.applyProgramTemplate(currentSelectedMemberId, progId);
+      closeProgramSelectionModal();
+      playAudioChime();
+      alert("✅ Routine Activated! Your weekly 7-day timeline has been populated.");
+      loadMember(currentSelectedMemberId);
+    }
+
+    // --- AUTOMATED CALORIE & MACRO CALCULATOR ---
+    function openSmartNutritionCalcModal() {
+      const modal = document.getElementById("smart-nutrition-calc-modal");
+      if (!modal) return;
+      modal.classList.remove("hidden");
+    }
+
+    function closeSmartNutritionCalcModal() {
+      document.getElementById("smart-nutrition-calc-modal")?.classList.add("hidden");
+    }
+
+    function handleSmartNutritionCalcSubmit(e) {
+      e.preventDefault();
+      const weight = parseFloat(document.getElementById("calc-weight")?.value) || 72;
+      const gender = document.querySelector('input[name="calc-gender"]:checked')?.value || "Male";
+      const goal = document.getElementById("calc-goal")?.value || "fat_loss";
+
+      const updated = window.fit24Store.calculateGenericDietTargets(currentSelectedMemberId, {
+        weightKg: weight,
+        gender: gender,
+        goal: goal
+      });
+
+      closeSmartNutritionCalcModal();
+      playAudioChime();
+      if (updated && updated.dietTargets) {
+        alert(`✅ Calculated! Target: ${updated.dietTargets.calories} kcal/day (${updated.dietTargets.proteinGrams}g Protein, ${updated.dietTargets.carbsGrams}g Carbs, ${updated.dietTargets.fatsGrams}g Fats).`);
+      }
+      loadMember(currentSelectedMemberId);
+    }
+
+    // --- 1-ON-1 PT UPGRADE REQUEST ---
+    function openRequestPTModal() {
+      const modal = document.getElementById("request-pt-modal");
+      if (!modal) return;
+      modal.classList.remove("hidden");
+    }
+
+    function closeRequestPTModal() {
+      document.getElementById("request-pt-modal")?.classList.add("hidden");
+    }
+
+    function handleRequestPTSubmit(e) {
+      e.preventDefault();
+      const focus = document.getElementById("pt-req-focus")?.value || "Goal Consultation";
+      const timeSlot = document.getElementById("pt-req-time")?.value || "Evening Prime";
+
+      const res = window.fit24Store.requestPTConsultation(currentSelectedMemberId, `${focus} (${timeSlot})`);
+      closeRequestPTModal();
+      playAudioChime();
+      alert(`✅ Consultation Request Transmitted! Club desk will contact you via WhatsApp to coordinate your free 1-on-1 assessment.`);
     }
 
     document.addEventListener("DOMContentLoaded", () => {

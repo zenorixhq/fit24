@@ -2184,6 +2184,7 @@ window.openMemberDossier = function(id) {
   const ptTotal = member.ptSessionsTotal || 0;
   const ptUsed = member.ptSessionsUsed || 0;
   const ptRem = ptTotal - ptUsed;
+  const hasTrainer = Boolean(member.assignedTrainerId && (ptTotal > 0));
   const biometrics = member.biometrics || [];
   const trainers = window.fit24Store.getTrainers() || [];
   const workoutPlan = member.workoutPlan;
@@ -2275,10 +2276,18 @@ window.openMemberDossier = function(id) {
               <div>
                 <span class="text-zinc-400 block">🥊 Personal Training:</span>
                 <strong class="text-red-400">${ptRem} / ${ptTotal} Sessions</strong>
+                <span class="text-[9px] ${hasTrainer ? 'text-emerald-400' : 'text-amber-400'} block font-bold">${hasTrainer ? '● 1-on-1 PT Active' : '○ Self-Guided Floor Athlete'}</span>
               </div>
-              <button onclick="window.deductMemberPT('${member.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded">
-                -1 PT
-              </button>
+              <div class="flex items-center gap-1">
+                ${ptRem > 0 ? `
+                  <button onclick="window.deductMemberPT('${member.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded">
+                    -1 PT
+                  </button>
+                ` : ''}
+                <button onclick="window.addMemberPTSessions('${member.id}', 6)" class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-[10px] font-bold uppercase rounded" title="Add +6 PT Sessions">
+                  +6 PT
+                </button>
+              </div>
             </div>
             <div class="p-2 bg-white/5 border border-white/10 flex justify-between">
               <span class="text-zinc-400">☕ Café Wallet:</span>
@@ -2323,12 +2332,14 @@ window.openMemberDossier = function(id) {
             <h4 class="text-lg font-gymbox text-white uppercase">${workoutPlan ? workoutPlan.title : 'NO WORKOUT PLAN PRESCRIBED'}</h4>
             <div class="text-[10px] text-zinc-400">${workoutPlan ? workoutPlan.phase : 'Assign a split preset below'}</div>
           </div>
-          <!-- Presets -->
-          <div class="flex flex-wrap gap-1">
-            <button onclick="window.applyWorkoutPreset('${member.id}', 'STRENGTH')" class="px-2 py-1 bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[10px] font-bold uppercase border border-red-500/40">⚡ Strength</button>
-            <button onclick="window.applyWorkoutPreset('${member.id}', 'COMBAT')" class="px-2 py-1 bg-amber-600/30 hover:bg-amber-600 text-amber-300 hover:text-white text-[10px] font-bold uppercase border border-amber-500/40">🥊 Combat</button>
-            <button onclick="window.applyWorkoutPreset('${member.id}', 'LADIES')" class="px-2 py-1 bg-pink-600/30 hover:bg-pink-600 text-pink-300 hover:text-white text-[10px] font-bold uppercase border border-pink-500/40">🌸 Ladies</button>
-            <button onclick="window.applyWorkoutPreset('${member.id}', 'REHAB')" class="px-2 py-1 bg-cyan-600/30 hover:bg-cyan-600 text-cyan-300 hover:text-white text-[10px] font-bold uppercase border border-cyan-500/40">🩺 Rehab</button>
+          <!-- Presets & Standard Templates -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-[9px] text-zinc-500 uppercase font-mono mr-0.5">Programs:</span>
+            <button onclick="window.applyStandardProgram('${member.id}', 'ppl-6day')" class="px-2 py-1 bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[10px] font-bold uppercase border border-red-500/40" title="Push / Pull / Legs Hypertrophy">⚡ PPL (6-Day)</button>
+            <button onclick="window.applyStandardProgram('${member.id}', 'upper-lower-4day')" class="px-2 py-1 bg-cyan-600/30 hover:bg-cyan-600 text-cyan-300 hover:text-white text-[10px] font-bold uppercase border border-cyan-500/40" title="Upper / Lower Powerbuilding">🏋️ Upper/Lower (4-Day)</button>
+            <button onclick="window.applyStandardProgram('${member.id}', 'fullbody-3day')" class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-[10px] font-bold uppercase border border-emerald-500/40" title="Full Body Strength">🧱 Full Body (3-Day)</button>
+            <button onclick="window.applyStandardProgram('${member.id}', 'fat-shred-5day')" class="px-2 py-1 bg-amber-600/30 hover:bg-amber-600 text-amber-300 hover:text-white text-[10px] font-bold uppercase border border-amber-500/40" title="Metabolic HIIT & Conditioning">🔥 Fat Shred (5-Day)</button>
+            <button onclick="window.applyStandardProgram('${member.id}', 'ladies-sculpt-4day')" class="px-2 py-1 bg-pink-600/30 hover:bg-pink-600 text-pink-300 hover:text-white text-[10px] font-bold uppercase border border-pink-500/40" title="Ladies Sculpt & Tone">🌸 Ladies Sculpt (4-Day)</button>
           </div>
         </div>
 
@@ -3079,4 +3090,27 @@ window.saveTrainerDayWorkout = function(memberId, dayKey) {
     alert("Could not update workout split. Please check the member details.");
   }
 };
+
+window.addMemberPTSessions = function(memberId, count = 6) {
+  if (!window.fit24Store || !window.fit24Store.addPTSessions) return;
+  const res = window.fit24Store.addPTSessions(memberId, count);
+  if (!res || !res.success) {
+    alert(res?.message || "Failed to add PT sessions.");
+    return;
+  }
+  alert(`🥊 Added +${count} PT Sessions! Total package: ${res.newTotal} sessions (${res.remaining} remaining).`);
+  window.openMemberDossier(memberId);
+  renderAllData();
+};
+
+window.applyStandardProgram = function(memberId, programId) {
+  if (!window.fit24Store || !window.fit24Store.applyProgramTemplate) return;
+  const member = window.fit24Store.applyProgramTemplate(memberId, programId);
+  if (member) {
+    alert(`📋 Routine Blueprint applied: "${member.workoutPlan?.title || programId}"`);
+    window.openMemberDossier(memberId);
+    renderAllData();
+  }
+};
+
 

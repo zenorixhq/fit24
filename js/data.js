@@ -768,6 +768,216 @@ const FIT24_DATA = {
       pauseHistory: [],
       lastCheckIn: "2026-10-24T06:30:00",
       totalVisits: 22
+    },
+    {
+      id: "F24-1006",
+      name: "Kavya Suresh",
+      phone: "+91 98475 44332",
+      email: "kavya.s@gmail.com",
+      gender: "Female",
+      tier: "PRO",
+      durationMonths: 12,
+      startDate: "2026-10-18",
+      endDate: "2027-10-18",
+      status: "ACTIVE",
+      amountPaid: 19999,
+      assignedTrainerId: null, // Self-Guided Athlete (No personal trainer)
+      ptSessionsTotal: 0,
+      ptSessionsUsed: 0,
+      activeProgramId: "ladies-sculpt-4day",
+      workoutPlan: {
+        title: "Ladies Sculpt & Glute Focus",
+        phase: "Phase 1: Glute & Posterior Chain Tone",
+        dietTargets: { calories: 1850, proteinGrams: 125, carbsGrams: 190, fatsGrams: 48, waterLiters: 3.5 },
+        split: [
+          { day: "Mon", title: "Glute & Posterior Chain", exercises: "Barbell Hip Thrusts 4x10, Romanian Deadlifts 3x10, Cable Kickbacks 3x15", notes: "Full lock at top of thrust" },
+          { day: "Tue", title: "Upper Body Tone & Core", exercises: "DB Overhead Press 3x10, Lat Pulldowns 3x12, Push-ups 3x10, Lateral Raises 3x15", notes: "Controlled tempo" },
+          { day: "Thu", title: "Quad & Glute Hypertrophy", exercises: "Bulgarian Split Squats 3x10, Leg Press 4x12, Goblet Squats 3x12", notes: "Drive through heels" },
+          { day: "Fri", title: "Core & Metabolic Circuit", exercises: "Planks 3x45s, KB Swings 4x15, Jump Rope 500 skips", notes: "High heart rate finish" }
+        ]
+      },
+      dailyHabits: {
+        caloriesBurntTarget: 500,
+        caloriesBurntDone: 420,
+        stepsTarget: 10000,
+        stepsDone: 9100,
+        waterDone: 3.2,
+        sleepHours: 7.5,
+        sleepDone: true,
+        proteinDone: true
+      },
+      calorieIntakeHistory: [
+        { day: "Mon", date: "2026-10-19", intakeKcal: 1820, burntKcal: 510, targetKcal: 1850, proteinGrams: 124, carbsGrams: 185, fatsGrams: 46 },
+        { day: "Tue", date: "2026-10-20", intakeKcal: 1860, burntKcal: 480, targetKcal: 1850, proteinGrams: 128, carbsGrams: 190, fatsGrams: 48 },
+        { day: "Wed", date: "2026-10-21", intakeKcal: 1790, burntKcal: 440, targetKcal: 1850, proteinGrams: 120, carbsGrams: 180, fatsGrams: 45 },
+        { day: "Thu", date: "2026-10-22", intakeKcal: 1840, burntKcal: 530, targetKcal: 1850, proteinGrams: 125, carbsGrams: 188, fatsGrams: 47 },
+        { day: "Fri", date: "2026-10-23", intakeKcal: 1880, burntKcal: 550, targetKcal: 1850, proteinGrams: 130, carbsGrams: 192, fatsGrams: 49 },
+        { day: "Sat", date: "2026-10-24", intakeKcal: 1810, burntKcal: 420, targetKcal: 1850, proteinGrams: 122, carbsGrams: 184, fatsGrams: 46 },
+        { day: "Sun", date: "2026-10-25", intakeKcal: 1780, burntKcal: 390, targetKcal: 1850, proteinGrams: 118, carbsGrams: 178, fatsGrams: 44 }
+      ],
+      todayMeals: [
+        { time: "08:30 AM", name: "Avocado Toast & Egg Whites (25g Protein)", kcal: 420, protein: 28 },
+        { time: "01:00 PM", name: "Grilled Paneer & Quinoa Salad Bowl", kcal: 540, protein: 35 },
+        { time: "05:00 PM", name: "Whey Isolate Shake & Green Apple", kcal: 220, protein: 26 },
+        { time: "08:00 PM", name: "Stir-fried Tofu & Steamed Broccoli", kcal: 480, protein: 32 }
+      ],
+      dayByDaySchedule: [
+        {
+          dayKey: "Mon",
+          dayName: "Monday",
+          status: "completed",
+          title: "Glute & Posterior Chain Tone",
+          completedDate: "2026-10-19",
+          totalVolumeKg: 7800,
+          durationMins: 55,
+          coachCue: "Full glute lock at top of hip thrusts. 2-sec pause.",
+          exercises: [
+            { name: "Barbell Hip Thrusts", sets: "4x10", targetWeight: "60kg", actualBest: "60kg × 10", completed: true },
+            { name: "Romanian Deadlifts (RDL)", sets: "3x10", targetWeight: "50kg", actualBest: "50kg × 10", completed: true },
+            { name: "Cable Glute Kickbacks", sets: "3x15/leg", targetWeight: "15kg", actualBest: "15kg × 15", completed: true }
+          ],
+          coachFeedback: "Self-Guided Audit: Outstanding form and tempo adherence."
+        },
+        {
+          dayKey: "Tue",
+          dayName: "Tuesday",
+          status: "completed",
+          title: "Upper Body Tone & Core Stability",
+          completedDate: "2026-10-20",
+          totalVolumeKg: 5200,
+          durationMins: 50,
+          coachCue: "Keep ribs down on overhead press. Strict lat pulldown retraction.",
+          exercises: [
+            { name: "Dumbbell Overhead Press", sets: "3x10", targetWeight: "12kg DBs", actualBest: "12kg × 10", completed: true },
+            { name: "Wide-Grip Lat Pulldowns", sets: "3x12", targetWeight: "40kg", actualBest: "40kg × 12", completed: true },
+            { name: "Push-ups (Elevated/Floor)", sets: "3x12", targetWeight: "BW", actualBest: "BW × 12", completed: true }
+          ],
+          coachFeedback: "Self-Guided Audit: +2.5kg PR hit on lat pulldowns!"
+        },
+        {
+          dayKey: "Wed",
+          dayName: "Wednesday",
+          status: "completed",
+          title: "Active Recovery & 10k Steps",
+          completedDate: "2026-10-21",
+          totalVolumeKg: 0,
+          durationMins: 40,
+          coachCue: "Low-intensity walking, foam rolling, infrared sauna.",
+          exercises: [
+            { name: "Outdoor Incline Walk", sets: "40 min", targetWeight: "10,000 steps", actualBest: "10,240 steps", completed: true },
+            { name: "Dry Sauna Thermal Recovery", sets: "1x15 min", targetWeight: "80°C", actualBest: "15 min", completed: true }
+          ],
+          coachFeedback: "Recovery session logged."
+        },
+        {
+          dayKey: "Thu",
+          dayName: "Thursday",
+          status: "today",
+          title: "Quad & Glute Hypertrophy",
+          completedDate: null,
+          totalVolumeKg: 8400,
+          durationMins: 55,
+          coachCue: "Drive through midfoot, knees in line with second toe. Rest 75s between sets.",
+          exercises: [
+            { name: "Bulgarian Split Squats", sets: "3x10/leg", targetWeight: "14kg DBs", previousBest: "12kg × 10", tempo: "2-0-1-0", restSeconds: 75, completed: false },
+            { name: "45° Leg Press", sets: "4x12", targetWeight: "120kg", previousBest: "110kg × 12", tempo: "3-0-1-0", restSeconds: 90, completed: false },
+            { name: "Goblet Squats", sets: "3x12", targetWeight: "20kg KB", previousBest: "18kg × 12", tempo: "2-0-1-0", restSeconds: 60, completed: false }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Fri",
+          dayName: "Friday",
+          status: "upcoming",
+          title: "Core, Sculpt & HIIT Circuit",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "Fast pace, 45 seconds rest between circuit rounds.",
+          exercises: [
+            { name: "Kettlebell Swings", sets: "4x15", targetWeight: "16kg", tempo: "Explosive", restSeconds: 45 },
+            { name: "Plank to Push-up Walkouts", sets: "3x10", targetWeight: "Bodyweight", tempo: "Controlled", restSeconds: 45 },
+            { name: "Jump Rope Double-unders/Skips", sets: "4x100", targetWeight: "Speed", tempo: "Continuous", restSeconds: 60 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sat",
+          dayName: "Saturday",
+          status: "upcoming",
+          title: "Mobility & Sub-Zero Contrast Plunge",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 40,
+          coachCue: "Full body foam roll followed by 4°C ice bath contrast session.",
+          exercises: [
+            { name: "Thoracic Spine Mobility", sets: "15 min", targetWeight: "Bodyweight", tempo: "Flow", restSeconds: 0 },
+            { name: "Ice Bath Plunge", sets: "1x3 min", targetWeight: "4°C", tempo: "Passive", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sun",
+          dayName: "Sunday",
+          status: "upcoming",
+          title: "Sunday Self-Guided Review & Goal Setting",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 20,
+          coachCue: "Submit 5-min Sunday check-in. The system will audit adherence and update next week's progressive overload.",
+          exercises: [
+            { name: "Guided 5-Min Sunday Check-In", sets: "1 review", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        }
+      ],
+      parq: {
+        heartCondition: false,
+        chestPain: false,
+        dizziness: false,
+        boneOrJoint: false,
+        medications: false,
+        fitnessGoal: "Toning, glute strength & healthy metabolic lifestyle",
+        dietaryRestrictions: "Vegetarian",
+        signedDate: "2026-10-18"
+      },
+      circumferences: {
+        waistCm: 68.0,
+        chestCm: 88.0,
+        armsCm: 26.5,
+        thighsCm: 53.0
+      },
+      weeklyCheckIns: [
+        {
+          date: "2026-10-25",
+          energyRating: 4,
+          stressRating: 2,
+          adherencePct: 94,
+          wins: "Completed all 4 workout splits independently and hit 10k steps 6 out of 7 days!",
+          coachQuestion: "Should I increase hip thrusts to 65kg next week?",
+          coachFeedback: "[FIT24 System Audit: Peak Discipline] Phenomenal progress! You logged 94% adherence with 4/4 sessions completed. System recommendation: Increase hip thrusts to 65kg for 4x8 to drive progressive overload."
+        }
+      ],
+      loggedWorkoutSets: [
+        { date: "2026-10-20", exercise: "Barbell Hip Thrusts", setNumber: 1, weightKg: 55, reps: 10 },
+        { date: "2026-10-20", exercise: "Barbell Hip Thrusts", setNumber: 2, weightKg: 60, reps: 10 }
+      ],
+      saunaTotal: 0,
+      saunaUsed: 0,
+      iceBathTotal: 0,
+      iceBathUsed: 0,
+      guestPassesTotal: 1,
+      guestPassesUsed: 0,
+      cafeCredit: 150,
+      cafeDiscount: 0,
+      snookerDiscount: 0,
+      totalPauseAllowed: 45,
+      pauseDaysUsed: 0,
+      pauseBlocksUsed: 0,
+      isPaused: false,
+      pauseHistory: [],
+      lastCheckIn: "2026-10-24T09:00:00",
+      totalVisits: 11
     }
   ],
 
@@ -1014,132 +1224,634 @@ function defaultTodayMeals() {
   ];
 }
 
-function defaultDayByDaySchedule() {
+function getStandardWorkoutPrograms() {
   return [
     {
-      dayKey: "Mon",
-      dayName: "Monday",
-      status: "completed",
-      title: "Heavy Push & Chest Hypertrophy",
-      completedDate: "2026-10-19",
-      totalVolumeKg: 14200,
-      durationMins: 65,
-      coachCue: "Focus on 2-sec eccentric pause on bench. Squeeze pecs at lockout.",
-      exercises: [
-        { name: "Incline DB Press", sets: "4x8", targetWeight: "32kg", actualBest: "32kg × 8", completed: true },
-        { name: "Barbell Bench Press", sets: "4x6", targetWeight: "100kg", actualBest: "100kg × 6 🏆 PR", completed: true },
-        { name: "Weighted Dips", sets: "3x10", targetWeight: "BW+15kg", actualBest: "BW+15kg × 10", completed: true },
-        { name: "DB Lateral Raises", sets: "4x15", targetWeight: "12kg", actualBest: "12kg × 15", completed: true }
-      ],
-      coachFeedback: "Bench bar path was laser straight. Added +2.5kg to 1RM calculation."
+      id: "ppl-6day",
+      title: "Push / Pull / Legs (PPL) Hypertrophy",
+      tagline: "The gold-standard 6-day split for maximum mass and aesthetic symmetry",
+      daysPerWeek: 6,
+      difficulty: "Intermediate",
+      goal: "Muscle Hypertrophy & Compound Mass",
+      dietTargets: { calories: 2400, proteinGrams: 165, carbsGrams: 245, fatsGrams: 65, waterLiters: 4.0 },
+      schedule: [
+        {
+          dayKey: "Mon",
+          dayName: "Monday",
+          status: "completed",
+          title: "Heavy Push & Chest Hypertrophy",
+          completedDate: "2026-10-19",
+          totalVolumeKg: 14200,
+          durationMins: 65,
+          coachCue: "Focus on 2-sec eccentric pause on bench. Squeeze pecs at lockout.",
+          exercises: [
+            { name: "Incline DB Press", sets: "4x8", targetWeight: "32kg", actualBest: "32kg × 8", completed: true },
+            { name: "Barbell Bench Press", sets: "4x6", targetWeight: "100kg", actualBest: "100kg × 6 🏆 PR", completed: true },
+            { name: "Weighted Dips", sets: "3x10", targetWeight: "BW+15kg", actualBest: "BW+15kg × 10", completed: true },
+            { name: "DB Lateral Raises", sets: "4x15", targetWeight: "12kg", actualBest: "12kg × 15", completed: true }
+          ],
+          coachFeedback: "Bench bar path was laser straight. Added +2.5kg to 1RM calculation."
+        },
+        {
+          dayKey: "Tue",
+          dayName: "Tuesday",
+          status: "completed",
+          title: "Back & Pull Engine (Width & Lats)",
+          completedDate: "2026-10-20",
+          totalVolumeKg: 16400,
+          durationMins: 70,
+          coachCue: "Maintain neutral spine on deadlifts. Retract scapula on lat pulldowns.",
+          exercises: [
+            { name: "Conventional Deadlifts", sets: "4x5", targetWeight: "140kg", actualBest: "140kg × 5", completed: true },
+            { name: "Lat Pulldowns", sets: "4x10", targetWeight: "75kg", actualBest: "75kg × 10", completed: true },
+            { name: "Chest Supported Rows", sets: "3x10", targetWeight: "30kg", actualBest: "30kg × 10", completed: true },
+            { name: "Facepulls", sets: "3x15", targetWeight: "25kg", actualBest: "25kg × 15", completed: true }
+          ],
+          coachFeedback: "Strong pull. Next week we attempt 145kg deadlift for 5 reps."
+        },
+        {
+          dayKey: "Wed",
+          dayName: "Wednesday",
+          status: "completed",
+          title: "Lower Body Power & Squats",
+          completedDate: "2026-10-21",
+          totalVolumeKg: 12600,
+          durationMins: 60,
+          coachCue: "Knees tracking over toes, explosive ascent out of the hole. Rest 90s.",
+          exercises: [
+            { name: "Barbell Back Squats", sets: "4x8", targetWeight: "105kg", actualBest: "105kg × 8", completed: true },
+            { name: "Romanian Deadlifts (RDL)", sets: "3x10", targetWeight: "90kg", actualBest: "90kg × 10", completed: true },
+            { name: "Bulgarian Split Squats", sets: "3x10/leg", targetWeight: "20kg DBs", actualBest: "20kg × 10", completed: true },
+            { name: "Standing Calf Raises", sets: "4x15", targetWeight: "70kg", actualBest: "70kg × 15", completed: true }
+          ],
+          coachFeedback: "Depth on squats reached parallel. Good knee tracking."
+        },
+        {
+          dayKey: "Thu",
+          dayName: "Thursday",
+          status: "today",
+          title: "Push 2: Incline & Shoulder Overload",
+          completedDate: null,
+          totalVolumeKg: 11800,
+          durationMins: 60,
+          coachCue: "Tuck elbows at 45 degrees. Explosive triceps extension.",
+          exercises: [
+            { name: "Incline Barbell Press", sets: "4x8", targetWeight: "80kg", previousBest: "75kg × 8", tempo: "3-0-1-0", restSeconds: 90, completed: false },
+            { name: "Seated DB Shoulder Press", sets: "4x10", targetWeight: "26kg DBs", previousBest: "24kg × 10", tempo: "2-0-1-0", restSeconds: 75, completed: false },
+            { name: "Cable Chest Flyes", sets: "3x12", targetWeight: "18kg", previousBest: "16kg × 12", tempo: "2-1-1-1", restSeconds: 60, completed: false },
+            { name: "Overhead Rope Triceps Extension", sets: "4x12", targetWeight: "25kg", previousBest: "22kg × 12", tempo: "2-0-1-0", restSeconds: 60, completed: false }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Fri",
+          dayName: "Friday",
+          status: "upcoming",
+          title: "Pull 2: Upper Back Density & Biceps",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 60,
+          coachCue: "Focus on mind-muscle connection. Drop sets on final arm exercise.",
+          exercises: [
+            { name: "Barbell Pendlay Rows", sets: "4x8", targetWeight: "80kg", tempo: "3-0-1-0", restSeconds: 90 },
+            { name: "Neutral Grip Pull-ups", sets: "3x10", targetWeight: "BW", tempo: "2-0-1-0", restSeconds: 75 },
+            { name: "Incline Dumbbell Bicep Curls", sets: "4x12", targetWeight: "14kg", tempo: "2-1-1-0", restSeconds: 60 },
+            { name: "Hammer Curls", sets: "3x12", targetWeight: "16kg", tempo: "2-0-1-0", restSeconds: 60 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sat",
+          dayName: "Saturday",
+          status: "upcoming",
+          title: "Legs 2: Posterior Chain & Hamstrings",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 55,
+          coachCue: "Control eccentric phase on RDLs. Squeeze hamstrings at top.",
+          exercises: [
+            { name: "Front Squats / Hack Squats", sets: "4x8", targetWeight: "85kg", tempo: "3-0-1-0", restSeconds: 90 },
+            { name: "Lying Leg Curls", sets: "4x12", targetWeight: "45kg", tempo: "2-0-1-0", restSeconds: 60 },
+            { name: "Walking DB Lunges", sets: "3x20 paces", targetWeight: "20kg DBs", tempo: "Steady", restSeconds: 60 },
+            { name: "Seated Calf Raises", sets: "4x15", targetWeight: "50kg", tempo: "2-1-1-1", restSeconds: 45 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sun",
+          dayName: "Sunday",
+          status: "upcoming",
+          title: "Active Recovery & Mobility Reset",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "Decompress spine, thoracic foam rolling, submit 5-minute Sunday Check-in on app.",
+          exercises: [
+            { name: "Full Body Foam Rolling", sets: "15 min", targetWeight: "Bodyweight", tempo: "Slow", restSeconds: 0 },
+            { name: "Thoracic & Hip Mobility Flow", sets: "20 min", targetWeight: "Bodyweight", tempo: "Static/Dynamic", restSeconds: 0 },
+            { name: "Guided 5-Min Sunday Check-In", sets: "1 submission", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        }
+      ]
     },
     {
-      dayKey: "Tue",
-      dayName: "Tuesday",
-      status: "completed",
-      title: "Conditioning & Core Engine",
-      completedDate: "2026-10-20",
-      totalVolumeKg: 6800,
-      durationMins: 50,
-      coachCue: "Assault bike intervals at 85% max HR. Keep core tight on carries.",
-      exercises: [
-        { name: "Farmer's Walk", sets: "4x50m", targetWeight: "32kg each", actualBest: "32kg × 50m", completed: true },
-        { name: "Hanging Leg Raises", sets: "3x15", targetWeight: "BW", actualBest: "BW × 15", completed: true },
-        { name: "Assault Bike Intervals", sets: "10x30s", targetWeight: "Zone 4", actualBest: "350 kcal burnt", completed: true }
-      ],
-      coachFeedback: "Heart rate recovery between intervals improved by 12 seconds."
+      id: "upper-lower-4day",
+      title: "Upper / Lower Powerbuilding Split",
+      tagline: "4-day split alternating heavy compound power with maximum rest",
+      daysPerWeek: 4,
+      difficulty: "All Levels",
+      goal: "Compound Strength, Joint Longevity & Dense Muscle",
+      dietTargets: { calories: 2250, proteinGrams: 155, carbsGrams: 230, fatsGrams: 60, waterLiters: 3.5 },
+      schedule: [
+        {
+          dayKey: "Mon",
+          dayName: "Monday",
+          status: "completed",
+          title: "Upper Body Power & Compounds",
+          completedDate: "2026-10-19",
+          totalVolumeKg: 13500,
+          durationMins: 60,
+          coachCue: "Drive feet into floor on bench press. Neutral head on barbell rows.",
+          exercises: [
+            { name: "Barbell Bench Press", sets: "4x6", targetWeight: "95kg", actualBest: "95kg × 6", completed: true },
+            { name: "Barbell Bent-Over Rows", sets: "4x8", targetWeight: "80kg", actualBest: "80kg × 8", completed: true },
+            { name: "Standing Barbell OHP", sets: "3x8", targetWeight: "50kg", actualBest: "50kg × 8", completed: true },
+            { name: "Weighted Pull-ups", sets: "3x8", targetWeight: "BW+10kg", actualBest: "BW+10kg × 8", completed: true }
+          ],
+          coachFeedback: "Clean bar control. Keep tight upper back tightness."
+        },
+        {
+          dayKey: "Tue",
+          dayName: "Tuesday",
+          status: "completed",
+          title: "Lower Body Power & Squats",
+          completedDate: "2026-10-20",
+          totalVolumeKg: 14800,
+          durationMins: 65,
+          coachCue: "Deep breath and brace core before descent on squats.",
+          exercises: [
+            { name: "Barbell Back Squats", sets: "4x6", targetWeight: "110kg", actualBest: "110kg × 6", completed: true },
+            { name: "Romanian Deadlifts", sets: "4x8", targetWeight: "95kg", actualBest: "95kg × 8", completed: true },
+            { name: "Leg Press 45°", sets: "3x10", targetWeight: "180kg", actualBest: "180kg × 10", completed: true },
+            { name: "Standing Calf Machine", sets: "4x15", targetWeight: "80kg", actualBest: "80kg × 15", completed: true }
+          ],
+          coachFeedback: "Squat depth consistent on all 4 working sets."
+        },
+        {
+          dayKey: "Wed",
+          dayName: "Wednesday",
+          status: "completed",
+          title: "Active Recovery & Thermal Flush",
+          completedDate: "2026-10-21",
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "Zone 2 steady-state cardio, dry sauna 85°C recovery flush.",
+          exercises: [
+            { name: "Assault Bike Zone 2", sets: "30 min", targetWeight: "Zone 2", actualBest: "30 min", completed: true },
+            { name: "Dry Infrared Sauna", sets: "1x15 min", targetWeight: "85°C", actualBest: "15 min", completed: true }
+          ],
+          coachFeedback: "Cardio recovery completed."
+        },
+        {
+          dayKey: "Thu",
+          dayName: "Thursday",
+          status: "today",
+          title: "Upper Body Hypertrophy & Arms",
+          completedDate: null,
+          totalVolumeKg: 11200,
+          durationMins: 60,
+          coachCue: "Full range of motion. Rest 75s between hypertrophy sets.",
+          exercises: [
+            { name: "Incline DB Press", sets: "4x10", targetWeight: "30kg DBs", previousBest: "28kg × 10", tempo: "3-0-1-0", restSeconds: 75, completed: false },
+            { name: "Seated Cable Rows", sets: "4x10", targetWeight: "70kg", previousBest: "65kg × 10", tempo: "2-1-1-0", restSeconds: 75, completed: false },
+            { name: "DB Lateral Raises", sets: "4x15", targetWeight: "12kg", previousBest: "10kg × 15", tempo: "2-0-1-1", restSeconds: 60, completed: false },
+            { name: "Dips / Tricep Pushdowns", sets: "3x12", targetWeight: "BW+10kg", previousBest: "BW × 12", tempo: "2-0-1-0", restSeconds: 60, completed: false }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Fri",
+          dayName: "Friday",
+          status: "upcoming",
+          title: "Lower Body Hypertrophy & Hinge",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 60,
+          coachCue: "Control lowering phase on Bulgarian split squats.",
+          exercises: [
+            { name: "Front Squats", sets: "4x8", targetWeight: "75kg", tempo: "3-0-1-0", restSeconds: 90 },
+            { name: "Bulgarian Split Squats", sets: "3x10/leg", targetWeight: "20kg DBs", tempo: "2-0-1-0", restSeconds: 75 },
+            { name: "Lying Hamstring Curls", sets: "4x12", targetWeight: "40kg", tempo: "2-0-1-1", restSeconds: 60 },
+            { name: "Walking DB Lunges", sets: "3x16 paces", targetWeight: "18kg DBs", tempo: "Controlled", restSeconds: 60 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sat",
+          dayName: "Saturday",
+          status: "upcoming",
+          title: "Conditioning, Core & Sauna",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "High cadence, keep core tight on heavy carries.",
+          exercises: [
+            { name: "Heavy Trap Bar Farmer's Walk", sets: "4x40m", targetWeight: "80kg", tempo: "Continuous", restSeconds: 90 },
+            { name: "Hanging Leg Raises", sets: "4x12", targetWeight: "Bodyweight", tempo: "Controlled", restSeconds: 60 },
+            { name: "Sub-Zero Ice Bath Plunge", sets: "1x3 min", targetWeight: "4°C", tempo: "Cold Shock", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sun",
+          dayName: "Sunday",
+          status: "upcoming",
+          title: "Sunday Rest & Nutrition Reflection",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 20,
+          coachCue: "Weekly reflection and self-guided progressive overload check-in.",
+          exercises: [
+            { name: "Guided 5-Min Sunday Check-In", sets: "1 review", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        }
+      ]
     },
     {
-      dayKey: "Wed",
-      dayName: "Wednesday",
-      status: "completed",
-      title: "Back & Pull Engine",
-      completedDate: "2026-10-21",
-      totalVolumeKg: 16400,
-      durationMins: 70,
-      coachCue: "Maintain neutral spine on deadlifts. Retract scapula on lat pulldowns.",
-      exercises: [
-        { name: "Conventional Deadlifts", sets: "4x5", targetWeight: "140kg", actualBest: "140kg × 5", completed: true },
-        { name: "Lat Pulldowns", sets: "4x10", targetWeight: "75kg", actualBest: "75kg × 10", completed: true },
-        { name: "Chest Supported Rows", sets: "3x10", targetWeight: "30kg", actualBest: "30kg × 10", completed: true },
-        { name: "Facepulls", sets: "3x15", targetWeight: "25kg", actualBest: "25kg × 15", completed: true }
-      ],
-      coachFeedback: "Strong pull. Next week we attempt 145kg deadlift for 5 reps."
+      id: "full-body-3day",
+      title: "Full Body Functional Strength",
+      tagline: "3 high-impact sessions per week with maximum recovery between workouts",
+      daysPerWeek: 3,
+      difficulty: "Beginner to Intermediate",
+      goal: "General Fitness, Mobility & Time-Efficiency",
+      dietTargets: { calories: 2100, proteinGrams: 140, carbsGrams: 220, fatsGrams: 55, waterLiters: 3.5 },
+      schedule: [
+        {
+          dayKey: "Mon",
+          dayName: "Monday",
+          status: "completed",
+          title: "Full Body A: Squat & Horizontal Press",
+          completedDate: "2026-10-19",
+          totalVolumeKg: 11400,
+          durationMins: 55,
+          coachCue: "Solid bracing on squats. Chest up on rows.",
+          exercises: [
+            { name: "Barbell Back Squats", sets: "4x8", targetWeight: "90kg", actualBest: "90kg × 8", completed: true },
+            { name: "Barbell Bench Press", sets: "4x8", targetWeight: "80kg", actualBest: "80kg × 8", completed: true },
+            { name: "Lat Pulldowns", sets: "3x10", targetWeight: "60kg", actualBest: "60kg × 10", completed: true },
+            { name: "Plank Hold", sets: "3x60s", targetWeight: "BW", actualBest: "3x60s", completed: true }
+          ],
+          coachFeedback: "Strong start to the week."
+        },
+        {
+          dayKey: "Tue",
+          dayName: "Tuesday",
+          status: "completed",
+          title: "Active Recovery & 10k Steps",
+          completedDate: "2026-10-20",
+          totalVolumeKg: 0,
+          durationMins: 40,
+          coachCue: "Hit 10k steps and hydrate with 3.5L water.",
+          exercises: [
+            { name: "Outdoor Incline Walk", sets: "40 min", targetWeight: "10,000 steps", actualBest: "10,500 steps", completed: true }
+          ],
+          coachFeedback: "Steps target completed."
+        },
+        {
+          dayKey: "Wed",
+          dayName: "Wednesday",
+          status: "completed",
+          title: "Full Body B: Deadlift & Vertical Push",
+          completedDate: "2026-10-21",
+          totalVolumeKg: 12200,
+          durationMins: 55,
+          coachCue: "Drive floor away on deadlifts. Keep core rigid on OHP.",
+          exercises: [
+            { name: "Conventional Deadlifts", sets: "4x6", targetWeight: "120kg", actualBest: "120kg × 6", completed: true },
+            { name: "Standing DB Overhead Press", sets: "4x8", targetWeight: "22kg DBs", actualBest: "22kg × 8", completed: true },
+            { name: "Chest Supported Machine Rows", sets: "3x10", targetWeight: "50kg", actualBest: "50kg × 10", completed: true },
+            { name: "Hanging Knee Raises", sets: "3x15", targetWeight: "BW", actualBest: "BW × 15", completed: true }
+          ],
+          coachFeedback: "Deadlift form was crisp."
+        },
+        {
+          dayKey: "Thu",
+          dayName: "Thursday",
+          status: "today",
+          title: "Rest, Mobility & Sauna Flush",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 40,
+          coachCue: "15 min dry sauna (80°C) flush followed by thoracic spine mobility.",
+          exercises: [
+            { name: "Thoracic Mobility & Foam Rolling", sets: "20 min", targetWeight: "Bodyweight", tempo: "Flow", restSeconds: 0 },
+            { name: "FIT24 Dry Sauna Recovery", sets: "1x15 min", targetWeight: "80°C", tempo: "Thermal", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Fri",
+          dayName: "Friday",
+          status: "upcoming",
+          title: "Full Body C: Hinge, Incline & Pull-ups",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 55,
+          coachCue: "Explosive concentric phase on leg press. Squeeze pecs on incline.",
+          exercises: [
+            { name: "45° Leg Press", sets: "4x10", targetWeight: "160kg", tempo: "3-0-1-0", restSeconds: 90 },
+            { name: "Incline DB Bench Press", sets: "4x8", targetWeight: "28kg DBs", tempo: "3-0-1-0", restSeconds: 75 },
+            { name: "Pull-ups / Chin-ups", sets: "3x8", targetWeight: "Bodyweight", tempo: "2-0-1-0", restSeconds: 75 },
+            { name: "Barbell Bicep Curls + Dips Superset", sets: "3x12", targetWeight: "25kg / BW", tempo: "2-0-1-0", restSeconds: 60 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sat",
+          dayName: "Saturday",
+          status: "upcoming",
+          title: "Outdoor Cardio / Active Weekend",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "Enjoy outdoor sports or long brisk walk. Maintain 140g protein.",
+          exercises: [
+            { name: "Weekend Brisk Cardio Walk", sets: "45 min", targetWeight: "Zone 1-2", tempo: "Continuous", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sun",
+          dayName: "Sunday",
+          status: "upcoming",
+          title: "Weekly Check-In & Rest",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 20,
+          coachCue: "Submit 5-min weekly review to audit consistency.",
+          exercises: [
+            { name: "Guided 5-Min Sunday Check-In", sets: "1 review", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        }
+      ]
     },
     {
-      dayKey: "Thu",
-      dayName: "Thursday",
-      status: "today",
-      title: "Lower Body Power & Squats",
-      completedDate: null,
-      totalVolumeKg: 12600,
-      durationMins: 60,
-      coachCue: "Knees tracking over toes, explosive ascent out of the hole. Rest 90s between working sets.",
-      exercises: [
-        { name: "Barbell Back Squats", sets: "4x8", targetWeight: "105kg", previousBest: "100kg × 8", tempo: "3-0-1-0", restSeconds: 90, completed: false },
-        { name: "Romanian Deadlifts (RDL)", sets: "3x10", targetWeight: "90kg", previousBest: "85kg × 10", tempo: "3-1-1-0", restSeconds: 90, completed: false },
-        { name: "Bulgarian Split Squats", sets: "3x10/leg", targetWeight: "22kg DBs", previousBest: "20kg × 10", tempo: "2-0-1-0", restSeconds: 60, completed: false },
-        { name: "Standing Calf Raises", sets: "4x15", targetWeight: "70kg", previousBest: "65kg × 15", tempo: "2-1-1-1", restSeconds: 60, completed: false }
-      ],
-      coachFeedback: null
+      id: "fat-loss-conditioning-5day",
+      title: "Metabolic Fat Shred & Conditioning",
+      tagline: "High-cadence resistance circuits for accelerated fat burn and conditioning",
+      daysPerWeek: 5,
+      difficulty: "High Intensity",
+      goal: "Fat Loss, Calorie Burn & Heart Rate Capacity",
+      dietTargets: { calories: 1950, proteinGrams: 155, carbsGrams: 175, fatsGrams: 45, waterLiters: 4.0 },
+      schedule: [
+        {
+          dayKey: "Mon",
+          dayName: "Monday",
+          status: "completed",
+          title: "Upper Body Density Circuit",
+          completedDate: "2026-10-19",
+          totalVolumeKg: 8900,
+          durationMins: 45,
+          coachCue: "Minimal rest between circuit exercises. 60s rest between rounds.",
+          exercises: [
+            { name: "DB Push Press", sets: "4x12", targetWeight: "16kg DBs", actualBest: "16kg × 12", completed: true },
+            { name: "Push-ups to Renegade Row", sets: "4x10", targetWeight: "12kg DBs", actualBest: "12kg × 10", completed: true },
+            { name: "Kettlebell Swings", sets: "4x20", targetWeight: "20kg KB", actualBest: "20kg × 20", completed: true },
+            { name: "Assault Bike Sprint", sets: "4x30s", targetWeight: "Max Watts", actualBest: "350W", completed: true }
+          ],
+          coachFeedback: "Heart rate stayed elevated in Zone 4. Great metabolic push."
+        },
+        {
+          dayKey: "Tue",
+          dayName: "Tuesday",
+          status: "completed",
+          title: "Lower Body Calorie Burn & Core",
+          completedDate: "2026-10-20",
+          totalVolumeKg: 9400,
+          durationMins: 50,
+          coachCue: "Drive through heels on goblet squats. Fast tempo.",
+          exercises: [
+            { name: "Goblet Squats", sets: "4x15", targetWeight: "24kg KB", actualBest: "24kg × 15", completed: true },
+            { name: "Walking Dumbbell Lunges", sets: "4x20 steps", targetWeight: "14kg DBs", actualBest: "14kg × 20", completed: true },
+            { name: "Box Jumps / Step-ups", sets: "3x12", targetWeight: "24-inch", actualBest: "12 reps", completed: true },
+            { name: "Hanging Knee Tucks", sets: "3x15", targetWeight: "Bodyweight", actualBest: "15 reps", completed: true }
+          ],
+          coachFeedback: "Strong legs under fatigue."
+        },
+        {
+          dayKey: "Wed",
+          dayName: "Wednesday",
+          status: "completed",
+          title: "Assault Bike Intervals & Battle Ropes",
+          completedDate: "2026-10-21",
+          totalVolumeKg: 3500,
+          durationMins: 40,
+          coachCue: "High-cadence interval engine. Recover breathing between rounds.",
+          exercises: [
+            { name: "Assault Bike Intervals (Tabata)", sets: "8x20s/10s", targetWeight: "Zone 5", actualBest: "420 kcal", completed: true },
+            { name: "Battle Rope Waves & Slams", sets: "5x30s", targetWeight: "High Cadence", actualBest: "5 rounds", completed: true },
+            { name: "Plank Shoulder Taps", sets: "3x20", targetWeight: "BW", actualBest: "20 reps", completed: true }
+          ],
+          coachFeedback: "Cardio recovery time improved by 15%."
+        },
+        {
+          dayKey: "Thu",
+          dayName: "Thursday",
+          status: "today",
+          title: "Full Body Functional Conditioning",
+          completedDate: null,
+          totalVolumeKg: 8200,
+          durationMins: 45,
+          coachCue: "Keep core rigid on trap bar deadlifts. Pace burpees smoothly.",
+          exercises: [
+            { name: "Trap Bar Deadlifts", sets: "4x10", targetWeight: "100kg", previousBest: "95kg × 10", tempo: "2-0-1-0", restSeconds: 60, completed: false },
+            { name: "Single-Arm Dumbbell Snatches", sets: "4x8/arm", targetWeight: "16kg DB", previousBest: "14kg × 8", tempo: "Explosive", restSeconds: 45, completed: false },
+            { name: "Burpees to Target", sets: "4x10", targetWeight: "Speed", previousBest: "10 reps", tempo: "Continuous", restSeconds: 45, completed: false }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Fri",
+          dayName: "Friday",
+          status: "upcoming",
+          title: "Athletic Finisher & Rowing Flush",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "Maintain sub-2:00 / 500m split on the Concept2 row machine.",
+          exercises: [
+            { name: "Concept2 Rowing Intervals", sets: "5x500m", targetWeight: "Sub 2:00 split", tempo: "Race Pace", restSeconds: 60 },
+            { name: "Farmer's Carry Hold", sets: "4x40m", targetWeight: "28kg DBs each", tempo: "Steady", restSeconds: 60 },
+            { name: "Medicine Ball Slams", sets: "4x15", targetWeight: "10kg Ball", tempo: "Explosive", restSeconds: 45 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sat",
+          dayName: "Saturday",
+          status: "upcoming",
+          title: "Thermal Contrast Recovery (Sauna & Ice)",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 40,
+          coachCue: "3 rounds contrast: 12 min dry sauna (85°C) + 2 min ice plunge (4°C).",
+          exercises: [
+            { name: "Dry Sauna Thermal Session", sets: "2x12 min", targetWeight: "85°C", tempo: "Heat Shock", restSeconds: 180 },
+            { name: "Sub-Zero Contrast Plunge", sets: "2x2 min", targetWeight: "4°C", tempo: "Cryo Recovery", restSeconds: 180 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sun",
+          dayName: "Sunday",
+          status: "upcoming",
+          title: "Sunday Check-In & Calorie Audit",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 20,
+          coachCue: "Log weekly weight, submit wins and energy level for automatic audit.",
+          exercises: [
+            { name: "Guided 5-Min Sunday Check-In", sets: "1 review", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        }
+      ]
     },
     {
-      dayKey: "Fri",
-      dayName: "Friday",
-      status: "upcoming",
-      title: "Upper Body Hypertrophy & Arms",
-      completedDate: null,
-      totalVolumeKg: 0,
-      durationMins: 60,
-      coachCue: "Focus on mind-muscle connection. Drop sets on final arm exercises.",
-      exercises: [
-        { name: "Incline Barbell Press", sets: "4x8", targetWeight: "80kg", tempo: "3-0-1-0", restSeconds: 90 },
-        { name: "Seated Cable Rows", sets: "4x10", targetWeight: "70kg", tempo: "2-1-1-0", restSeconds: 75 },
-        { name: "Overhead Dumbbell Triceps Extension", sets: "3x12", targetWeight: "28kg", tempo: "2-0-1-0", restSeconds: 60 },
-        { name: "Incline Dumbbell Bicep Curls", sets: "3x12", targetWeight: "14kg", tempo: "2-1-1-0", restSeconds: 60 }
-      ],
-      coachFeedback: "Pack your elbow sleeves. We are testing a high-cadence superset."
-    },
-    {
-      dayKey: "Sat",
-      dayName: "Saturday",
-      status: "upcoming",
-      title: "Olympic Lifting & Combat Conditioning",
-      completedDate: null,
-      totalVolumeKg: 0,
-      durationMins: 55,
-      coachCue: "Triple extension on cleans. Heavy bag rounds with coach pads.",
-      exercises: [
-        { name: "Power Cleans", sets: "5x3", targetWeight: "70kg", tempo: "Explosive", restSeconds: 120 },
-        { name: "Kettlebell Snatches", sets: "4x10/arm", targetWeight: "20kg", tempo: "Continuous", restSeconds: 60 },
-        { name: "Boxing Heavy Bag Rounds", sets: "5x3 min", targetWeight: "High Cadence", tempo: "Combat", restSeconds: 60 },
-        { name: "Dry Sauna Thermal Recovery", sets: "1x15 min", targetWeight: "85°C", tempo: "Passive", restSeconds: 0 }
-      ],
-      coachFeedback: "Mouthguard and hand wraps required. Follow with 4°C ice plunge."
-    },
-    {
-      dayKey: "Sun",
-      dayName: "Sunday",
-      status: "upcoming",
-      title: "Active Recovery, Mobility & Weekly Check-In",
-      completedDate: null,
-      totalVolumeKg: 0,
-      durationMins: 45,
-      coachCue: "Decompress spine, thoracic foam rolling, submit 5-minute Sunday Check-in on app.",
-      exercises: [
-        { name: "Full Body Foam Rolling", sets: "15 min", targetWeight: "Bodyweight", tempo: "Slow", restSeconds: 0 },
-        { name: "Thoracic & Hip Mobility Flow", sets: "20 min", targetWeight: "Bodyweight", tempo: "Static/Dynamic", restSeconds: 0 },
-        { name: "Guided 5-Min Sunday Check-In", sets: "1 submission", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
-      ],
-      coachFeedback: "Submit wins and stress rating by 6:00 PM for Monday programming review."
+      id: "ladies-sculpt-4day",
+      title: "Ladies Sculpt & Glute Focus",
+      tagline: "Prioritizes glute hypertrophy, hamstring tone, and core stability",
+      daysPerWeek: 4,
+      difficulty: "All Levels",
+      goal: "Glute Hypertrophy, Postural Tone & Core Tightness",
+      dietTargets: { calories: 1850, proteinGrams: 125, carbsGrams: 190, fatsGrams: 48, waterLiters: 3.5 },
+      schedule: [
+        {
+          dayKey: "Mon",
+          dayName: "Monday",
+          status: "completed",
+          title: "Glute & Posterior Chain Tone",
+          completedDate: "2026-10-19",
+          totalVolumeKg: 7800,
+          durationMins: 55,
+          coachCue: "Full glute lock at top of hip thrusts. 2-sec pause.",
+          exercises: [
+            { name: "Barbell Hip Thrusts", sets: "4x10", targetWeight: "60kg", actualBest: "60kg × 10", completed: true },
+            { name: "Romanian Deadlifts (RDL)", sets: "3x10", targetWeight: "50kg", actualBest: "50kg × 10", completed: true },
+            { name: "Cable Glute Kickbacks", sets: "3x15/leg", targetWeight: "15kg", actualBest: "15kg × 15", completed: true }
+          ],
+          coachFeedback: "Self-Guided Audit: Outstanding form and tempo adherence."
+        },
+        {
+          dayKey: "Tue",
+          dayName: "Tuesday",
+          status: "completed",
+          title: "Upper Body Tone & Core Stability",
+          completedDate: "2026-10-20",
+          totalVolumeKg: 5200,
+          durationMins: 50,
+          coachCue: "Keep ribs down on overhead press. Strict lat pulldown retraction.",
+          exercises: [
+            { name: "Dumbbell Overhead Press", sets: "3x10", targetWeight: "12kg DBs", actualBest: "12kg × 10", completed: true },
+            { name: "Wide-Grip Lat Pulldowns", sets: "3x12", targetWeight: "40kg", actualBest: "40kg × 12", completed: true },
+            { name: "Push-ups (Elevated/Floor)", sets: "3x12", targetWeight: "BW", actualBest: "BW × 12", completed: true }
+          ],
+          coachFeedback: "Self-Guided Audit: +2.5kg PR hit on lat pulldowns!"
+        },
+        {
+          dayKey: "Wed",
+          dayName: "Wednesday",
+          status: "completed",
+          title: "Active Recovery & 10k Steps",
+          completedDate: "2026-10-21",
+          totalVolumeKg: 0,
+          durationMins: 40,
+          coachCue: "Low-intensity walking, foam rolling, infrared sauna.",
+          exercises: [
+            { name: "Outdoor Incline Walk", sets: "40 min", targetWeight: "10,000 steps", actualBest: "10,240 steps", completed: true },
+            { name: "Dry Sauna Thermal Recovery", sets: "1x15 min", targetWeight: "80°C", actualBest: "15 min", completed: true }
+          ],
+          coachFeedback: "Recovery session logged."
+        },
+        {
+          dayKey: "Thu",
+          dayName: "Thursday",
+          status: "today",
+          title: "Quad & Glute Hypertrophy",
+          completedDate: null,
+          totalVolumeKg: 8400,
+          durationMins: 55,
+          coachCue: "Drive through midfoot, knees in line with second toe. Rest 75s between sets.",
+          exercises: [
+            { name: "Bulgarian Split Squats", sets: "3x10/leg", targetWeight: "14kg DBs", previousBest: "12kg × 10", tempo: "2-0-1-0", restSeconds: 75, completed: false },
+            { name: "45° Leg Press", sets: "4x12", targetWeight: "120kg", previousBest: "110kg × 12", tempo: "3-0-1-0", restSeconds: 90, completed: false },
+            { name: "Goblet Squats", sets: "3x12", targetWeight: "20kg KB", previousBest: "18kg × 12", tempo: "2-0-1-0", restSeconds: 60, completed: false }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Fri",
+          dayName: "Friday",
+          status: "upcoming",
+          title: "Core, Sculpt & HIIT Circuit",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 45,
+          coachCue: "Fast pace, 45 seconds rest between circuit rounds.",
+          exercises: [
+            { name: "Kettlebell Swings", sets: "4x15", targetWeight: "16kg", tempo: "Explosive", restSeconds: 45 },
+            { name: "Plank to Push-up Walkouts", sets: "3x10", targetWeight: "Bodyweight", tempo: "Controlled", restSeconds: 45 },
+            { name: "Jump Rope Double-unders/Skips", sets: "4x100", targetWeight: "Speed", tempo: "Continuous", restSeconds: 60 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sat",
+          dayName: "Saturday",
+          status: "upcoming",
+          title: "Mobility & Sub-Zero Contrast Plunge",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 40,
+          coachCue: "Full body foam roll followed by 4°C ice bath contrast session.",
+          exercises: [
+            { name: "Thoracic Spine Mobility", sets: "15 min", targetWeight: "Bodyweight", tempo: "Flow", restSeconds: 0 },
+            { name: "Ice Bath Plunge", sets: "1x3 min", targetWeight: "4°C", tempo: "Passive", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        },
+        {
+          dayKey: "Sun",
+          dayName: "Sunday",
+          status: "upcoming",
+          title: "Sunday Self-Guided Review & Goal Setting",
+          completedDate: null,
+          totalVolumeKg: 0,
+          durationMins: 20,
+          coachCue: "Submit 5-min Sunday check-in. The system will audit adherence and update next week's progressive overload.",
+          exercises: [
+            { name: "Guided 5-Min Sunday Check-In", sets: "1 review", targetWeight: "Reflections", tempo: "Prompt", restSeconds: 0 }
+          ],
+          coachFeedback: null
+        }
+      ]
     }
   ];
+}
+
+function defaultDayByDaySchedule(programId = "ppl-6day") {
+  const programs = getStandardWorkoutPrograms();
+  const found = programs.find(p => p.id === programId) || programs[0];
+  return JSON.parse(JSON.stringify(found.schedule));
 }
 
 // Storage Management Helper for LocalStorage
 class Fit24Store {
   constructor() {
-    this.STORAGE_KEY = "FIT24_APP_STORAGE_v5";
+    this.STORAGE_KEY = "FIT24_APP_STORAGE_v6";
     this._memoryStore = null;
     this.init();
   }
@@ -1262,8 +1974,12 @@ class Fit24Store {
       member.todayMeals = defaultTodayMeals();
       updated = true;
     }
+    if (!member.activeProgramId) {
+      member.activeProgramId = (member.assignedTrainerId && (member.ptSessionsTotal > 0)) ? "coach-assigned" : "ppl-6day";
+      updated = true;
+    }
     if (!member.dayByDaySchedule || member.dayByDaySchedule.length === 0) {
-      member.dayByDaySchedule = defaultDayByDaySchedule();
+      member.dayByDaySchedule = defaultDayByDaySchedule(member.activeProgramId === "coach-assigned" ? "ppl-6day" : member.activeProgramId);
       updated = true;
     }
     if (updated) {
@@ -1926,6 +2642,32 @@ class Fit24Store {
     };
   }
 
+  addPTSessions(memberId, count = 6) {
+    const store = this.getStore();
+    if (!store.members) return { success: false, message: "Member not found" };
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return { success: false, message: "Member not found" };
+
+    const addCount = parseInt(count) || 6;
+    member.ptSessionsTotal = (member.ptSessionsTotal || 0) + addCount;
+    // If member has no trainer assigned yet, assign first active coach by default
+    if (!member.assignedTrainerId && store.trainers && store.trainers.length > 0) {
+      member.assignedTrainerId = store.trainers[0].id;
+    }
+    this.saveStore(store);
+
+    if (window.fit24Supabase) {
+      window.fit24Supabase.updateMember(member);
+    }
+
+    return {
+      success: true,
+      member,
+      newTotal: member.ptSessionsTotal,
+      remaining: (member.ptSessionsTotal - (member.ptSessionsUsed || 0))
+    };
+  }
+
   // --- FINANCIAL & EXPIRING REPORTS ---
   getExpiringMembers(withinDays = 14) {
     const store = this.getStore();
@@ -2024,13 +2766,22 @@ class Fit24Store {
     }
   }
 
-  // --- WEEKLY SUNDAY CHECK-IN & SUBJECTIVE FEEDBACK ---
   submitWeeklyCheckIn(memberId, checkInData) {
     const store = this.getStore();
     const member = store.members.find(m => m.id === memberId);
     if (!member) return null;
 
     if (!member.weeklyCheckIns) member.weeklyCheckIns = [];
+
+    // Auto-generate instant algorithm feedback if member does not have a dedicated personal trainer
+    let autoFeedback = checkInData.coachFeedback || "";
+    if (!member.assignedTrainerId || member.ptSessionsTotal === 0) {
+      const adh = parseInt(checkInData.adherencePct) || 90;
+      const energy = parseInt(checkInData.energyRating) || 4;
+      const statusWord = adh >= 90 ? "Peak Discipline" : adh >= 75 ? "Consistent Execution" : "Refocus Target";
+      autoFeedback = `[FIT24 System Audit: ${statusWord}] You logged ${adh}% adherence with energy rated ${energy}/5. Progressive overload target: cleared for +2.5kg compound progression next week. Maintain 3.5L hydration & protein daily. (Upgrade to 1-on-1 PT anytime for personal coach debriefs).`;
+    }
+
     const newEntry = {
       date: new Date().toISOString().split('T')[0],
       energyRating: parseInt(checkInData.energyRating) || 5,
@@ -2038,7 +2789,7 @@ class Fit24Store {
       adherencePct: parseInt(checkInData.adherencePct) || 90,
       wins: checkInData.wins || "Maintained routine workouts",
       coachQuestion: checkInData.coachQuestion || "",
-      coachFeedback: ""
+      coachFeedback: autoFeedback
     };
 
     member.weeklyCheckIns.unshift(newEntry);
@@ -2234,6 +2985,116 @@ class Fit24Store {
       valueOf: () => finalScore,
       toString: () => `${finalScore}`
     };
+  }
+
+  // --- GENERIC WORKOUT PROGRAMS & SELF-GUIDED SYSTEM ---
+  getStandardWorkoutPrograms() {
+    return getStandardWorkoutPrograms();
+  }
+
+  applyProgramTemplate(memberId, programId) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    const programs = getStandardWorkoutPrograms();
+    const prog = programs.find(p => p.id === programId) || programs[0];
+
+    member.activeProgramId = prog.id;
+    member.dayByDaySchedule = JSON.parse(JSON.stringify(prog.schedule));
+    member.workoutPlan = {
+      title: prog.title,
+      phase: prog.tagline,
+      goal: prog.goal,
+      difficulty: prog.difficulty,
+      daysPerWeek: prog.daysPerWeek,
+      dietTargets: prog.dietTargets,
+      split: prog.schedule.filter(s => s.status !== 'rest').map(s => ({
+        day: s.dayKey,
+        title: s.title,
+        exercises: Array.isArray(s.exercises) ? s.exercises.map(e => `${e.name} (${e.sets})`).join(', ') : s.exercises,
+        notes: s.coachCue
+      }))
+    };
+
+    if (prog.dietTargets) {
+      member.dietTargets = prog.dietTargets;
+    }
+
+    this.saveStore(store);
+    if (window.fit24Supabase) {
+      window.fit24Supabase.updateMember(member);
+    }
+    return member;
+  }
+
+  calculateGenericDietTargets(memberId, { goal = "fat_loss", weightKg = 75, gender = "Male" }) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    const w = parseFloat(weightKg) || 75;
+    let multiplier = 24;
+    let deficitFactor = 0.8; // default 20% deficit
+    let proteinPerKg = 2.0;
+
+    if (goal === "muscle_gain") {
+      deficitFactor = 1.15; // 15% surplus
+      proteinPerKg = 1.8;
+    } else if (goal === "recomp") {
+      deficitFactor = 1.0; // maintenance
+      proteinPerKg = 2.0;
+    }
+
+    const tdee = Math.round(w * multiplier * 1.35); // average active gym member multiplier
+    const targetCalories = Math.round(tdee * deficitFactor);
+    const targetProtein = Math.round(w * proteinPerKg);
+    const targetFats = Math.round((targetCalories * 0.25) / 9);
+    const remainingKcal = targetCalories - (targetProtein * 4) - (targetFats * 9);
+    const targetCarbs = Math.max(80, Math.round(remainingKcal / 4));
+
+    member.dietTargets = {
+      calories: targetCalories,
+      proteinGrams: targetProtein,
+      carbsGrams: targetCarbs,
+      fatsGrams: targetFats,
+      waterLiters: gender === "Female" ? 3.0 : 3.8
+    };
+
+    if (member.calorieIntakeHistory && member.calorieIntakeHistory.length > 0) {
+      member.calorieIntakeHistory.forEach(day => {
+        day.targetKcal = targetCalories;
+      });
+    }
+
+    this.saveStore(store);
+    if (window.fit24Supabase) {
+      window.fit24Supabase.updateMember(member);
+    }
+    return member;
+  }
+
+  requestPTConsultation(memberId, notes = "") {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member) return { success: false, message: "Member not found" };
+
+    if (!store.leads) store.leads = [];
+    const lead = {
+      id: `pt-req-${Date.now()}`,
+      name: `${member.name} (Member ${member.id})`,
+      phone: member.phone,
+      email: member.email || "",
+      interest: `1-on-1 PT Consultation & Goal Assessment (${notes || 'Self-Guided Upgrade'})`,
+      source: "Member Portal Upgrade Request",
+      status: "New",
+      notes: `Active self-guided member requested PT consultation. Tier: ${member.tier}.`,
+      createdAt: "Just now"
+    };
+
+    store.leads.unshift(lead);
+    this.saveStore(store);
+    return { success: true, message: "Consultation request sent to club desk!", lead };
   }
 }
 
