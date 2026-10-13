@@ -389,6 +389,102 @@
         <button type="submit" class="w-full py-3.5 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-xl uppercase tracking-wider transition-all">
           TRANSMIT COACH REQUEST
         </button>
+  <!-- ======================================================== -->
+  <!-- MODAL: ADD CUSTOM EXERCISE (SELF-GUIDED ATHLETE)         -->
+  <!-- ======================================================== -->
+  <div id="add-exercise-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeAddExerciseModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <span class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">// CUSTOM EXERCISE BUILDER</span>
+        <h3 id="add-ex-modal-title" class="text-2xl font-gymbox text-white">ADD EXERCISE TO WORKOUT</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Customize your session with your preferred movements and load targets.</p>
+      </div>
+
+      <form id="add-exercise-form" onsubmit="handleAddExerciseSubmit(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="add-ex-day-key">
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Exercise Name:</label>
+          <input id="add-ex-name" type="text" required placeholder="e.g. Incline DB Flyes or Barbell Bicep Curls"
+                 class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Sets & Reps:</label>
+            <input id="add-ex-sets" type="text" required placeholder="e.g. 4x10 or 3x12" value="3x10"
+                   class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+          </div>
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Target Load / Weight:</label>
+            <input id="add-ex-weight" type="text" placeholder="e.g. 24kg DBs or Bodyweight" value="—"
+                   class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Rest Interval:</label>
+            <select id="add-ex-rest" class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+              <option value="60">60 Seconds</option>
+              <option value="90" selected>90 Seconds</option>
+              <option value="120">120 Seconds (2 min)</option>
+              <option value="45">45 Seconds (HIIT/Tone)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Tempo (Optional):</label>
+            <input id="add-ex-tempo" type="text" placeholder="e.g. 2-0-1-0" value="2-0-1-0"
+                   class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-xl uppercase tracking-wider transition-all">
+          ➕ ADD MOVEMENT TO TODAY
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: CUSTOMIZE WORKOUT SESSION (SELF-GUIDED ATHLETE)    -->
+  <!-- ======================================================== -->
+  <div id="edit-custom-split-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeCustomSplitModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <span class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">// CUSTOMIZE WORKOUT SESSION</span>
+        <h3 id="custom-split-modal-title" class="text-2xl font-gymbox text-white">EDIT WORKOUT SPLIT</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Tailor your workout title, target duration, and personal focus cues.</p>
+      </div>
+
+      <form id="custom-split-form" onsubmit="handleCustomSplitSubmit(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="custom-split-day-key">
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Workout Session Title:</label>
+          <input id="custom-split-title" type="text" required placeholder="e.g. Chest Hypertrophy & Delts"
+                 class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Estimated Duration (Mins):</label>
+          <input id="custom-split-duration" type="number" min="15" max="180" value="60"
+                 class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Personal Training Focus / Cues:</label>
+          <textarea id="custom-split-cue" rows="2" placeholder="e.g. Focus on chest squeeze at top, pause reps on incline DB bench."
+                    class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-xl uppercase tracking-wider transition-all">
+          SAVE WORKOUT SESSION
+        </button>
       </form>
     </div>
   </div>
@@ -535,6 +631,8 @@
       const wrapper = document.getElementById("member-todays-plan-wrapper");
       if (!wrapper) return;
 
+      const hasTrainer = Boolean(member.assignedTrainerId && (member.ptSessionsTotal > 0));
+      const programTitle = member.workoutPlan ? member.workoutPlan.title : "FIT24 Standard Split";
       const schedule = member.dayByDaySchedule || defaultDayByDaySchedule();
       const currentSelectedKey = window.selectedWorkoutDayKey || 'Thu';
       const activeDay = schedule.find(d => d.dayKey.toLowerCase() === currentSelectedKey.toLowerCase()) || schedule[3];
@@ -666,21 +764,33 @@
 
             <!-- Live Workout Logger -->
             <div class="space-y-2.5 pt-1">
-              <div class="flex justify-between items-center text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">
-                <span>LIVE EXERCISE LOGGER:</span>
-                <span class="text-[#ff0033]">+35 kcal burnt / set</span>
+              <div class="flex flex-wrap justify-between items-center gap-2 text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest border-b border-white/5 pb-2">
+                <div class="flex items-center gap-2">
+                  <span>LIVE EXERCISE LOGGER:</span>
+                  <span class="text-[#ff0033]">+35 kcal burnt / set</span>
+                </div>
+                <button onclick="openAddExerciseModal('${activeDay.dayKey}')" class="px-2.5 py-1 bg-[#ff0033] hover:bg-red-600 text-white text-[10px] font-bold uppercase rounded transition-all shadow flex items-center gap-1">
+                  <span>➕ Add Exercise</span>
+                </button>
               </div>
 
               ${(activeDay.exercises || []).map((ex, exIdx) => `
                 <div class="bg-black p-3 border border-white/10 space-y-2">
                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-mono">
-                    <div>
-                      <strong class="text-white text-sm">${ex.name}</strong>
-                      <span class="text-zinc-400 text-[10px] block">Target: ${ex.sets} @ ${ex.targetWeight} · Tempo: ${ex.tempo || '3-0-1-0'}</span>
+                    <div class="flex items-start gap-2">
+                      <div>
+                        <strong class="text-white text-sm">${ex.name}</strong>
+                        <span class="text-zinc-400 text-[10px] block">Target: ${ex.sets} @ ${ex.targetWeight} · Tempo: ${ex.tempo || '3-0-1-0'}</span>
+                      </div>
                     </div>
-                    <div class="text-left sm:text-right">
-                      <span class="text-amber-400 text-[10px] block font-bold">Previous: ${ex.previousBest || '100kg × 8'}</span>
-                      <span class="text-zinc-500 text-[9px]">Rest: ${ex.restSeconds || 90}s</span>
+                    <div class="flex items-center justify-between sm:justify-end gap-3 text-left sm:text-right">
+                      <div>
+                        <span class="text-amber-400 text-[10px] block font-bold">Previous: ${ex.previousBest || '100kg × 8'}</span>
+                        <span class="text-zinc-500 text-[9px]">Rest: ${ex.restSeconds || 90}s</span>
+                      </div>
+                      ${!hasTrainer ? `
+                        <button onclick="removeCustomExercise('${activeDay.dayKey}', ${exIdx})" class="text-zinc-500 hover:text-red-400 text-xs px-1 font-bold" title="Remove exercise from today">✕</button>
+                      ` : ''}
                     </div>
                   </div>
 
@@ -710,7 +820,7 @@
           <div class="space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-2">
               <div>
-                <span class="text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-bold">// UPCOMING WORKOUT — PRESCRIBED BY DRILLMASTER</span>
+                <span class="text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-bold">// UPCOMING WORKOUT — ${hasTrainer ? 'PRESCRIBED BY DRILLMASTER' : 'SCHEDULED SPLIT'}</span>
                 <h4 class="text-2xl font-gymbox text-white uppercase tracking-wide">${activeDay.title}</h4>
                 <div class="text-xs text-zinc-400 font-mono mt-0.5">Scheduled for: ${activeDay.dayName} · Est. Duration: ${activeDay.durationMins || 60} Mins</div>
               </div>
@@ -721,36 +831,43 @@
 
             <!-- Coach Prep Instructions -->
             <div class="p-3 bg-cyan-950/20 border border-cyan-500/30 rounded font-mono text-xs space-y-1">
-              <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider block">💬 DRILLMASTER PREPARATION NOTES:</span>
+              <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider block">💬 PREPARATION NOTES:</span>
               <p class="text-zinc-200 italic">"${activeDay.coachCue || activeDay.coachFeedback || 'Follow prescribed tempo and maintain proper hydration.'}"</p>
             </div>
 
             <!-- Prescribed Exercises Preview -->
             <div class="space-y-2">
-              <div class="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">PRESCRIBED EXERCISE BLUEPRINT:</div>
-              ${(activeDay.exercises || []).map(ex => `
+              <div class="flex justify-between items-center text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest border-b border-white/5 pb-1">
+                <span>PRESCRIBED EXERCISE BLUEPRINT:</span>
+                <button onclick="openAddExerciseModal('${activeDay.dayKey}')" class="px-2 py-0.5 bg-white/10 hover:bg-[#ff0033] text-white text-[9px] font-bold uppercase rounded border border-white/20 transition-all flex items-center gap-1">
+                  <span>➕ Add Movement</span>
+                </button>
+              </div>
+              ${(activeDay.exercises || []).map((ex, exIdx) => `
                 <div class="p-3 bg-black border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between font-mono text-xs gap-1">
                   <div>
                     <strong class="text-white block">${ex.name}</strong>
                     <span class="text-[10px] text-zinc-400">Target Load: <strong class="text-yellow-400">${ex.targetWeight || 'Prescribed'}</strong> · Tempo: ${ex.tempo || '3-0-1-0'}</span>
                   </div>
-                  <div class="text-left sm:text-right">
-                    <span class="text-[#ff0033] font-bold">${ex.sets || '4x8'}</span>
-                    <span class="text-[10px] text-zinc-500 block">Rest: ${ex.restSeconds || 90}s</span>
+                  <div class="flex items-center justify-between sm:justify-end gap-3 text-left sm:text-right">
+                    <div>
+                      <span class="text-[#ff0033] font-bold">${ex.sets || '4x8'}</span>
+                      <span class="text-[10px] text-zinc-500 block">Rest: ${ex.restSeconds || 90}s</span>
+                    </div>
+                    ${!hasTrainer ? `
+                      <button onclick="removeCustomExercise('${activeDay.dayKey}', ${exIdx})" class="text-zinc-500 hover:text-red-400 text-xs px-1 font-bold" title="Remove exercise from blueprint">✕</button>
+                    ` : ''}
                   </div>
                 </div>
               `).join('')}
             </div>
 
             <div class="p-3 bg-black border border-white/5 text-center text-xs text-zinc-500 font-mono">
-              💡 Routine unlocked by coach. You can study technique and prepare necessary gym gear in advance.
+              💡 Routine scheduled for this day. You can add movements or customize exercises anytime.
             </div>
           </div>
         `;
       }
-
-      const hasTrainer = Boolean(member.assignedTrainerId && (member.ptSessionsTotal > 0));
-      const programTitle = member.workoutPlan ? member.workoutPlan.title : "FIT24 Standard Split";
 
       wrapper.innerHTML = `
         <div class="bg-[#0e0e12] border-2 border-[#ff0033] p-5 space-y-4">
@@ -764,9 +881,14 @@
               <h4 class="text-xl font-gymbox text-white uppercase mt-0.5">${programTitle}</h4>
             </div>
             ${!hasTrainer ? `
-              <button onclick="openProgramSelectionModal()" class="self-start sm:self-auto px-2.5 py-1.5 bg-white/10 hover:bg-[#ff0033] hover:text-white text-zinc-200 text-[10px] font-bold rounded uppercase border border-white/20 transition-all flex items-center gap-1.5 shadow">
-                <span>🔄</span> <span>Switch Routine</span>
-              </button>
+              <div class="flex items-center gap-1.5 self-start sm:self-auto">
+                <button onclick="openProgramSelectionModal()" class="px-2.5 py-1.5 bg-white/10 hover:bg-[#ff0033] hover:text-white text-zinc-200 text-[10px] font-bold rounded uppercase border border-white/20 transition-all flex items-center gap-1.5 shadow">
+                  <span>🔄</span> <span>Switch Routine</span>
+                </button>
+                <button onclick="openCustomSplitModal('${activeDay.dayKey}')" class="px-2.5 py-1.5 bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[10px] font-bold rounded uppercase border border-red-500/40 transition-all flex items-center gap-1.5 shadow" title="Customize workout title and cues">
+                  <span>✏️</span> <span>Edit Day's Split</span>
+                </button>
+              </div>
             ` : ''}
           </div>
 
@@ -1607,6 +1729,102 @@
       closeRequestPTModal();
       playAudioChime();
       alert(`✅ Consultation Request Transmitted! Club desk will contact you via WhatsApp to coordinate your free 1-on-1 assessment.`);
+    }
+
+    // --- CUSTOM EXERCISE & SPLIT BUILDER (SELF-GUIDED ATHLETES) ---
+    function openAddExerciseModal(dayKey) {
+      const modal = document.getElementById("add-exercise-modal");
+      if (!modal) return;
+      const targetDay = dayKey || window.selectedWorkoutDayKey || 'Thu';
+      const dayInput = document.getElementById("add-ex-day-key");
+      if (dayInput) dayInput.value = targetDay;
+      const titleEl = document.getElementById("add-ex-modal-title");
+      if (titleEl) titleEl.textContent = `ADD EXERCISE (${targetDay.toUpperCase()})`;
+      const nameInput = document.getElementById("add-ex-name");
+      if (nameInput) nameInput.value = "";
+      modal.classList.remove("hidden");
+    }
+
+    function closeAddExerciseModal() {
+      document.getElementById("add-exercise-modal")?.classList.add("hidden");
+    }
+
+    function handleAddExerciseSubmit(e) {
+      e.preventDefault();
+      const dayKey = document.getElementById("add-ex-day-key")?.value || window.selectedWorkoutDayKey || 'Thu';
+      const name = document.getElementById("add-ex-name")?.value?.trim();
+      if (!name) return;
+      const sets = document.getElementById("add-ex-sets")?.value?.trim() || "3x10";
+      const weight = document.getElementById("add-ex-weight")?.value?.trim() || "—";
+      const rest = parseInt(document.getElementById("add-ex-rest")?.value) || 90;
+      const tempo = document.getElementById("add-ex-tempo")?.value?.trim() || "2-0-1-0";
+
+      window.fit24Store.addExerciseToMemberDay(currentSelectedMemberId, dayKey, {
+        name,
+        sets,
+        targetWeight: weight,
+        restSeconds: rest,
+        tempo
+      });
+
+      closeAddExerciseModal();
+      playAudioChime();
+      alert(`✅ Added "${name}" to ${dayKey.toUpperCase()}'s workout!`);
+      loadMember(currentSelectedMemberId);
+    }
+
+    function openCustomSplitModal(dayKey) {
+      const modal = document.getElementById("edit-custom-split-modal");
+      if (!modal) return;
+      const member = window.fit24Store.getMember(currentSelectedMemberId);
+      if (!member || !member.dayByDaySchedule) return;
+
+      const targetDay = dayKey || window.selectedWorkoutDayKey || 'Thu';
+      const dayObj = member.dayByDaySchedule.find(d => d.dayKey.toLowerCase() === targetDay.toLowerCase());
+      if (!dayObj) return;
+
+      const dayInput = document.getElementById("custom-split-day-key");
+      if (dayInput) dayInput.value = targetDay;
+      const titleEl = document.getElementById("custom-split-modal-title");
+      if (titleEl) titleEl.textContent = `EDIT ${targetDay.toUpperCase()} WORKOUT`;
+      const splitTitleInput = document.getElementById("custom-split-title");
+      if (splitTitleInput) splitTitleInput.value = dayObj.title || "";
+      const splitDurationInput = document.getElementById("custom-split-duration");
+      if (splitDurationInput) splitDurationInput.value = dayObj.durationMins || 60;
+      const splitCueInput = document.getElementById("custom-split-cue");
+      if (splitCueInput) splitCueInput.value = dayObj.coachCue || "";
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeCustomSplitModal() {
+      document.getElementById("edit-custom-split-modal")?.classList.add("hidden");
+    }
+
+    function handleCustomSplitSubmit(e) {
+      e.preventDefault();
+      const dayKey = document.getElementById("custom-split-day-key")?.value || window.selectedWorkoutDayKey || 'Thu';
+      const title = document.getElementById("custom-split-title")?.value?.trim();
+      const duration = parseInt(document.getElementById("custom-split-duration")?.value) || 60;
+      const cue = document.getElementById("custom-split-cue")?.value?.trim();
+
+      window.fit24Store.updateDayWorkoutSplit(currentSelectedMemberId, dayKey, {
+        title,
+        durationMins: duration,
+        coachCue: cue
+      });
+
+      closeCustomSplitModal();
+      playAudioChime();
+      alert(`✅ Updated ${dayKey.toUpperCase()}'s workout session split!`);
+      loadMember(currentSelectedMemberId);
+    }
+
+    function removeCustomExercise(dayKey, exIdx) {
+      if (!confirm("Remove this exercise from your workout?")) return;
+      window.fit24Store.removeExerciseFromMemberDay(currentSelectedMemberId, dayKey, exIdx);
+      playAudioChime();
+      loadMember(currentSelectedMemberId);
     }
 
     document.addEventListener("DOMContentLoaded", () => {

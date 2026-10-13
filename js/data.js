@@ -2881,6 +2881,52 @@ class Fit24Store {
     return member;
   }
 
+  addExerciseToMemberDay(memberId, dayKey, exerciseData) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member || !member.dayByDaySchedule) return null;
+    const dayObj = member.dayByDaySchedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
+    if (!dayObj) return null;
+
+    if (!Array.isArray(dayObj.exercises)) {
+      dayObj.exercises = [];
+    }
+
+    const newExercise = {
+      name: exerciseData.name || "Custom Exercise",
+      sets: exerciseData.sets || "3x10",
+      targetWeight: exerciseData.targetWeight || "—",
+      tempo: exerciseData.tempo || "2-0-1-0",
+      restSeconds: parseInt(exerciseData.restSeconds) || 60,
+      completed: false,
+      previousBest: exerciseData.targetWeight || "—"
+    };
+
+    dayObj.exercises.push(newExercise);
+    this.saveStore(store);
+
+    if (window.fit24Supabase) {
+      window.fit24Supabase.updateMember(member);
+    }
+    return member;
+  }
+
+  removeExerciseFromMemberDay(memberId, dayKey, exerciseIndex) {
+    const store = this.getStore();
+    const member = store.members.find(m => m.id === memberId);
+    if (!member || !member.dayByDaySchedule) return null;
+    const dayObj = member.dayByDaySchedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
+    if (!dayObj || !Array.isArray(dayObj.exercises)) return null;
+
+    dayObj.exercises.splice(exerciseIndex, 1);
+    this.saveStore(store);
+
+    if (window.fit24Supabase) {
+      window.fit24Supabase.updateMember(member);
+    }
+    return member;
+  }
+
   addTrainerWorkoutFeedback(memberId, dayKey, feedbackText) {
     const store = this.getStore();
     const member = store.members.find(m => m.id === memberId);
