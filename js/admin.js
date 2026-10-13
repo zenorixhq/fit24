@@ -358,8 +358,13 @@ function renderMemberTable(searchQuery = "", filterTier = "ALL", filterStatus = 
       <tr class="border-b border-white/5 hover:bg-white/[0.02]">
         <td class="py-3 px-4 text-xs font-mono font-bold text-red-400">${m.id}</td>
         <td class="py-3 px-4">
-          <div class="text-xs font-bold text-white">${m.name}</div>
-          <div class="text-[11px] text-zinc-400 font-mono">${m.phone}</div>
+          <button onclick="window.openMemberDossier('${m.id}')" class="text-left group cursor-pointer focus:outline-none">
+            <div class="text-xs font-bold text-white group-hover:text-purple-400 flex items-center gap-1.5 transition-colors">
+              ${m.name} 
+              <span class="px-1.5 py-0.2 bg-purple-600/30 text-purple-300 border border-purple-500/40 text-[9px] rounded font-mono font-normal">360°</span>
+            </div>
+            <div class="text-[11px] text-zinc-400 font-mono">${m.phone}</div>
+          </button>
         </td>
         <td class="py-3 px-4 text-xs">
           <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${m.tier === 'ELITE' ? 'bg-yellow-500/20 text-yellow-400' : m.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">${m.tier}</span>
@@ -386,7 +391,7 @@ function renderMemberTable(searchQuery = "", filterTier = "ALL", filterStatus = 
           }
         </td>
         <td class="py-3 px-4 text-xs text-right space-x-1 whitespace-nowrap">
-          <button onclick="window.openMemberDossier('${m.id}')" class="px-2 py-1 rounded bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white text-[11px]" title="360° Health & Biometrics Dossier">Dossier</button>
+          <button onclick="window.openMemberDossier('${m.id}')" class="px-2.5 py-1 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] border border-purple-400/50 shadow-sm" title="360° Health & Biometrics Dossier">📋 View 360°</button>
           <button onclick="window.issueInvoiceForMember('${m.id}')" class="px-2 py-1 rounded bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-[11px]" title="GST Tax Receipt">Receipt</button>
           <button onclick="viewMemberPass('${m.id}')" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-[11px] text-white">Pass</button>
           <button onclick="openQuotaModal('${m.id}')" class="px-2 py-1 rounded bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[11px]">Quota</button>

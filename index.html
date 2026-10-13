@@ -65,22 +65,28 @@
       </nav>
 
       <!-- Action Buttons -->
-      <div class="flex items-center gap-3">
-        <!-- Digital Pass -->
-        <button onclick="document.getElementById('pass-modal').classList.remove('hidden')" 
-                class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 border border-white/20 hover:border-[#ff0033] text-xs font-mono font-bold uppercase text-zinc-300 hover:text-white transition-all">
-          Member Pass
-        </button>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Member Portal -->
+        <a href="member.html" 
+           class="inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 hover:border-[#ff0033] text-xs font-mono font-bold uppercase text-zinc-300 hover:text-white transition-all">
+          <span>📱 Member Pass</span>
+        </a>
+
+        <!-- Coach Hub -->
+        <a href="trainer.html" 
+           class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 bg-red-600/20 hover:bg-[#ff0033] text-red-300 hover:text-white text-xs font-mono font-bold uppercase tracking-wider border border-red-500/40 transition-all">
+          <span>🥊 Coach Hub</span>
+        </a>
 
         <!-- Admin Portal -->
         <a href="admin.html" 
-           class="px-4 py-2 bg-white/10 hover:bg-[#ff0033] text-white text-xs font-mono font-bold uppercase tracking-wider border border-white/15 transition-all">
-          Staff ERP
+           class="px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-bold uppercase tracking-wider border border-white/15 transition-all">
+          Desk ERP
         </a>
 
         <!-- Join CTA -->
         <a href="#memberships" 
-           class="px-5 py-2.5 bg-[#ff0033] hover:bg-white hover:text-black text-white text-xs font-gymbox text-base uppercase tracking-wider shadow-lg transition-all">
+           class="px-4 sm:px-5 py-2 sm:py-2.5 bg-[#ff0033] hover:bg-white hover:text-black text-white text-xs font-gymbox text-base uppercase tracking-wider shadow-lg transition-all">
           JOIN NOW
         </a>
       </div>
@@ -755,8 +761,13 @@
               </a>
             </li>
             <li class="pt-2">
-              <a href="admin.html" class="text-[#ff0033] font-bold hover:underline">
-                ⚙ Staff Reception ERP Portal →
+              <a href="trainer.html" class="text-white hover:text-[#ff0033] font-bold flex items-center gap-1.5">
+                <span>🥊 Coach Command Hub →</span>
+              </a>
+            </li>
+            <li>
+              <a href="admin.html" class="text-[#ff0033] font-bold hover:underline flex items-center gap-1.5">
+                <span>⚙ Front Desk ERP Portal →</span>
               </a>
             </li>
           </ul>

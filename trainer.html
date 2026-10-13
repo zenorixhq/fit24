@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIT24 Coach Hub | Trainer Command & Athlete Management Portal</title>
+  <meta name="theme-color" content="#ff0033">
+  <!-- FIT24 Compiled Production Stylesheet (Tailwind + Gymbox Aesthetics) -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #09090b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff0033;
+    }
+  </style>
+</head>
+<body class="bg-[#050505] text-zinc-100 antialiased min-h-screen flex flex-col selection:bg-[#ff0033] selection:text-white">
+
+  <!-- TOP APP BAR -->
+  <header class="bg-[#0d0d10] border-b-2 border-white/10 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <div class="flex items-center gap-4">
+        <a href="trainer.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 bg-[#ff0033] flex items-center justify-center font-gymbox text-2xl text-white group-hover:bg-white group-hover:text-black transition-all">
+            24
+          </div>
+          <div>
+            <span class="text-2xl font-gymbox tracking-wider text-white">FIT24 COACH HUB</span>
+            <span class="text-[9px] font-mono uppercase tracking-widest text-[#ff0033] block -mt-1 font-bold">TRAINER COMMAND & ATHLETE ERP</span>
+          </div>
+        </a>
+        <span class="hidden md:inline px-2 py-0.5 bg-black border border-emerald-500/40 text-emerald-400 text-[10px] font-mono font-bold uppercase">
+          ● COACH ACTIVE ON FLOOR
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Direct Quick Links -->
+        <a href="member.html" class="px-3 py-1.5 bg-white/5 hover:bg-white/15 border border-white/10 text-xs font-mono font-bold uppercase text-zinc-300 hover:text-white transition-all flex items-center gap-1.5">
+          <span>📱 Athlete View</span>
+        </a>
+        <a href="admin.html" class="px-3 py-1.5 bg-white/5 hover:bg-white/15 border border-white/10 text-xs font-mono font-bold uppercase text-zinc-300 hover:text-white transition-all flex items-center gap-1.5">
+          <span>🏛️ Front Desk ERP</span>
+        </a>
+        <a href="index.html" class="px-3 py-1.5 bg-[#ff0033]/20 hover:bg-[#ff0033] border border-red-500/40 text-xs font-mono font-bold uppercase text-red-300 hover:text-white transition-all">
+          <span>Home →</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN COACH CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+    <!-- 1. COACH PROFILE & ACTIVE SWITCHER BANNER -->
+    <div class="bg-[#0e0e12] border-2 border-white/10 p-5 relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-64 h-64 bg-[#ff0033]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+        <!-- Coach Info -->
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <img id="coach-banner-avatar" src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=400&q=80" 
+                 class="w-16 h-16 object-cover border-2 border-[#ff0033] rounded">
+            <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-black rounded-full" title="Active On Floor"></span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="coach-banner-badge" class="px-2 py-0.5 bg-red-600/20 text-[#ff0033] border border-red-500/30 text-[9px] font-mono font-bold uppercase rounded">HEAD COACH</span>
+              <span class="text-[10px] font-mono text-zinc-400">FIT24 Biomechanics & Strength</span>
+            </div>
+            <h2 id="coach-banner-name" class="text-3xl font-gymbox text-white tracking-wide mt-0.5">RAHUL MENON</h2>
+            <p id="coach-banner-specialty" class="text-xs text-zinc-300 font-mono">Specialist in heavy compound lifts, hypertrophy periodization, and movement analysis.</p>
+          </div>
+        </div>
+
+        <!-- Coach Selector Dropdown & Stats -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="p-2.5 bg-black border border-white/10 font-mono text-xs">
+            <label for="coach-select-dropdown" class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Switch Active Coach:</label>
+            <select id="coach-select-dropdown" onchange="switchActiveCoach(this.value)" 
+                    class="bg-[#18181b] border border-white/20 text-white text-xs p-1.5 focus:border-[#ff0033] focus:outline-none w-56 font-mono">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <!-- Quick KPIs -->
+          <div class="flex items-center gap-2 text-center font-mono">
+            <div class="p-2.5 bg-black border border-white/10 rounded min-w-[90px]">
+              <span class="text-[9px] text-zinc-400 uppercase block">1-on-1 Roster</span>
+              <strong id="stat-pt-roster" class="text-xl font-gymbox text-white">0</strong>
+            </div>
+            <div class="p-2.5 bg-black border border-white/10 rounded min-w-[90px]">
+              <span class="text-[9px] text-zinc-400 uppercase block">Compliance</span>
+              <strong id="stat-compliance-avg" class="text-xl font-gymbox text-emerald-400">92%</strong>
+            </div>
+            <div class="p-2.5 bg-black border border-white/10 rounded min-w-[90px]">
+              <span class="text-[9px] text-zinc-400 uppercase block">Check-Ins</span>
+              <strong id="stat-pending-reviews" class="text-xl font-gymbox text-amber-400">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. COACH SUB-NAVIGATION TABS -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button onclick="setCoachTab('roster')" id="tab-btn-roster" 
+                class="px-4 py-2 font-mono text-xs font-bold uppercase transition-all bg-[#ff0033] text-white border border-red-500">
+          🏋️ My 1-on-1 Roster
+        </button>
+        <button onclick="setCoachTab('floor')" id="tab-btn-floor" 
+                class="px-4 py-2 font-mono text-xs font-bold uppercase transition-all bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10">
+          🌐 All Floor Athletes
+        </button>
+        <button onclick="setCoachTab('checkins')" id="tab-btn-checkins" 
+                class="px-4 py-2 font-mono text-xs font-bold uppercase transition-all bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10 flex items-center gap-1.5">
+          <span>📝 Sunday Reviews Queue</span>
+          <span id="tab-checkins-badge" class="px-1.5 py-0.2 bg-amber-500 text-black text-[9px] font-bold rounded hidden">0</span>
+        </button>
+        <button onclick="setCoachTab('schedule')" id="tab-btn-schedule" 
+                class="px-4 py-2 font-mono text-xs font-bold uppercase transition-all bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10">
+          📅 PT Bookings
+        </button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="flex items-center gap-2">
+        <input id="athlete-search-input" type="text" placeholder="Search athlete by name, ID, phone..." 
+               oninput="renderActiveTabContent()"
+               class="bg-black border border-white/20 px-3 py-1.5 text-xs text-white focus:border-[#ff0033] focus:outline-none w-64 font-mono">
+      </div>
+    </div>
+
+    <!-- 3. TAB CONTENT CONTAINERS -->
+    
+    <!-- A. ROSTER TAB (1-ON-1 PT CLIENTS) -->
+    <div id="pane-roster" class="space-y-4">
+      <div class="flex items-center justify-between text-xs font-mono text-zinc-400">
+        <div>// ASSIGNED 1-ON-1 ATHLETES (<span id="roster-count" class="text-white font-bold">0</span>)</div>
+        <div class="text-[11px] text-zinc-500">Click athlete card or "Program Split" to prescribe workouts & log PT sessions</div>
+      </div>
+      <div id="roster-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- B. FLOOR TAB (ALL GYM FLOOR MEMBERS) -->
+    <div id="pane-floor" class="hidden space-y-4">
+      <div class="flex items-center justify-between text-xs font-mono text-zinc-400">
+        <div>// GENERAL GYM FLOOR ATHLETES (<span id="floor-count" class="text-white font-bold">0</span>)</div>
+        <div class="text-[11px] text-zinc-500">Floor duty support: machine setup, spot checks & standard routine assistance</div>
+      </div>
+      <div id="floor-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- C. SUNDAY REVIEWS QUEUE TAB -->
+    <div id="pane-checkins" class="hidden space-y-4">
+      <div class="flex items-center justify-between text-xs font-mono text-zinc-400">
+        <div>// ATHLETE WEEKLY REFLECTIONS & COACH REVIEWS (<span id="checkins-count" class="text-white font-bold">0</span>)</div>
+        <div class="text-[11px] text-zinc-500">Read weekly wins, energy ratings, and reply with progressive overload feedback</div>
+      </div>
+      <div id="checkins-list" class="space-y-3 font-mono">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- D. SCHEDULE TAB (PT BOOKINGS) -->
+    <div id="pane-schedule" class="hidden space-y-4">
+      <div class="flex items-center justify-between text-xs font-mono text-zinc-400">
+        <div>// 1-ON-1 PT APPOINTMENTS & CALENDAR (<span id="schedule-count" class="text-white font-bold">0</span>)</div>
+        <button onclick="promptQuickBookPT()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase rounded">
+          + Book PT Slot
+        </button>
+      </div>
+      <div id="schedule-list" class="space-y-2.5 font-mono">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: COACH WORKOUT PROGRAMMER & ATHLETE 360° DOSSIER   -->
+  <!-- ======================================================== -->
+  <div id="coach-dossier-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-4xl w-full p-5 sm:p-6 relative max-h-[92vh] overflow-y-auto">
+      <button onclick="closeCoachDossierModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-xl font-bold p-1">✕</button>
+      <div id="coach-dossier-content">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: EDIT DAY WORKOUT SPLIT (COACH PRESCRIPTION)       -->
+  <!-- ======================================================== -->
+  <div id="coach-edit-split-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeCoachEditSplitModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <span class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">// DAY SPLIT BUILDER</span>
+        <h3 id="edit-split-modal-title" class="text-2xl font-gymbox text-white">EDIT DAY'S SPLIT</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Pushes updated exercises and form cues directly to the athlete's app.</p>
+      </div>
+
+      <form id="coach-edit-split-form" onsubmit="handleCoachSaveSplit(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="edit-split-member-id">
+        <input type="hidden" id="edit-split-day-key">
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Workout Session Title:</label>
+          <input id="edit-split-title" type="text" required placeholder="e.g. Heavy Push & Bench Press"
+                 class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Duration (Mins):</label>
+            <input id="edit-split-duration" type="number" value="60" min="15" max="180"
+                   class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033]">
+          </div>
+          <div>
+            <label class="block text-zinc-300 font-bold uppercase mb-1">Status:</label>
+            <select id="edit-split-status" class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033]">
+              <option value="upcoming">Upcoming</option>
+              <option value="today">Today's Active Workout</option>
+              <option value="completed">Completed / Logged</option>
+              <option value="rest">Rest Day</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Coach Biomechanical Cue:</label>
+          <input id="edit-split-cue" type="text" placeholder="e.g. 2-sec eccentric pause on bench press. Drive feet hard into floor."
+                 class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033]">
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Exercises Prescription (One per line):</label>
+          <div class="text-[10px] text-zinc-500 mb-1">Format: <code>Exercise Name | Sets | Target Load | Tempo | Rest (sec)</code></div>
+          <textarea id="edit-split-exercises" rows="5" placeholder="Barbell Bench Press | 4x6 | 95kg | 2-0-1-0 | 90&#10;Incline DB Press | 4x8 | 32kg DBs | 2-1-1-0 | 75"
+                    class="w-full bg-black border border-white/20 p-2 text-white text-xs font-mono focus:border-[#ff0033]"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-[#ff0033] hover:bg-red-600 text-white font-gymbox text-lg uppercase tracking-wider transition-all">
+          PUSH BLUEPRINT TO ATHLETE
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/data.js"></script>
+  <script>
+    let activeTrainerId = null;
+    let currentCoachTab = "roster";
+    let activeDossierMemberId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCoachPortal();
+    });
+
+    function initCoachPortal() {
+      const trainers = window.fit24Store.getTrainers() || [];
+      const selectEl = document.getElementById("coach-select-dropdown");
+      if (!selectEl) return;
+
+      selectEl.innerHTML = trainers.map(t => `
+        <option value="${t.id}">${t.name} (${t.title || t.badge})</option>
+      `).join("");
+
+      // Set active trainer (default to first active or from URL parameter)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlTrainerId = urlParams.get("coach") || urlParams.get("trainer");
+      activeTrainerId = urlTrainerId && trainers.some(t => t.id === urlTrainerId) 
+        ? urlTrainerId 
+        : (trainers[0] ? trainers[0].id : null);
+
+      if (activeTrainerId) {
+        selectEl.value = activeTrainerId;
+      }
+
+      updateCoachBanner();
+      renderActiveTabContent();
+    }
+
+    function switchActiveCoach(newId) {
+      activeTrainerId = newId;
+      updateCoachBanner();
+      renderActiveTabContent();
+    }
+
+    function updateCoachBanner() {
+      const trainer = window.fit24Store.getTrainer(activeTrainerId);
+      if (!trainer) return;
+
+      document.getElementById("coach-banner-name").textContent = trainer.name.toUpperCase();
+      document.getElementById("coach-banner-avatar").src = trainer.photoUrl || "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=400&q=80";
+      document.getElementById("coach-banner-badge").textContent = (trainer.badge || trainer.title || "COACH").toUpperCase();
+      document.getElementById("coach-banner-specialty").textContent = trainer.specialty || trainer.bio || "FIT24 Lead Specialist";
+
+      // Calculate stats
+      const assignedClients = (window.fit24Store.getMembers() || []).filter(m => m.assignedTrainerId === activeTrainerId);
+      document.getElementById("stat-pt-roster").textContent = assignedClients.length;
+
+      let complianceTotal = 0;
+      let pendingReviews = 0;
+
+      assignedClients.forEach(m => {
+        const c = window.fit24Store.calculateComplianceScore ? window.fit24Store.calculateComplianceScore(m.id) : { score: 90 };
+        complianceTotal += c.score;
+        if (m.weeklyCheckIns && m.weeklyCheckIns.length > 0 && !m.weeklyCheckIns[0].coachFeedback) {
+          pendingReviews++;
+        }
+      });
+
+      const avg = assignedClients.length > 0 ? Math.round(complianceTotal / assignedClients.length) : 92;
+      document.getElementById("stat-compliance-avg").textContent = `${avg}%`;
+      document.getElementById("stat-pending-reviews").textContent = pendingReviews;
+
+      const badgeEl = document.getElementById("tab-checkins-badge");
+      if (badgeEl) {
+        if (pendingReviews > 0) {
+          badgeEl.textContent = pendingReviews;
+          badgeEl.classList.remove("hidden");
+        } else {
+          badgeEl.classList.add("hidden");
+        }
+      }
+    }
+
+    function setCoachTab(tabKey) {
+      currentCoachTab = tabKey;
+      ["roster", "floor", "checkins", "schedule"].forEach(k => {
+        const btn = document.getElementById(`tab-btn-${k}`);
+        const pane = document.getElementById(`pane-${k}`);
+        if (k === tabKey) {
+          btn?.classList.add("bg-[#ff0033]", "text-white", "border-red-500");
+          btn?.classList.remove("bg-white/5", "text-zinc-300", "border-white/10");
+          pane?.classList.remove("hidden");
+        } else {
+          btn?.classList.remove("bg-[#ff0033]", "text-white", "border-red-500");
+          btn?.classList.add("bg-white/5", "text-zinc-300", "border-white/10");
+          pane?.classList.add("hidden");
+        }
+      });
+      renderActiveTabContent();
+    }
+
+    function renderActiveTabContent() {
+      const search = (document.getElementById("athlete-search-input")?.value || "").toLowerCase().trim();
+      const allMembers = window.fit24Store.getMembers() || [];
+
+      if (currentCoachTab === "roster") {
+        renderRosterTab(allMembers, search);
+      } else if (currentCoachTab === "floor") {
+        renderFloorTab(allMembers, search);
+      } else if (currentCoachTab === "checkins") {
+        renderCheckInsTab(allMembers, search);
+      } else if (currentCoachTab === "schedule") {
+        renderScheduleTab();
+      }
+    }
+
+    // --- TAB A: MY 1-ON-1 ROSTER ---
+    function renderRosterTab(members, search) {
+      const grid = document.getElementById("roster-grid");
+      if (!grid) return;
+
+      const assigned = members.filter(m => {
+        const isAssigned = m.assignedTrainerId === activeTrainerId;
+        const matchesSearch = !search || m.name.toLowerCase().includes(search) || m.id.toLowerCase().includes(search) || m.phone.includes(search);
+        return isAssigned && matchesSearch;
+      });
+
+      document.getElementById("roster-count").textContent = assigned.length;
+
+      if (assigned.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full p-8 text-center bg-[#0e0e12] border border-white/10 font-mono text-zinc-500">
+            <p>No 1-on-1 athletes assigned to this coach yet.</p>
+            <p class="text-xs text-zinc-600 mt-1">Switch to "All Floor Athletes" tab to view unassigned members or floor support athletes.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = assigned.map(m => renderAthleteCardHTML(m, true)).join("");
+    }
+
+    // --- TAB B: FLOOR ATHLETES ---
+    function renderFloorTab(members, search) {
+      const grid = document.getElementById("floor-grid");
+      if (!grid) return;
+
+      const floorMembers = members.filter(m => {
+        const matchesSearch = !search || m.name.toLowerCase().includes(search) || m.id.toLowerCase().includes(search) || m.phone.includes(search);
+        return matchesSearch;
+      });
+
+      document.getElementById("floor-count").textContent = floorMembers.length;
+      grid.innerHTML = floorMembers.map(m => renderAthleteCardHTML(m, false)).join("");
+    }
+
+    function renderAthleteCardHTML(m, isAssigned) {
+      const ptRem = Math.max(0, (m.ptSessionsTotal || 0) - (m.ptSessionsUsed || 0));
+      const ptTotal = m.ptSessionsTotal || 0;
+      const compliance = window.fit24Store.calculateComplianceScore ? window.fit24Store.calculateComplianceScore(m.id) : { score: 90, color: 'emerald', level: 'HIGH COMPLIANCE' };
+      const compColorClass = compliance.color === 'emerald' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : compliance.color === 'amber' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30';
+      const progTitle = m.workoutPlan ? m.workoutPlan.title : "No Split Assigned";
+      const hasPendingCheckin = m.weeklyCheckIns && m.weeklyCheckIns.length > 0 && !m.weeklyCheckIns[0].coachFeedback;
+
+      return `
+        <div class="bg-[#0e0e12] border ${hasPendingCheckin ? 'border-amber-500/60' : 'border-white/10 hover:border-white/30'} p-4 space-y-3 font-mono transition-all">
+          
+          <!-- Card Header -->
+          <div class="flex items-start justify-between gap-2 border-b border-white/5 pb-2.5">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-bold text-white uppercase">${m.name}</span>
+                ${hasPendingCheckin ? `<span class="px-1.5 py-0.2 bg-amber-500 text-black text-[9px] font-bold rounded">REVIEW PENDING</span>` : ''}
+              </div>
+              <div class="text-[10px] text-zinc-400">
+                Code: <strong class="text-red-400">${m.id}</strong> · Tier: <strong class="text-yellow-400">${m.tier}</strong>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase border ${compColorClass}">
+              ${compliance.score}% Adherence
+            </span>
+          </div>
+
+          <!-- PT Quota & Active Split -->
+          <div class="space-y-1.5 text-xs">
+            <div class="p-2 bg-black border border-white/5 flex items-center justify-between">
+              <div>
+                <span class="text-[9px] text-zinc-500 block uppercase">1-on-1 PT Passbook:</span>
+                <strong class="${ptRem > 0 ? 'text-red-400' : 'text-zinc-400'} font-bold">
+                  ${ptTotal > 0 ? `${ptRem} / ${ptTotal} Sessions Left` : 'Self-Guided (No PT)'}
+                </strong>
+              </div>
+              ${ptRem > 0 ? `
+                <button onclick="logPTSessionDirect('${m.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white font-bold text-[10px] uppercase rounded" title="Deduct 1 Completed PT Session">
+                  -1 PT Done
+                </button>
+              ` : `
+                <button onclick="addPTDirect('${m.id}', 6)" class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white font-bold text-[10px] uppercase border border-emerald-500/40 rounded">
+                  +6 PT
+                </button>
+              `}
+            </div>
+
+            <div class="p-2 bg-black border border-white/5">
+              <span class="text-[9px] text-zinc-500 block uppercase">Active Workout Blueprint:</span>
+              <div class="text-white text-[11px] font-bold truncate">${progTitle}</div>
+            </div>
+          </div>
+
+          <!-- Card Actions -->
+          <div class="flex items-center gap-1.5 pt-1">
+            <button onclick="openCoachAthleteDossier('${m.id}')" 
+                    class="flex-1 py-1.5 bg-[#ff0033] hover:bg-red-600 text-white text-center text-[10px] font-bold uppercase rounded transition-all">
+              📋 Program Split
+            </button>
+            <a href="https://wa.me/${m.phone.replace(/[^0-9]/g, '')}?text=Hi%20${encodeURIComponent(m.name)},%20Coach%20from%20FIT24%20here.%20Checking%20in%20on%20your%20training%20progress." target="_blank"
+               class="px-2.5 py-1.5 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-center text-[10px] font-bold uppercase border border-emerald-500/40 rounded flex items-center gap-1">
+              <span>💬 WA</span>
+            </a>
+          </div>
+
+        </div>
+      `;
+    }
+
+    // --- TAB C: SUNDAY REVIEWS QUEUE ---
+    function renderCheckInsTab(members, search) {
+      const container = document.getElementById("checkins-list");
+      if (!container) return;
+
+      const items = [];
+      members.forEach(m => {
+        if (m.weeklyCheckIns && m.weeklyCheckIns.length > 0) {
+          m.weeklyCheckIns.forEach((ci, idx) => {
+            const matchesSearch = !search || m.name.toLowerCase().includes(search) || m.id.toLowerCase().includes(search);
+            if (matchesSearch) {
+              items.push({ member: m, checkIn: ci, index: idx });
+            }
+          });
+        }
+      });
+
+      document.getElementById("checkins-count").textContent = items.length;
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-[#0e0e12] border border-white/10 text-zinc-500">
+            No weekly reflections submitted yet. Athletes submit these guided check-ins in their Member Portal.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <div class="p-4 bg-[#0e0e12] border ${!item.checkIn.coachFeedback ? 'border-amber-500/60 bg-amber-950/10' : 'border-white/10'} rounded space-y-2.5 text-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-2">
+            <div class="flex items-center gap-2">
+              <strong class="text-white text-sm">${item.member.name}</strong>
+              <span class="text-red-400 text-[10px]">(${item.member.id})</span>
+              <span class="px-2 py-0.5 bg-white/10 text-zinc-300 text-[10px] rounded">${item.checkIn.date}</span>
+              ${!item.checkIn.coachFeedback ? `<span class="px-2 py-0.2 bg-amber-500 text-black text-[9px] font-bold rounded">NEEDS FEEDBACK</span>` : `<span class="px-2 py-0.2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold rounded">DEBRIEF SENT</span>`}
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-zinc-400 text-[11px]">Adherence: <strong class="text-emerald-400 font-gymbox text-base">${item.checkIn.adherencePct || item.checkIn.adherencePercent || 90}%</strong></span>
+              <button onclick="promptCoachCheckInReply('${item.member.id}', ${item.index})" class="px-2.5 py-1 bg-[#ff0033] hover:bg-red-600 text-white font-bold text-[10px] uppercase rounded">
+                💬 ${item.checkIn.coachFeedback ? 'Update Feedback' : 'Send Coach Debrief'}
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
+            <div class="p-2.5 bg-black border border-white/5">
+              <span class="text-[9px] text-zinc-500 uppercase font-bold block mb-1">Athlete Wins & Highlights:</span>
+              <p class="text-zinc-200 italic">"${item.checkIn.wins || 'Executed all scheduled workouts.'}"</p>
+            </div>
+            <div class="p-2.5 bg-black border border-white/5">
+              <span class="text-[9px] text-zinc-500 uppercase font-bold block mb-1">Question for Coach:</span>
+              <p class="text-zinc-200 italic">"${item.checkIn.coachQuestion || 'None asked this week.'}"</p>
+            </div>
+          </div>
+
+          ${item.checkIn.coachFeedback ? `
+            <div class="p-2.5 bg-emerald-950/20 border border-emerald-500/30 rounded text-[11px] text-emerald-300">
+              <strong class="text-emerald-400 uppercase text-[9px] block">Coach Debrief Active on Athlete App:</strong>
+              "${item.checkIn.coachFeedback}"
+            </div>
+          ` : ''}
+        </div>
+      `).join("");
+    }
+
+    // --- TAB D: PT SCHEDULE ---
+    function renderScheduleTab() {
+      const list = document.getElementById("schedule-list");
+      if (!list) return;
+
+      const bookings = (window.fit24Store.getBookings ? window.fit24Store.getBookings() : []).filter(b => b.trainerId === activeTrainerId || !b.trainerId);
+      document.getElementById("schedule-count").textContent = bookings.length;
+
+      if (bookings.length === 0) {
+        list.innerHTML = `
+          <div class="p-8 text-center bg-[#0e0e12] border border-white/10 text-zinc-500">
+            No 1-on-1 PT bookings scheduled for this coach. Click "+ Book PT Slot" above to schedule an appointment.
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = bookings.map(b => `
+        <div class="p-3 bg-[#0e0e12] border border-white/10 flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-1 bg-red-600/20 text-[#ff0033] border border-red-500/30 font-bold text-[10px] rounded">${b.timeSlot}</span>
+            <div>
+              <strong class="text-white text-sm">${b.memberName}</strong>
+              <div class="text-[10px] text-zinc-400">${b.sessionType} · Date: ${b.sessionDate}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 ${b.status === 'CONFIRMED' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-400'} text-[10px] font-bold rounded">
+              ${b.status}
+            </span>
+            <button onclick="logPTSessionDirect('${b.memberId}')" class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white font-bold text-[10px] uppercase rounded">
+              Mark Completed
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // --- COACH ATHLETE DOSSIER & WORKOUT PROGRAMMER MODAL ---
+    function openCoachAthleteDossier(memberId) {
+      activeDossierMemberId = memberId;
+      const member = window.fit24Store.getMember(memberId);
+      if (!member) return;
+
+      const modal = document.getElementById("coach-dossier-modal");
+      const content = document.getElementById("coach-dossier-content");
+      if (!modal || !content) return;
+
+      const ptRem = Math.max(0, (member.ptSessionsTotal || 0) - (member.ptSessionsUsed || 0));
+      const ptTotal = member.ptSessionsTotal || 0;
+      const compliance = window.fit24Store.calculateComplianceScore ? window.fit24Store.calculateComplianceScore(member.id) : { score: 90 };
+      const biometrics = member.biometrics || [];
+      const workoutPlan = member.workoutPlan;
+      const schedule = member.dayByDaySchedule || [];
+      const parq = member.parq || {};
+      const hasParqFlags = parq.heartCondition || parq.chestPain || parq.dizziness || parq.boneOrJoint || parq.medications;
+
+      content.innerHTML = `
+        <div class="space-y-5 font-mono">
+          
+          <!-- Dossier Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
+            <div>
+              <span class="text-[10px] font-bold text-red-500 uppercase tracking-widest">// ATHLETE COACHING DOSSIER</span>
+              <h3 class="text-3xl font-gymbox text-white uppercase">${member.name}</h3>
+              <p class="text-xs text-zinc-400 mt-0.5">
+                Member Code: <strong class="text-white">${member.id}</strong> · Tier: <strong class="text-yellow-400">${member.tier}</strong> · Phone: ${member.phone}
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-center rounded">
+                <span class="text-[8px] uppercase block">Adherence</span>
+                <strong class="text-base font-gymbox">${compliance.score}%</strong>
+              </div>
+              <div class="px-3 py-1 bg-black border border-white/10 text-center rounded">
+                <span class="text-[8px] text-zinc-400 uppercase block">PT Passbook</span>
+                <strong class="text-base font-gymbox text-red-400">${ptRem} / ${ptTotal}</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medical Alert & PT Action Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- Medical Safety -->
+            <div class="p-3 bg-black border border-white/10 space-y-1">
+              <div class="flex justify-between items-center">
+                <span class="text-[9px] uppercase font-bold text-zinc-400">Clinical PAR-Q Clearance:</span>
+                <span class="text-[10px] font-bold ${hasParqFlags ? 'text-red-400' : 'text-emerald-400'}">
+                  ${hasParqFlags ? '⚠️ Restricted / Review Notes' : '✓ Cleared for Intense Training'}
+                </span>
+              </div>
+              <div class="text-[11px] text-zinc-300">
+                Medical Alert: <strong class="text-white">${member.medicalAlerts || 'None recorded'}</strong>
+              </div>
+              <div class="text-[10px] text-zinc-500">Emergency: ${member.emergencyContact || 'None listed'}</div>
+            </div>
+
+            <!-- Quick PT Quota Management -->
+            <div class="p-3 bg-black border border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-[9px] uppercase font-bold text-zinc-400 block">Personal Training Session:</span>
+                <strong class="text-sm text-white">${ptRem} Sessions Left</strong>
+              </div>
+              <div class="flex items-center gap-1.5">
+                ${ptRem > 0 ? `
+                  <button onclick="logPTSessionDirect('${member.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase rounded">
+                    -1 PT Session
+                  </button>
+                ` : ''}
+                <button onclick="addPTDirect('${member.id}', 6)" class="px-2.5 py-1.5 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white font-bold text-xs uppercase border border-emerald-500/40 rounded">
+                  +6 PT
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prescribed Routine Blueprint & Template Switcher -->
+          <div class="p-4 bg-black border border-white/10 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-2">
+              <div>
+                <span class="text-[9px] text-[#ff0033] uppercase tracking-widest font-bold">// WORKOUT SPLIT BLUEPRINT</span>
+                <h4 class="text-lg font-gymbox text-white uppercase">${workoutPlan ? workoutPlan.title : 'NO BLUEPRINT ASSIGNED'}</h4>
+                <div class="text-[10px] text-zinc-400">${workoutPlan ? workoutPlan.phase : 'Assign a split template below'}</div>
+              </div>
+
+              <!-- 1-Click Split Presets -->
+              <div class="flex flex-wrap items-center gap-1">
+                <span class="text-[9px] text-zinc-500 mr-1">Presets:</span>
+                <button onclick="applySplitTemplate('${member.id}', 'ppl-6day')" class="px-2 py-1 bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[10px] font-bold uppercase border border-red-500/40">⚡ PPL (6D)</button>
+                <button onclick="applySplitTemplate('${member.id}', 'upper-lower-4day')" class="px-2 py-1 bg-cyan-600/30 hover:bg-cyan-600 text-cyan-300 hover:text-white text-[10px] font-bold uppercase border border-cyan-500/40">🏋️ Up/Low (4D)</button>
+                <button onclick="applySplitTemplate('${member.id}', 'fullbody-3day')" class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-[10px] font-bold uppercase border border-emerald-500/40">🧱 Full (3D)</button>
+                <button onclick="applySplitTemplate('${member.id}', 'fat-shred-5day')" class="px-2 py-1 bg-amber-600/30 hover:bg-amber-600 text-amber-300 hover:text-white text-[10px] font-bold uppercase border border-amber-500/40">🔥 Shred (5D)</button>
+                <button onclick="applySplitTemplate('${member.id}', 'ladies-sculpt-4day')" class="px-2 py-1 bg-pink-600/30 hover:bg-pink-600 text-pink-300 hover:text-white text-[10px] font-bold uppercase border border-pink-500/40">🌸 Ladies (4D)</button>
+              </div>
+            </div>
+
+            <!-- Day-by-Day Schedule List -->
+            <div class="space-y-2">
+              <span class="text-[10px] text-zinc-400 font-bold block uppercase">// 7-DAY SCHEDULE & EXERCISE BUILDER</span>
+              ${schedule.length === 0 ? `
+                <div class="text-zinc-500 text-xs italic py-2">No schedule generated yet. Click a split preset above.</div>
+              ` : schedule.map(day => `
+                <div class="p-3 bg-white/[0.02] border ${day.status === 'completed' ? 'border-emerald-500/30' : day.status === 'today' ? 'border-[#ff0033]/60 bg-red-950/15' : 'border-white/10'} rounded text-xs space-y-1.5">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-white/5 pb-1">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 ${day.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400' : day.status === 'today' ? 'bg-red-600 text-white' : 'bg-white/10 text-zinc-300'} text-[10px] font-bold rounded">
+                        ${day.dayKey} (${day.status.toUpperCase()})
+                      </span>
+                      <strong class="text-white text-sm font-gymbox">${day.title}</strong>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      ${day.status === 'completed' ? `
+                        <span class="text-emerald-400 text-[10px] font-bold">✓ ${(day.totalVolumeKg || 0).toLocaleString()} kg Lifted</span>
+                      ` : `
+                        <span class="text-zinc-400 text-[10px]">${day.durationMins || 60} Mins</span>
+                      `}
+                      <button onclick="openCoachEditSplit('${member.id}', '${day.dayKey}')" class="px-2.5 py-0.5 bg-[#ff0033] hover:bg-red-600 text-white font-bold text-[10px] uppercase rounded">
+                        ✏️ Edit Split
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="text-[11px] text-zinc-300">
+                    <span class="text-[9px] uppercase text-zinc-500 font-bold block">Exercises:</span>
+                    ${Array.isArray(day.exercises) ? day.exercises.map(e => `${e.name} (${e.sets || '4x8'})`).join(' · ') : day.exercises}
+                  </div>
+
+                  ${day.coachCue ? `
+                    <div class="text-[10px] text-amber-400 italic">💡 Cue: "${day.coachCue}"</div>
+                  ` : ''}
+
+                  ${day.coachFeedback ? `
+                    <div class="text-[10px] text-emerald-400">💬 Coach Debrief: "${day.coachFeedback}"</div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Biometrics Weigh-in Log -->
+          <div class="p-4 bg-black border border-white/10 space-y-2">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+              <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">// WEIGH-INS & BIOMETRICS LOG</span>
+              <button onclick="logWeighInDirect('${member.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase rounded">
+                + Weigh-in PR
+              </button>
+            </div>
+            ${biometrics.length === 0 ? `
+              <div class="text-zinc-500 text-xs italic py-2">No weigh-ins logged. Click "+ Weigh-in PR" above.</div>
+            ` : `
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                ${biometrics.map(b => `
+                  <div class="p-2 bg-white/5 border border-white/10">
+                    <div class="flex justify-between text-[10px] text-zinc-400">
+                      <span>${b.date}</span>
+                      <strong class="text-emerald-400 text-sm font-gymbox">${b.weight} kg</strong>
+                    </div>
+                    <div class="text-[10px] text-zinc-300 mt-0.5 truncate">${b.notes || 'Routine assessment'}</div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+
+        </div>
+      `;
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeCoachDossierModal() {
+      document.getElementById("coach-dossier-modal")?.classList.add("hidden");
+    }
+
+    // --- DAY SPLIT EDITING ---
+    function openCoachEditSplit(memberId, dayKey) {
+      const member = window.fit24Store.getMember(memberId);
+      if (!member || !member.dayByDaySchedule) return;
+      const day = member.dayByDaySchedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
+      if (!day) return;
+
+      document.getElementById("edit-split-member-id").value = memberId;
+      document.getElementById("edit-split-day-key").value = dayKey;
+      document.getElementById("edit-split-modal-title").textContent = `EDIT ${dayKey.toUpperCase()} SPLIT (${member.name})`;
+      document.getElementById("edit-split-title").value = day.title || "";
+      document.getElementById("edit-split-duration").value = day.durationMins || 60;
+      document.getElementById("edit-split-status").value = day.status || "upcoming";
+      document.getElementById("edit-split-cue").value = day.coachCue || "";
+
+      let exercisesText = "";
+      if (Array.isArray(day.exercises)) {
+        exercisesText = day.exercises.map(e => {
+          return `${e.name || 'Exercise'} | ${e.sets || '4x8'} | ${e.targetWeight || '—'} | ${e.tempo || '2-0-1-0'} | ${e.restSeconds || 90}`;
+        }).join('\n');
+      } else {
+        exercisesText = day.exercises || "";
+      }
+      document.getElementById("edit-split-exercises").value = exercisesText;
+
+      document.getElementById("coach-edit-split-modal")?.classList.remove("hidden");
+    }
+
+    function closeCoachEditSplitModal() {
+      document.getElementById("coach-edit-split-modal")?.classList.add("hidden");
+    }
+
+    function handleCoachSaveSplit(e) {
+      e.preventDefault();
+      const memberId = document.getElementById("edit-split-member-id").value;
+      const dayKey = document.getElementById("edit-split-day-key").value;
+      const title = document.getElementById("edit-split-title").value.trim();
+      const durationMins = parseInt(document.getElementById("edit-split-duration").value) || 60;
+      const status = document.getElementById("edit-split-status").value;
+      const coachCue = document.getElementById("edit-split-cue").value.trim();
+      const rawExercises = document.getElementById("edit-split-exercises").value.trim();
+
+      const exercises = rawExercises.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+        const p = l.split('|').map(s => s.trim());
+        return {
+          name: p[0] || "Exercise",
+          sets: p[1] || "4x8",
+          targetWeight: p[2] || "—",
+          tempo: p[3] || "2-0-1-0",
+          restSeconds: parseInt(p[4]) || 90,
+          completed: status === 'completed'
+        };
+      });
+
+      const updated = window.fit24Store.updateDayWorkoutSplit(memberId, dayKey, {
+        title,
+        durationMins,
+        status,
+        coachCue,
+        exercises: exercises.length > 0 ? exercises : [{ name: title, sets: "4x10", targetWeight: "—" }]
+      });
+
+      if (updated) {
+        closeCoachEditSplitModal();
+        alert(`✅ Pushed ${dayKey} split directly to ${updated.name}'s Athlete Action Center!`);
+        openCoachAthleteDossier(memberId);
+        renderActiveTabContent();
+      }
+    }
+
+    // --- QUICK ACTIONS ---
+    function logPTSessionDirect(memberId) {
+      const res = window.fit24Store.deductPTSession(memberId);
+      if (!res.success) {
+        alert("⚠️ " + res.message);
+        return;
+      }
+      alert(`🥊 PT Session Logged! ${res.remaining}`);
+      renderActiveTabContent();
+      updateCoachBanner();
+      if (activeDossierMemberId === memberId) {
+        openCoachAthleteDossier(memberId);
+      }
+    }
+
+    function addPTDirect(memberId, count) {
+      const res = window.fit24Store.addPTSessions(memberId, count);
+      if (res && res.success) {
+        alert(`🥊 Added +${count} PT Sessions! Total: ${res.newTotal} sessions.`);
+        renderActiveTabContent();
+        updateCoachBanner();
+        if (activeDossierMemberId === memberId) {
+          openCoachAthleteDossier(memberId);
+        }
+      }
+    }
+
+    function logWeighInDirect(memberId) {
+      const w = prompt("Enter athlete weight in kg (e.g. 78.5):", "78.0");
+      if (!w) return;
+      const note = prompt("Assessment / PR note (e.g. Squat 140kg PR):", "Coach assessment");
+      window.fit24Store.logBiometric(memberId, {
+        weight: parseFloat(w) || 78,
+        notes: note || "Weigh-in"
+      });
+      openCoachAthleteDossier(memberId);
+    }
+
+    function applySplitTemplate(memberId, progId) {
+      const m = window.fit24Store.applyProgramTemplate(memberId, progId);
+      if (m) {
+        alert(`✅ Prescribed "${m.workoutPlan?.title || progId}"!`);
+        openCoachAthleteDossier(memberId);
+        renderActiveTabContent();
+      }
+    }
+
+    function promptCoachCheckInReply(memberId, checkInIdx) {
+      const member = window.fit24Store.getMember(memberId);
+      if (!member || !member.weeklyCheckIns || !member.weeklyCheckIns[checkInIdx]) return;
+      const current = member.weeklyCheckIns[checkInIdx].coachFeedback || "";
+      const text = prompt(`Coach Debrief for ${member.name}:\n\nType your feedback and progressive overload cues for next week:`, current || "Great consistency this week. Cleared for +2.5kg on squats. Maintain 3.5L hydration.");
+      if (text !== null && text.trim()) {
+        window.fit24Store.replyWeeklyCheckIn(memberId, checkInIdx, text.trim());
+        alert("✅ Debrief transmitted to athlete's mobile action center!");
+        renderActiveTabContent();
+        updateCoachBanner();
+      }
+    }
+
+    function promptQuickBookPT() {
+      const name = prompt("Athlete Name or Member Code (e.g. F24-1001):", "F24-1001");
+      if (!name) return;
+      const slot = prompt("Time Slot (e.g. 07:00 AM):", "07:00 AM");
+      if (!slot) return;
+      const date = prompt("Date (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+      if (!date) return;
+
+      const member = window.fit24Store.getMember(name) || { name: name, id: name };
+      const trainer = window.fit24Store.getTrainer(activeTrainerId);
+
+      window.fit24Store.addBooking({
+        memberId: member.id,
+        memberName: member.name,
+        trainerId: activeTrainerId,
+        trainerName: trainer ? trainer.name : "Lead Coach",
+        sessionDate: date,
+        timeSlot: slot,
+        sessionType: "1-on-1 PT Coaching"
+      });
+
+      alert(`✅ Booked 1-on-1 PT session with ${member.name} for ${slot} on ${date}!`);
+      renderActiveTabContent();
+    }
+  </script>
+</body>
+</html>
