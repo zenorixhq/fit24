@@ -255,7 +255,12 @@
         </div>
 
         <div>
-          <label class="block text-zinc-300 font-bold uppercase mb-1">Exercises Prescription (One per line):</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-zinc-300 font-bold uppercase text-xs">Exercises Prescription (One per line):</label>
+            <select id="coach-quick-add-exercise-select" onchange="coachInsertExerciseFromLibrary(this.value)" class="bg-black border border-cyan-500/40 text-cyan-400 text-[10px] p-1 font-mono focus:border-cyan-400">
+              <option value="">⚡ + Pick from Library (70+ Movements)...</option>
+            </select>
+          </div>
           <div class="text-[10px] text-zinc-500 mb-1">Format: <code>Exercise Name | Sets | Target Load | Tempo | Rest (sec)</code></div>
           <textarea id="edit-split-exercises" rows="5" placeholder="Barbell Bench Press | 4x6 | 95kg | 2-0-1-0 | 90&#10;Incline DB Press | 4x8 | 32kg DBs | 2-1-1-0 | 75"
                     class="w-full bg-black border border-white/20 p-2 text-white text-xs font-mono focus:border-[#ff0033]"></textarea>
@@ -269,6 +274,7 @@
   </div>
 
   <!-- SCRIPTS -->
+  <script src="js/exercises.js"></script>
   <script src="js/data.js"></script>
   <script>
     let activeTrainerId = null;
@@ -795,7 +801,35 @@
       }
       document.getElementById("edit-split-exercises").value = exercisesText;
 
+      // Populate Quick Library Dropdown
+      const selectDropdown = document.getElementById("coach-quick-add-exercise-select");
+      if (selectDropdown && window.MASTER_EXERCISE_LIBRARY) {
+        selectDropdown.innerHTML = `<option value="">⚡ + Pick from Library (70+ Movements)...</option>` + 
+          (window.MASTER_EXERCISE_CATEGORIES || []).filter(c => c.id !== 'all').map(cat => {
+            const catExs = (window.MASTER_EXERCISE_LIBRARY || []).filter(e => e.category === cat.id);
+            return `<optgroup label="${cat.icon} ${cat.name.toUpperCase()}">
+              ${catExs.map(e => `<option value="${e.id}">${e.name} (${e.recommendedSets})</option>`).join('')}
+            </optgroup>`;
+          }).join('');
+      }
+
       document.getElementById("coach-edit-split-modal")?.classList.remove("hidden");
+    }
+
+    function coachInsertExerciseFromLibrary(exId) {
+      if (!exId) return;
+      const ex = window.fit24Store.getExerciseById(exId);
+      if (!ex) return;
+      const textarea = document.getElementById("edit-split-exercises");
+      if (!textarea) return;
+
+      const formatted = `${ex.name} | ${ex.recommendedSets || '4x8'} | — | ${ex.recommendedTempo || '2-0-1-0'} | ${ex.recommendedRestSec || 90}`;
+      const current = textarea.value.trim();
+      textarea.value = current ? `${current}\n${formatted}` : formatted;
+
+      // Reset dropdown
+      const sel = document.getElementById("coach-quick-add-exercise-select");
+      if (sel) sel.value = "";
     }
 
     function closeCoachEditSplitModal() {
@@ -834,6 +868,17 @@
 
       if (updated) {
         closeCoachEditSplitModal();
+        const trainer = window.fit24Store.getTrainer(activeTrainerId);
+        window.fit24Store.logActivity({
+          actorType: "TRAINER",
+          actorId: activeTrainerId || "TR-01",
+          actorName: trainer ? trainer.name : "Coach",
+          targetId: memberId,
+          targetName: updated.name,
+          actionType: "SPLIT_UPDATED",
+          summary: `${trainer ? trainer.name : 'Coach'} prescribed ${dayKey.toUpperCase()} split ("${title}") for ${updated.name}`,
+          details: { dayKey, title, exercisesCount: exercises.length }
+        });
         alert(`✅ Pushed ${dayKey} split directly to ${updated.name}'s Athlete Action Center!`);
         openCoachAthleteDossier(memberId);
         renderActiveTabContent();

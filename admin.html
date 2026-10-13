@@ -69,6 +69,14 @@
           Member CRM
         </button>
 
+        <button data-tab="tab-activity" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center justify-between transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
+          <div class="flex items-center gap-3">
+            <span class="text-lg text-red-500">🥊</span>
+            <span>Coaching & Activity Hub</span>
+          </div>
+          <span class="px-1.5 py-0.5 text-[9px] font-mono bg-[#ff0033] text-white font-bold rounded">LIVE</span>
+        </button>
+
         <button data-tab="tab-leads" class="admin-nav-btn w-full px-3.5 py-2.5 text-left text-xs font-gymbox text-base uppercase tracking-wider flex items-center justify-between transition-all text-zinc-400 hover:bg-white/5 hover:text-white">
           <div class="flex items-center gap-3">
             <span class="text-lg text-rose-500">🎯</span>
@@ -403,6 +411,127 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- ================= 3B. TAB: COACHING & FLOOR OPERATIONS HUB ================= -->
+      <section id="tab-activity" class="admin-tab-panel hidden space-y-6 font-mono">
+        <!-- Header & Action Ribbon -->
+        <div class="bg-[#0e0e12] border-2 border-[#ff0033] p-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">// OPERATIONAL SURVEILLANCE & COACH AUDIT</span>
+                <span class="px-2 py-0.5 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold uppercase rounded">LIVE STREAM ACTIVE</span>
+              </div>
+              <h3 class="text-3xl font-gymbox text-white uppercase tracking-wide mt-1">COACHING & FLOOR OPERATIONS HUB</h3>
+              <p class="text-xs text-zinc-400 mt-0.5">Real-time oversight into what trainers prescribe, PT debits performed, and member workouts logged.</p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <a href="trainer.html" target="_blank" class="px-3.5 py-2 bg-[#ff0033] hover:bg-white hover:text-black text-white text-xs font-gymbox uppercase tracking-wider transition-all flex items-center gap-1.5 shadow">
+                <span>🥊</span> <span>Coach Portal →</span>
+              </a>
+              <button onclick="openAdminExerciseDirectoryModal()" class="px-3 py-2 bg-cyan-950/40 hover:bg-cyan-600 hover:text-white text-cyan-300 text-xs font-bold uppercase border border-cyan-500/30 transition-all flex items-center gap-1.5">
+                <span>📚</span> <span>Master Movement Library</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Top Real-Time Operational KPI Metrics -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
+            <div class="p-3 bg-black border border-white/10">
+              <span class="text-[9px] text-zinc-400 uppercase block font-bold">LIFTERS ACTIVE TODAY</span>
+              <strong id="activity-kpi-lifters" class="text-2xl font-gymbox text-emerald-400">0</strong>
+              <span class="text-[9px] text-zinc-500 block mt-0.5">Logging sets or present</span>
+            </div>
+            <div class="p-3 bg-black border border-white/10">
+              <span class="text-[9px] text-zinc-400 uppercase block font-bold">GYM VOLUME LIFTED TODAY</span>
+              <strong id="activity-kpi-volume" class="text-2xl font-gymbox text-yellow-400">0 KG</strong>
+              <span class="text-[9px] text-zinc-500 block mt-0.5">Cumulative floor overload</span>
+            </div>
+            <div class="p-3 bg-black border border-white/10">
+              <span class="text-[9px] text-zinc-400 uppercase block font-bold">PT SESSIONS CONDUCTED</span>
+              <strong id="activity-kpi-pt-debits" class="text-2xl font-gymbox text-[#ff0033]">0</strong>
+              <span class="text-[9px] text-zinc-500 block mt-0.5">Verified coach debits</span>
+            </div>
+            <div class="p-3 bg-black border border-white/10">
+              <span class="text-[9px] text-zinc-400 uppercase block font-bold">LOW PT QUOTA (≤2 LEFT)</span>
+              <strong id="activity-kpi-low-quota" class="text-2xl font-gymbox text-rose-400">0</strong>
+              <span class="text-[9px] text-zinc-500 block mt-0.5">Renewal outreach ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-Column Command Surveillance Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Column 1 & 2: Live Activity Surveillance Stream (Left) -->
+          <div class="lg:col-span-2 bg-[#0e0e12] border-2 border-white/10 p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+              <div>
+                <span class="text-[9px] text-zinc-500 font-bold uppercase tracking-wider block">// REAL-TIME SURVEILLANCE FEED</span>
+                <h4 class="text-xl font-gymbox text-white uppercase tracking-wide">ECOSYSTEM ACTIVITY AUDIT TRAIL</h4>
+              </div>
+              <span class="text-[10px] text-zinc-400">Auto-synced with Floor</span>
+            </div>
+
+            <!-- Filter Pills Bar -->
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[10px]">
+              <button onclick="setActivityStreamFilter('ALL')" id="act-btn-filter-all" class="px-2.5 py-1 rounded bg-[#ff0033] text-white font-bold uppercase whitespace-nowrap">All Events</button>
+              <button onclick="setActivityStreamFilter('TRAINER_ACTIONS')" id="act-btn-filter-trainer" class="px-2.5 py-1 rounded bg-black border border-white/10 text-zinc-400 hover:text-white font-bold uppercase whitespace-nowrap">🥊 Coach Actions</button>
+              <button onclick="setActivityStreamFilter('MEMBER_WORKOUTS')" id="act-btn-filter-workouts" class="px-2.5 py-1 rounded bg-black border border-white/10 text-zinc-400 hover:text-white font-bold uppercase whitespace-nowrap">⚡ Member Workouts</button>
+              <button onclick="setActivityStreamFilter('PT_DEBITS')" id="act-btn-filter-pt" class="px-2.5 py-1 rounded bg-black border border-white/10 text-zinc-400 hover:text-white font-bold uppercase whitespace-nowrap">📋 PT Quota Debits</button>
+              <button onclick="setActivityStreamFilter('CHECKINS_FEEDBACK')" id="act-btn-filter-checkins" class="px-2.5 py-1 rounded bg-black border border-white/10 text-zinc-400 hover:text-white font-bold uppercase whitespace-nowrap">💬 Reflections & Feedback</button>
+            </div>
+
+            <!-- Live Search Bar -->
+            <div>
+              <input id="activity-stream-search" type="text" oninput="renderActivityFeedList()" placeholder="🔍 Filter activity by athlete, coach name, movement, or ID..."
+                     class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+            </div>
+
+            <!-- Scrollable Stream Container -->
+            <div id="activity-stream-list" class="space-y-2.5 max-h-[600px] overflow-y-auto pr-1">
+              <!-- Rendered dynamically by admin.js -->
+            </div>
+          </div>
+
+          <!-- Column 3: Coach Accountability & Low-Quota Alerts (Right) -->
+          <div class="space-y-6">
+            
+            <!-- Coach Performance & Accountability Scorecards -->
+            <div class="bg-[#0e0e12] border-2 border-white/10 p-5 space-y-4">
+              <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                  <span class="text-[9px] text-[#ff0033] font-bold uppercase tracking-wider block">// STAFF ACCOUNTABILITY</span>
+                  <h4 class="text-xl font-gymbox text-white uppercase">COACH PERFORMANCE</h4>
+                </div>
+                <span class="text-[10px] text-zinc-400">3 Active Coaches</span>
+              </div>
+
+              <div id="coach-accountability-list" class="space-y-3">
+                <!-- Rendered dynamically by admin.js -->
+              </div>
+            </div>
+
+            <!-- Low-Quota Athletes (Renewal Alert Box) -->
+            <div class="bg-[#0e0e12] border-2 border-red-500/40 p-5 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <div>
+                  <span class="text-[9px] text-rose-400 font-bold uppercase tracking-wider block">// RENEWAL RADAR</span>
+                  <h4 class="text-lg font-gymbox text-white uppercase">LOW PT PACKAGES (≤2 LEFT)</h4>
+                </div>
+                <span class="px-1.5 py-0.5 bg-rose-600/20 text-rose-400 border border-rose-500/30 text-[9px] font-bold uppercase">OUTREACH</span>
+              </div>
+              <p class="text-[11px] text-zinc-400">Athletes whose 1-on-1 package is nearing exhaustion. WhatsApp renewal link ready.</p>
+              
+              <div id="low-pt-watchlist" class="space-y-2 max-h-56 overflow-y-auto">
+                <!-- Rendered dynamically by admin.js -->
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </section>
 
@@ -1563,9 +1692,42 @@
     </div>
   </div>
 
+  <!-- 8. ADMIN MASTER EXERCISE DIRECTORY MODAL -->
+  <div id="admin-exercise-directory-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-cyan-500 max-w-4xl w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeAdminExerciseDirectoryModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 text-[9px] font-bold rounded uppercase">MASTER DIRECTORY</span>
+          <span class="text-zinc-500 text-[10px]">70+ VERIFIED MOVEMENTS</span>
+        </div>
+        <h3 class="text-3xl font-gymbox text-white mt-1">FIT24 MOVEMENT MASTER ENCYCLOPEDIA</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Full club exercise index across all 10 categories with equipment, sets/reps, and coaching cues.</p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-2 text-[10px]" id="admin-encyclopedia-category-pills">
+        <!-- populated dynamically -->
+      </div>
+
+      <!-- Search Bar -->
+      <div class="my-3">
+        <input id="admin-encyclopedia-search" type="text" oninput="renderAdminExerciseEncyclopedia()" placeholder="🔍 Filter exercises by name, target muscle, or equipment..."
+               class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-cyan-400 font-mono">
+      </div>
+
+      <!-- Grid of Exercise Cards -->
+      <div id="admin-encyclopedia-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[55vh] overflow-y-auto pr-1">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
+  <script src="js/exercises.js"></script>
   <script src="js/data.js"></script>
   <script src="js/scanner.js"></script>
   <script src="js/admin.js"></script>

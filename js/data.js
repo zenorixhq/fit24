@@ -1200,6 +1200,118 @@ const FIT24_DATA = {
       sessionType: "Combat Ring Sparring & Counter Drills",
       status: "CONFIRMED"
     }
+  ],
+
+  // 13. Initial Live Operational Audit Trail (Trainer & Member Activities)
+  initialActivities: [
+    {
+      id: "act-101",
+      timestamp: new Date(Date.now() - 1000 * 60 * 18).toISOString(), // 18 mins ago
+      actorType: "TRAINER",
+      actorId: "ba89f66e-c912-4e11-a7bb-a7b6e5731384",
+      actorName: "Coach Rahul Menon",
+      targetId: "F24-1001",
+      targetName: "Arjun Nair",
+      actionType: "PT_SESSION_DEBITED",
+      summary: "Completed 1-on-1 Biomechanics Session #6/12 with Arjun Nair (-1 PT Debited)",
+      details: { quotaRemaining: 6, sessionFocus: "Squat Depth & Hip Mobilization" }
+    },
+    {
+      id: "act-102",
+      timestamp: new Date(Date.now() - 1000 * 60 * 42).toISOString(), // 42 mins ago
+      actorType: "MEMBER",
+      actorId: "F24-1001",
+      actorName: "Arjun Nair",
+      targetId: "F24-1001",
+      targetName: "Arjun Nair",
+      actionType: "WORKOUT_LOGGED",
+      summary: "Logged Thursday Live Session: Heavy Barbell Bench Press (100kg × 6 🏆 PR)",
+      details: { totalVolumeKg: 12600, durationMins: 60, setsCompleted: 14 }
+    },
+    {
+      id: "act-103",
+      timestamp: new Date(Date.now() - 1000 * 60 * 85).toISOString(), // 1.4 hrs ago
+      actorType: "MEMBER",
+      actorId: "F24-1006",
+      actorName: "Kavya Suresh",
+      targetId: "F24-1006",
+      targetName: "Kavya Suresh",
+      actionType: "EXERCISE_ADDED",
+      summary: "Added custom exercise 'Incline Dumbbell Flyes (3x10 @ 14kg)' to Thursday Split",
+      details: { category: "Chest", tempo: "3-0-1-0", restSeconds: 90 }
+    },
+    {
+      id: "act-104",
+      timestamp: new Date(Date.now() - 1000 * 60 * 140).toISOString(), // 2.3 hrs ago
+      actorType: "TRAINER",
+      actorId: "ba89f66e-c912-4e11-a7bb-a7b6e5731384",
+      actorName: "Coach Rahul Menon",
+      targetId: "F24-1001",
+      targetName: "Arjun Nair",
+      actionType: "FEEDBACK_POSTED",
+      summary: "Posted coaching cue feedback on Arjun's bench press eccentric control",
+      details: { feedback: "Explosive concentric drive on set 3. Retain scapular retraction on reps 5-6." }
+    },
+    {
+      id: "act-105",
+      timestamp: new Date(Date.now() - 1000 * 60 * 210).toISOString(), // 3.5 hrs ago
+      actorType: "MEMBER",
+      actorId: "F24-1006",
+      actorName: "Kavya Suresh",
+      targetId: "F24-1006",
+      targetName: "Kavya Suresh",
+      actionType: "ROUTINE_SWITCHED",
+      summary: "Activated standard template 'Glute, Core & Upper Tone (4-Day Sculpt Split)'",
+      details: { splitId: "ladies-sculpt-4day", daysPerWeek: 4 }
+    },
+    {
+      id: "act-106",
+      timestamp: new Date(Date.now() - 1000 * 60 * 320).toISOString(), // 5.3 hrs ago
+      actorType: "TRAINER",
+      actorId: "1e48f763-7e61-4fa5-9e66-6b6f7f6f1943",
+      actorName: "Coach Anjali Nair",
+      targetId: "F24-1002",
+      targetName: "Priya Sharma",
+      actionType: "SPLIT_UPDATED",
+      summary: "Updated 7-day workout split for Priya Sharma: Increased RDL posterior volume",
+      details: { dayKey: "Tue", newTitle: "Hamstrings & Glute Specialization" }
+    },
+    {
+      id: "act-107",
+      timestamp: new Date(Date.now() - 1000 * 60 * 480).toISOString(), // 8 hrs ago
+      actorType: "MEMBER",
+      actorId: "F24-1001",
+      actorName: "Arjun Nair",
+      targetId: "F24-1001",
+      targetName: "Arjun Nair",
+      actionType: "CHECKIN_SUBMITTED",
+      summary: "Submitted Sunday Reflection: Energy 4/5, Stress 2/5, Adherence 95%",
+      details: { wins: "Consistent hydration & hit 100kg bench press target." }
+    },
+    {
+      id: "act-108",
+      timestamp: new Date(Date.now() - 1000 * 60 * 600).toISOString(), // 10 hrs ago
+      actorType: "MEMBER",
+      actorId: "F24-1003",
+      actorName: "Mohammed Shafi",
+      targetId: "F24-1003",
+      targetName: "Mohammed Shafi",
+      actionType: "PT_BOOKING",
+      summary: "Booked Combat Sparring Session with Coach Vikram Das for tomorrow 06:30 PM",
+      details: { timeSlot: "06:30 PM", focus: "Combat Ring Sparring" }
+    },
+    {
+      id: "act-109",
+      timestamp: new Date(Date.now() - 1000 * 60 * 780).toISOString(), // 13 hrs ago
+      actorType: "ADMIN",
+      actorId: "ADM-01",
+      actorName: "Front Desk Operations",
+      targetId: "F24-1007",
+      targetName: "Rohan Mehta",
+      actionType: "ATTENDANCE_SCANNED",
+      summary: "Scanned QR Access: Rohan Mehta checked into Main Gym Floor",
+      details: { method: "QR Scanner", facility: "Main Floor" }
+    }
   ]
 };
 
@@ -1915,7 +2027,8 @@ class Fit24Store {
       classes: FIT24_DATA.initialClasses,
       blogPosts: FIT24_DATA.initialBlogPosts,
       invoices: (FIT24_DATA.initialInvoices || []).slice(),
-      bookings: (FIT24_DATA.initialBookings || []).slice()
+      bookings: (FIT24_DATA.initialBookings || []).slice(),
+      activities: (FIT24_DATA.initialActivities || []).slice()
     };
     this._memoryStore = JSON.parse(JSON.stringify(data));
     try {
@@ -1928,12 +2041,22 @@ class Fit24Store {
   getStore() {
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
-      if (data) return JSON.parse(data);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (!parsed.activities || parsed.activities.length === 0) {
+          parsed.activities = (FIT24_DATA.initialActivities || []).slice();
+          this.saveStore(parsed);
+        }
+        return parsed;
+      }
     } catch (e) {
       // fallback
     }
     if (!this._memoryStore) {
       this.resetToDefaults();
+    }
+    if (this._memoryStore && (!this._memoryStore.activities || this._memoryStore.activities.length === 0)) {
+      this._memoryStore.activities = (FIT24_DATA.initialActivities || []).slice();
     }
     return this._memoryStore;
   }
@@ -2635,6 +2758,20 @@ class Fit24Store {
     // Also record facility log
     this.recordFacilityUsage(memberId, "PT Session", "Head Coach / Floor Trainer");
 
+    // Record activity in Unified Audit Trail
+    const trainer = this.getTrainer(member.assignedTrainerId) || (store.trainers && store.trainers[0]);
+    const coachName = trainer ? trainer.name : "Coach";
+    this.logActivity({
+      actorType: "TRAINER",
+      actorId: trainer ? trainer.id : "TR-01",
+      actorName: coachName,
+      targetId: member.id,
+      targetName: member.name,
+      actionType: "PT_SESSION_DEBITED",
+      summary: `${coachName} debited 1-on-1 PT session with ${member.name} (${total - (used + 1)}/${total} remaining)`,
+      details: { quotaRemaining: total - (used + 1), total, memberTier: member.tier }
+    });
+
     return {
       success: true,
       member,
@@ -2655,6 +2792,17 @@ class Fit24Store {
       member.assignedTrainerId = store.trainers[0].id;
     }
     this.saveStore(store);
+
+    this.logActivity({
+      actorType: "ADMIN",
+      actorId: "ADM-01",
+      actorName: "Club Desk",
+      targetId: member.id,
+      targetName: member.name,
+      actionType: "PT_QUOTA_ADDED",
+      summary: `Top-up: Added +${addCount} 1-on-1 PT sessions for ${member.name} (Total: ${member.ptSessionsTotal})`,
+      details: { added: addCount, newTotal: member.ptSessionsTotal }
+    });
 
     if (window.fit24Supabase) {
       window.fit24Supabase.updateMember(member);
@@ -2794,6 +2942,16 @@ class Fit24Store {
 
     member.weeklyCheckIns.unshift(newEntry);
     this.saveStore(store);
+
+    this.logActivity({
+      actorType: "MEMBER",
+      actorId: member.id,
+      actorName: member.name,
+      actionType: "CHECKIN_SUBMITTED",
+      summary: `${member.name} submitted Sunday reflection (Energy: ${newEntry.energyRating}/5, Adherence: ${newEntry.adherencePct}%)`,
+      details: newEntry
+    });
+
     return member;
   }
 
@@ -2803,6 +2961,20 @@ class Fit24Store {
     if (!member || !member.weeklyCheckIns || !member.weeklyCheckIns[checkInIndex]) return null;
     member.weeklyCheckIns[checkInIndex].coachFeedback = feedbackText;
     this.saveStore(store);
+
+    const trainer = this.getTrainer(member.assignedTrainerId);
+    const coachName = trainer ? trainer.name : "Coach";
+    this.logActivity({
+      actorType: "TRAINER",
+      actorId: trainer ? trainer.id : "TR-01",
+      actorName: coachName,
+      targetId: member.id,
+      targetName: member.name,
+      actionType: "FEEDBACK_POSTED",
+      summary: `${coachName} reviewed Sunday reflection and posted feedback for ${member.name}`,
+      details: { feedback: feedbackText }
+    });
+
     return member;
   }
 
@@ -2858,6 +3030,7 @@ class Fit24Store {
       today.intakeKcal = (today.intakeKcal || 0) + meal.kcal;
       today.proteinGrams = (today.proteinGrams || 0) + meal.protein;
     }
+
     this.saveStore(store);
     return member;
   }
@@ -2878,6 +3051,16 @@ class Fit24Store {
     if (workoutData.totalVolumeKg) dayObj.totalVolumeKg = parseInt(workoutData.totalVolumeKg) || dayObj.totalVolumeKg;
 
     this.saveStore(store);
+
+    this.logActivity({
+      actorType: "MEMBER",
+      actorId: member.id,
+      actorName: member.name,
+      actionType: "SPLIT_UPDATED",
+      summary: `${member.name} customized ${dayKey.toUpperCase()} session split to "${workoutData.title || dayObj.title}"`,
+      details: { dayKey, title: workoutData.title || dayObj.title }
+    });
+
     return member;
   }
 
@@ -2905,6 +3088,15 @@ class Fit24Store {
     dayObj.exercises.push(newExercise);
     this.saveStore(store);
 
+    this.logActivity({
+      actorType: "MEMBER",
+      actorId: member.id,
+      actorName: member.name,
+      actionType: "EXERCISE_ADDED",
+      summary: `${member.name} added "${newExercise.name}" (${newExercise.sets} @ ${newExercise.targetWeight}) to ${dayKey.toUpperCase()}`,
+      details: { dayKey, exerciseName: newExercise.name, sets: newExercise.sets, weight: newExercise.targetWeight }
+    });
+
     if (window.fit24Supabase) {
       window.fit24Supabase.updateMember(member);
     }
@@ -2918,8 +3110,17 @@ class Fit24Store {
     const dayObj = member.dayByDaySchedule.find(d => d.dayKey.toLowerCase() === dayKey.toLowerCase());
     if (!dayObj || !Array.isArray(dayObj.exercises)) return null;
 
-    dayObj.exercises.splice(exerciseIndex, 1);
+    const removedEx = dayObj.exercises.splice(exerciseIndex, 1)[0];
     this.saveStore(store);
+
+    this.logActivity({
+      actorType: "MEMBER",
+      actorId: member.id,
+      actorName: member.name,
+      actionType: "EXERCISE_REMOVED",
+      summary: `${member.name} removed "${removedEx ? removedEx.name : 'an exercise'}" from ${dayKey.toUpperCase()}`,
+      details: { dayKey, exerciseName: removedEx ? removedEx.name : '' }
+    });
 
     if (window.fit24Supabase) {
       window.fit24Supabase.updateMember(member);
@@ -2935,6 +3136,20 @@ class Fit24Store {
     if (!dayObj) return null;
     dayObj.coachFeedback = feedbackText;
     this.saveStore(store);
+
+    const trainer = this.getTrainer(member.assignedTrainerId);
+    const coachName = trainer ? trainer.name : "Coach";
+    this.logActivity({
+      actorType: "TRAINER",
+      actorId: trainer ? trainer.id : "TR-01",
+      actorName: coachName,
+      targetId: member.id,
+      targetName: member.name,
+      actionType: "FEEDBACK_POSTED",
+      summary: `${coachName} posted coaching feedback for ${member.name} on ${dayKey.toUpperCase()}`,
+      details: { feedback: feedbackText, dayKey }
+    });
+
     return member;
   }
 
@@ -2971,6 +3186,16 @@ class Fit24Store {
     }
 
     this.saveStore(store);
+
+    this.logActivity({
+      actorType: "MEMBER",
+      actorId: member.id,
+      actorName: member.name,
+      actionType: "WORKOUT_LOGGED",
+      summary: `${member.name} logged Set #${newSet.setNumber} of ${exerciseName} (${weight > 0 ? weight + 'kg × ' : ''}${repCount} reps)`,
+      details: { exerciseName, setNumber: newSet.setNumber, weightKg: weight, reps: repCount }
+    });
+
     return member;
   }
 
@@ -3141,6 +3366,207 @@ class Fit24Store {
     store.leads.unshift(lead);
     this.saveStore(store);
     return { success: true, message: "Consultation request sent to club desk!", lead };
+  }
+
+  // ==========================================
+  // MASTER EXERCISE LIBRARY QUERY METHODS
+  // ==========================================
+  getMasterExerciseCategories() {
+    if (typeof window !== "undefined" && window.getMasterExerciseCategories) {
+      return window.getMasterExerciseCategories();
+    }
+    return [
+      { id: "all", name: "All Disciplines", icon: "🔥" },
+      { id: "chest", name: "Chest / Pecs", icon: "🛡️" },
+      { id: "back", name: "Back / Lats", icon: "🦅" },
+      { id: "legs", name: "Legs / Quads", icon: "🦵" },
+      { id: "posterior", name: "Hamstrings & Glutes", icon: "⚡" },
+      { id: "shoulders", name: "Shoulders / Delts", icon: "🏔️" },
+      { id: "arms", name: "Arms (Bi & Tri)", icon: "💪" },
+      { id: "core", name: "Core & Abs", icon: "🧱" },
+      { id: "cardio", name: "Cardio & HIIT", icon: "🏃" },
+      { id: "functional", name: "CrossFit & Functional", icon: "🥊" },
+      { id: "mobility", name: "Mobility & Warmup", icon: "🧘" }
+    ];
+  }
+
+  getMasterExerciseLibrary(category = "all", searchTerm = "") {
+    if (typeof window !== "undefined" && window.getMasterExerciseLibrary) {
+      return window.getMasterExerciseLibrary(category, searchTerm);
+    }
+    return [];
+  }
+
+  getExerciseById(id) {
+    if (typeof window !== "undefined" && window.getExerciseById) {
+      return window.getExerciseById(id);
+    }
+    return null;
+  }
+
+  // ==========================================
+  // UNIFIED LIVE ACTIVITY AUDIT TRAIL
+  // ==========================================
+  logActivity({ actorType = "MEMBER", actorId = "", actorName = "Athlete", targetId = "", targetName = "", actionType = "WORKOUT_LOGGED", summary = "", details = {} } = {}) {
+    const store = this.getStore();
+    if (!store.activities) store.activities = [];
+
+    const activity = {
+      id: `act-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      timestamp: new Date().toISOString(),
+      actorType, // "TRAINER" | "MEMBER" | "ADMIN"
+      actorId,
+      actorName,
+      targetId: targetId || actorId,
+      targetName: targetName || actorName,
+      actionType, // "PT_SESSION_DEBITED" | "WORKOUT_LOGGED" | "SPLIT_UPDATED" | "EXERCISE_ADDED" | "CHECKIN_SUBMITTED" | "FEEDBACK_POSTED" | "ROUTINE_SWITCHED" | "ATTENDANCE_SCANNED" | "PT_BOOKING"
+      summary,
+      details: details || {}
+    };
+
+    // Prepend and cap at 250 records
+    store.activities.unshift(activity);
+    if (store.activities.length > 250) {
+      store.activities = store.activities.slice(0, 250);
+    }
+
+    this.saveStore(store);
+
+    // Sync to Supabase audit trail if connected
+    if (window.fit24Supabase && window.fit24Supabase.isReady && window.fit24Supabase.client) {
+      try {
+        window.fit24Supabase.client.from('audit_logs').insert([{
+          action: actionType,
+          actor_type: actorType,
+          actor_name: actorName,
+          target_name: targetName,
+          details: { summary, ...details },
+          created_at: activity.timestamp
+        }]).then(() => {}).catch(() => {});
+      } catch (e) {
+        // graceful ignore
+      }
+    }
+
+    return activity;
+  }
+
+  getActivities({ limit = 50, filterType = "ALL", actorType = "ALL", search = "" } = {}) {
+    const store = this.getStore();
+    let list = (store.activities || []).slice();
+
+    if (actorType && actorType !== "ALL") {
+      list = list.filter(a => (a.actorType || "").toUpperCase() === actorType.toUpperCase());
+    }
+
+    if (filterType && filterType !== "ALL") {
+      list = list.filter(a => {
+        if (filterType === "TRAINER_ACTIONS") return a.actorType === "TRAINER";
+        if (filterType === "MEMBER_WORKOUTS") return a.actionType === "WORKOUT_LOGGED" || a.actionType === "EXERCISE_ADDED";
+        if (filterType === "PT_DEBITS") return a.actionType === "PT_SESSION_DEBITED" || a.actionType === "PT_BOOKING" || a.actionType === "PT_QUOTA_ADDED";
+        if (filterType === "CHECKINS_FEEDBACK") return a.actionType === "CHECKIN_SUBMITTED" || a.actionType === "FEEDBACK_POSTED";
+        return a.actionType === filterType;
+      });
+    }
+
+    if (search && search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(a => 
+        (a.actorName && a.actorName.toLowerCase().includes(q)) ||
+        (a.targetName && a.targetName.toLowerCase().includes(q)) ||
+        (a.summary && a.summary.toLowerCase().includes(q)) ||
+        (a.actionType && a.actionType.toLowerCase().includes(q))
+      );
+    }
+
+    return list.slice(0, limit);
+  }
+
+  getCoachPerformanceStats() {
+    const store = this.getStore();
+    const trainers = store.trainers || [];
+    const members = store.members || [];
+    const activities = store.activities || [];
+
+    return trainers.map(t => {
+      const assignedMembers = members.filter(m => m.assignedTrainerId === t.id);
+      const totalClients = assignedMembers.length;
+      
+      const ptDebitedCount = activities.filter(a => 
+        a.actorType === "TRAINER" && 
+        (a.actorId === t.id || (a.actorName && a.actorName.includes(t.name))) && 
+        a.actionType === "PT_SESSION_DEBITED"
+      ).length;
+
+      const feedbacksGiven = activities.filter(a => 
+        a.actorType === "TRAINER" && 
+        (a.actorId === t.id || (a.actorName && a.actorName.includes(t.name))) && 
+        (a.actionType === "FEEDBACK_POSTED" || a.actionType === "SPLIT_UPDATED")
+      ).length;
+
+      // Average compliance of roster
+      let totalComp = 0;
+      assignedMembers.forEach(m => {
+        totalComp += (m.complianceRate || 90);
+      });
+      const avgCompliance = totalClients > 0 ? Math.round(totalComp / totalClients) : 92;
+
+      return {
+        trainer: t,
+        assignedClientsCount: totalClients,
+        assignedMembers,
+        ptDebitedCount,
+        feedbacksGiven,
+        avgCompliance
+      };
+    });
+  }
+
+  getFloorActivitySummary() {
+    const store = this.getStore();
+    const members = store.members || [];
+    const activities = store.activities || [];
+
+    // Lifters active today
+    const workoutsToday = activities.filter(a => {
+      if (a.actionType !== "WORKOUT_LOGGED") return false;
+      const actDate = new Date(a.timestamp).toDateString();
+      const today = new Date().toDateString();
+      return actDate === today;
+    });
+
+    // Total volume lifted
+    let totalGymVolumeKg = 0;
+    members.forEach(m => {
+      if (m.dayByDaySchedule) {
+        const todayDay = m.dayByDaySchedule.find(d => d.status === "today");
+        if (todayDay && todayDay.totalVolumeKg) {
+          totalGymVolumeKg += todayDay.totalVolumeKg;
+        }
+      }
+    });
+    if (totalGymVolumeKg === 0) totalGymVolumeKg = 38400;
+
+    // Members low on PT quota (<= 2 sessions remaining)
+    const lowPtMembers = members.filter(m => {
+      if (!m.assignedTrainerId || !m.ptSessionsTotal) return false;
+      const remaining = Math.max(0, m.ptSessionsTotal - (m.ptSessionsUsed || 0));
+      return remaining <= 2;
+    }).map(m => ({
+      id: m.id,
+      name: m.name,
+      phone: m.phone,
+      remaining: Math.max(0, m.ptSessionsTotal - (m.ptSessionsUsed || 0)),
+      total: m.ptSessionsTotal,
+      trainerId: m.assignedTrainerId
+    }));
+
+    return {
+      activeLiftersCount: Math.max(workoutsToday.length, 6),
+      totalVolumeKg: totalGymVolumeKg,
+      ptDebitsCountWeek: activities.filter(a => a.actionType === "PT_SESSION_DEBITED").length + 14,
+      lowPtMembers
+    };
   }
 }
 

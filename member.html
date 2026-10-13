@@ -390,61 +390,125 @@
           TRANSMIT COACH REQUEST
         </button>
   <!-- ======================================================== -->
-  <!-- MODAL: ADD CUSTOM EXERCISE (SELF-GUIDED ATHLETE)         -->
+  <!-- MODAL: ADD CUSTOM EXERCISE (WITH SMART MOVEMENT PICKER)  -->
   <!-- ======================================================== -->
   <div id="add-exercise-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-lg w-full p-6 relative max-h-[92vh] overflow-y-auto font-mono">
       <button onclick="closeAddExerciseModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
       
-      <div class="mb-4">
-        <span class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">// CUSTOM EXERCISE BUILDER</span>
+      <div class="mb-3">
+        <span class="text-[9px] font-bold text-[#ff0033] uppercase tracking-widest">// SMART MOVEMENT PICKER</span>
         <h3 id="add-ex-modal-title" class="text-2xl font-gymbox text-white">ADD EXERCISE TO WORKOUT</h3>
-        <p class="text-xs text-zinc-400 mt-0.5">Customize your session with your preferred movements and load targets.</p>
+        <p class="text-xs text-zinc-400 mt-0.5">Select from 70+ curated movements across 10 categories, or type your own.</p>
       </div>
 
-      <form id="add-exercise-form" onsubmit="handleAddExerciseSubmit(event)" class="space-y-4 text-xs">
+      <!-- Quick Category Filter Pills -->
+      <div class="space-y-1 mb-2.5">
+        <label class="block text-[9px] text-zinc-400 font-bold uppercase tracking-wider">FILTER BY CATEGORY:</label>
+        <div id="modal-category-pills" class="flex items-center gap-1 overflow-x-auto pb-1 text-[9px]">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Live Search / Picker Box -->
+      <div class="space-y-1 mb-3">
+        <div class="relative">
+          <input id="modal-exercise-search" type="text" oninput="filterModalExerciseSuggestions()" placeholder="🔍 Search library (e.g. Incline DB, Bench, Deadlift, Cable, Squat...)"
+                 class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033] font-mono">
+        </div>
+        <!-- Scrollable Suggestion Chips list -->
+        <div id="modal-exercise-suggestions" class="max-h-32 overflow-y-auto bg-black/90 border border-white/10 p-2 space-y-1 rounded text-xs">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Selected Movement Form Cue Callout (Hidden by default, shown when picked) -->
+      <div id="modal-picked-cue-card" class="p-2.5 bg-red-950/25 border border-red-500/30 rounded text-xs space-y-1 mb-3 hidden">
+        <div class="flex items-center justify-between text-[10px]">
+          <span class="text-[#ff0033] font-bold uppercase" id="modal-cue-target">TARGET: UPPER CHEST</span>
+          <span class="text-zinc-400" id="modal-cue-equip">Dumbbells & Incline Bench</span>
+        </div>
+        <p class="text-zinc-200 text-[11px] italic" id="modal-cue-text"></p>
+      </div>
+
+      <form id="add-exercise-form" onsubmit="handleAddExerciseSubmit(event)" class="space-y-3 text-xs border-t border-white/10 pt-3">
         <input type="hidden" id="add-ex-day-key">
 
         <div>
-          <label class="block text-zinc-300 font-bold uppercase mb-1">Exercise Name:</label>
-          <input id="add-ex-name" type="text" required placeholder="e.g. Incline DB Flyes or Barbell Bicep Curls"
-                 class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+          <label class="block text-zinc-300 font-bold uppercase mb-1">Movement Name:</label>
+          <input id="add-ex-name" type="text" required placeholder="Pick from suggestions or type custom movement name"
+                 class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033] font-mono">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-zinc-300 font-bold uppercase mb-1">Sets & Reps:</label>
             <input id="add-ex-sets" type="text" required placeholder="e.g. 4x10 or 3x12" value="3x10"
-                   class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+                   class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033] font-mono">
           </div>
           <div>
             <label class="block text-zinc-300 font-bold uppercase mb-1">Target Load / Weight:</label>
             <input id="add-ex-weight" type="text" placeholder="e.g. 24kg DBs or Bodyweight" value="—"
-                   class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+                   class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033] font-mono">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-zinc-300 font-bold uppercase mb-1">Rest Interval:</label>
-            <select id="add-ex-rest" class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+            <select id="add-ex-rest" class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033] font-mono">
               <option value="60">60 Seconds</option>
               <option value="90" selected>90 Seconds</option>
               <option value="120">120 Seconds (2 min)</option>
+              <option value="150">150 Seconds (Heavy Compound)</option>
               <option value="45">45 Seconds (HIIT/Tone)</option>
             </select>
           </div>
           <div>
             <label class="block text-zinc-300 font-bold uppercase mb-1">Tempo (Optional):</label>
             <input id="add-ex-tempo" type="text" placeholder="e.g. 2-0-1-0" value="2-0-1-0"
-                   class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-[#ff0033] font-mono">
+                   class="w-full bg-black border border-white/20 p-2 text-white text-xs focus:border-[#ff0033] font-mono">
           </div>
         </div>
 
-        <button type="submit" class="w-full py-3.5 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-xl uppercase tracking-wider transition-all">
-          ➕ ADD MOVEMENT TO TODAY
+        <button type="submit" class="w-full py-3 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-lg uppercase tracking-wider transition-all mt-1">
+          ➕ ADD MOVEMENT TO WORKOUT
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: MASTER EXERCISE ENCYCLOPEDIA & DIRECTORY           -->
+  <!-- ======================================================== -->
+  <div id="exercise-directory-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-cyan-500 max-w-4xl w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="closeExerciseDirectoryModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <div class="mb-4">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 text-[9px] font-bold rounded uppercase">COMPREHENSIVE DIRECTORY</span>
+          <span class="text-zinc-500 text-[10px]">70+ VERIFIED MOVEMENTS</span>
+        </div>
+        <h3 class="text-3xl font-gymbox text-white mt-1">FIT24 MASTER EXERCISE ENCYCLOPEDIA</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Explore standard club movement patterns, target muscles, equipment, and technique cues.</p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-2 text-[10px]" id="encyclopedia-category-pills">
+        <!-- populated dynamically -->
+      </div>
+
+      <!-- Search Bar -->
+      <div class="my-3">
+        <input id="encyclopedia-search" type="text" oninput="renderExerciseEncyclopedia()" placeholder="🔍 Filter exercises by name, target muscle, or equipment..."
+               class="w-full bg-black border border-white/20 p-2.5 text-white text-xs focus:border-cyan-400 font-mono">
+      </div>
+
+      <!-- Grid of Exercise Cards -->
+      <div id="encyclopedia-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[55vh] overflow-y-auto pr-1">
+        <!-- populated dynamically -->
+      </div>
     </div>
   </div>
 
@@ -492,6 +556,7 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
+  <script src="js/exercises.js"></script>
   <script src="js/data.js"></script>
   <script>
     let currentSelectedMemberId = 'F24-1001';
@@ -880,16 +945,19 @@
               </div>
               <h4 class="text-xl font-gymbox text-white uppercase mt-0.5">${programTitle}</h4>
             </div>
-            ${!hasTrainer ? `
-              <div class="flex items-center gap-1.5 self-start sm:self-auto">
+            <div class="flex items-center gap-1.5 self-start sm:self-auto flex-wrap">
+              <button onclick="openExerciseDirectoryModal()" class="px-2.5 py-1.5 bg-cyan-950/40 hover:bg-cyan-600 hover:text-white text-cyan-300 text-[10px] font-bold rounded uppercase border border-cyan-500/30 transition-all flex items-center gap-1.5 shadow" title="Explore complete 70+ movement library">
+                <span>📚</span> <span>Movement Library</span>
+              </button>
+              ${!hasTrainer ? `
                 <button onclick="openProgramSelectionModal()" class="px-2.5 py-1.5 bg-white/10 hover:bg-[#ff0033] hover:text-white text-zinc-200 text-[10px] font-bold rounded uppercase border border-white/20 transition-all flex items-center gap-1.5 shadow">
                   <span>🔄</span> <span>Switch Routine</span>
                 </button>
                 <button onclick="openCustomSplitModal('${activeDay.dayKey}')" class="px-2.5 py-1.5 bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[10px] font-bold rounded uppercase border border-red-500/40 transition-all flex items-center gap-1.5 shadow" title="Customize workout title and cues">
                   <span>✏️</span> <span>Edit Day's Split</span>
                 </button>
-              </div>
-            ` : ''}
+              ` : ''}
+            </div>
           </div>
 
           <!-- 7-Day Navigation Bar -->
@@ -1732,6 +1800,8 @@
     }
 
     // --- CUSTOM EXERCISE & SPLIT BUILDER (SELF-GUIDED ATHLETES) ---
+    let selectedModalExerciseCategory = "all";
+
     function openAddExerciseModal(dayKey) {
       const modal = document.getElementById("add-exercise-modal");
       if (!modal) return;
@@ -1742,11 +1812,87 @@
       if (titleEl) titleEl.textContent = `ADD EXERCISE (${targetDay.toUpperCase()})`;
       const nameInput = document.getElementById("add-ex-name");
       if (nameInput) nameInput.value = "";
+      const searchInput = document.getElementById("modal-exercise-search");
+      if (searchInput) searchInput.value = "";
+      document.getElementById("modal-picked-cue-card")?.classList.add("hidden");
+
+      renderModalCategoryPills();
+      filterModalExerciseSuggestions();
       modal.classList.remove("hidden");
     }
 
     function closeAddExerciseModal() {
       document.getElementById("add-exercise-modal")?.classList.add("hidden");
+    }
+
+    function renderModalCategoryPills() {
+      const container = document.getElementById("modal-category-pills");
+      if (!container) return;
+      const cats = window.fit24Store.getMasterExerciseCategories();
+      container.innerHTML = cats.map(c => `
+        <button type="button" onclick="setModalExerciseCategory('${c.id}')"
+                class="px-2.5 py-1 whitespace-nowrap rounded font-bold uppercase transition-all ${selectedModalExerciseCategory === c.id ? 'bg-[#ff0033] text-white shadow' : 'bg-black border border-white/10 text-zinc-400 hover:text-white'}">
+          <span>${c.icon}</span> <span>${c.name}</span>
+        </button>
+      `).join('');
+    }
+
+    function setModalExerciseCategory(catId) {
+      selectedModalExerciseCategory = catId;
+      renderModalCategoryPills();
+      filterModalExerciseSuggestions();
+    }
+
+    function filterModalExerciseSuggestions() {
+      const container = document.getElementById("modal-exercise-suggestions");
+      if (!container) return;
+      const q = document.getElementById("modal-exercise-search")?.value || "";
+      const exercises = window.fit24Store.getMasterExerciseLibrary(selectedModalExerciseCategory, q);
+
+      if (exercises.length === 0) {
+        container.innerHTML = `<div class="text-[10px] text-zinc-500 py-1 italic">No catalog movements found matching "${q}". Type your custom movement name below.</div>`;
+        return;
+      }
+
+      container.innerHTML = exercises.slice(0, 15).map(ex => `
+        <div onclick="selectModalExercise('${ex.id}')" 
+             class="p-2 bg-white/[0.03] hover:bg-red-950/30 border border-white/5 hover:border-red-500/50 rounded cursor-pointer flex items-center justify-between transition-all group">
+          <div>
+            <strong class="text-white group-hover:text-[#ff0033] block">${ex.name}</strong>
+            <span class="text-[10px] text-zinc-400">${ex.targetMuscle} · ${ex.equipment}</span>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 bg-white/10 text-zinc-300 rounded uppercase font-bold group-hover:bg-[#ff0033] group-hover:text-white transition-all">+ Pick</span>
+        </div>
+      `).join('');
+    }
+
+    function selectModalExercise(exId) {
+      const ex = window.fit24Store.getExerciseById(exId);
+      if (!ex) return;
+
+      const nameInput = document.getElementById("add-ex-name");
+      if (nameInput) nameInput.value = ex.name;
+
+      const setsInput = document.getElementById("add-ex-sets");
+      if (setsInput) setsInput.value = ex.recommendedSets || "3x10";
+
+      const restSelect = document.getElementById("add-ex-rest");
+      if (restSelect && ex.recommendedRestSec) restSelect.value = `${ex.recommendedRestSec}`;
+
+      const tempoInput = document.getElementById("add-ex-tempo");
+      if (tempoInput) tempoInput.value = ex.recommendedTempo || "2-0-1-0";
+
+      // Show cue callout
+      const cueCard = document.getElementById("modal-picked-cue-card");
+      if (cueCard) {
+        cueCard.classList.remove("hidden");
+        const targetEl = document.getElementById("modal-cue-target");
+        if (targetEl) targetEl.textContent = `TARGET: ${ex.targetMuscle.toUpperCase()}`;
+        const equipEl = document.getElementById("modal-cue-equip");
+        if (equipEl) equipEl.textContent = ex.equipment;
+        const textEl = document.getElementById("modal-cue-text");
+        if (textEl) textEl.textContent = `💡 Drillmaster Cue: ${ex.formCues}`;
+      }
     }
 
     function handleAddExerciseSubmit(e) {
@@ -1771,6 +1917,87 @@
       playAudioChime();
       alert(`✅ Added "${name}" to ${dayKey.toUpperCase()}'s workout!`);
       loadMember(currentSelectedMemberId);
+    }
+
+    // --- MASTER EXERCISE ENCYCLOPEDIA MODAL CONTROLLER ---
+    let selectedEncyclopediaCategory = "all";
+
+    function openExerciseDirectoryModal() {
+      const modal = document.getElementById("exercise-directory-modal");
+      if (!modal) return;
+      renderEncyclopediaCategoryPills();
+      renderExerciseEncyclopedia();
+      modal.classList.remove("hidden");
+    }
+
+    function closeExerciseDirectoryModal() {
+      document.getElementById("exercise-directory-modal")?.classList.add("hidden");
+    }
+
+    function renderEncyclopediaCategoryPills() {
+      const container = document.getElementById("encyclopedia-category-pills");
+      if (!container) return;
+      const cats = window.fit24Store.getMasterExerciseCategories();
+      container.innerHTML = cats.map(c => `
+        <button type="button" onclick="setEncyclopediaCategory('${c.id}')"
+                class="px-3 py-1.5 whitespace-nowrap rounded font-bold uppercase transition-all ${selectedEncyclopediaCategory === c.id ? 'bg-cyan-500 text-black shadow' : 'bg-black border border-white/10 text-zinc-400 hover:text-white'}">
+          <span>${c.icon}</span> <span>${c.name}</span>
+        </button>
+      `).join('');
+    }
+
+    function setEncyclopediaCategory(catId) {
+      selectedEncyclopediaCategory = catId;
+      renderEncyclopediaCategoryPills();
+      renderExerciseEncyclopedia();
+    }
+
+    function renderExerciseEncyclopedia() {
+      const container = document.getElementById("encyclopedia-grid");
+      if (!container) return;
+      const q = document.getElementById("encyclopedia-search")?.value || "";
+      const exercises = window.fit24Store.getMasterExerciseLibrary(selectedEncyclopediaCategory, q);
+
+      if (exercises.length === 0) {
+        container.innerHTML = `<div class="col-span-2 text-center text-zinc-500 py-8 font-mono">No exercises found matching "${q}".</div>`;
+        return;
+      }
+
+      container.innerHTML = exercises.map(ex => `
+        <div class="p-3.5 bg-black/70 border border-white/10 hover:border-cyan-400/50 rounded-xl space-y-2 transition-all">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="px-1.5 py-0.5 bg-cyan-950/60 text-cyan-400 border border-cyan-500/20 text-[9px] font-bold rounded uppercase">${ex.categoryLabel}</span>
+              <h4 class="text-base font-gymbox text-white uppercase mt-1 tracking-wide">${ex.name}</h4>
+            </div>
+            <span class="px-2 py-0.5 bg-white/5 text-zinc-400 text-[9px] font-bold rounded uppercase">${ex.difficulty}</span>
+          </div>
+
+          <div class="text-[11px] text-zinc-300 space-y-1 bg-white/[0.02] p-2 rounded border border-white/5">
+            <div><strong class="text-zinc-400">Biomechanic Target:</strong> <span class="text-yellow-400">${ex.targetMuscle}</span></div>
+            <div><strong class="text-zinc-400">Required Gear:</strong> <span class="text-white">${ex.equipment}</span></div>
+            <div class="flex items-center gap-3 text-[10px] text-zinc-400 pt-0.5">
+              <span>Standard: <strong class="text-white">${ex.recommendedSets}</strong></span>
+              <span>Rest: <strong class="text-emerald-400">${ex.recommendedRestSec}s</strong></span>
+              <span>Tempo: <strong class="text-cyan-400">${ex.recommendedTempo}</strong></span>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-zinc-300 italic border-l-2 border-cyan-400 pl-2 leading-relaxed">
+            "${ex.formCues}"
+          </p>
+
+          <button onclick="quickAddFromEncyclopedia('${ex.id}')" class="w-full py-1.5 bg-white/5 hover:bg-[#ff0033] hover:text-white text-zinc-300 font-bold text-[10px] uppercase rounded transition-all">
+            ➕ Add to Today's Workout
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function quickAddFromEncyclopedia(exId) {
+      closeExerciseDirectoryModal();
+      openAddExerciseModal(window.selectedWorkoutDayKey || 'Thu');
+      selectModalExercise(exId);
     }
 
     function openCustomSplitModal(dayKey) {

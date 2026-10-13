@@ -48,6 +48,8 @@ function initAdminTabs() {
           renderBlogTable();
         } else if (targetId === "tab-invoices") {
           renderInvoicesTable();
+        } else if (targetId === "tab-activity") {
+          renderActivityHub();
         }
       }
     });
@@ -69,6 +71,9 @@ function renderAllData() {
   renderBlogTable();
   renderInvoicesTable();
   populateMemberSelectDropdowns();
+  if (typeof renderActivityHub === 'function') {
+    renderActivityHub();
+  }
 }
 
 // 1. Dashboard Metrics
@@ -3117,5 +3122,330 @@ window.applyStandardProgram = function(memberId, programId) {
     renderAllData();
   }
 };
+
+// ========================================================
+// 14. LIVE COACHING & FLOOR OPERATIONS HUB (ACTIVITY AUDIT)
+// ========================================================
+let currentActivityStreamFilter = "ALL";
+let adminSelectedEncyclopediaCategory = "all";
+
+function renderActivityHub() {
+  if (!window.fit24Store) return;
+
+  // 1. Render Top Operational KPIs
+  const summary = window.fit24Store.getFloorActivitySummary ? window.fit24Store.getFloorActivitySummary() : { activeLiftersCount: 6, totalVolumeKg: 38400, ptDebitsCountWeek: 16, lowPtMembers: [] };
+  const liftersEl = document.getElementById("activity-kpi-lifters");
+  if (liftersEl) liftersEl.textContent = summary.activeLiftersCount;
+
+  const volumeEl = document.getElementById("activity-kpi-volume");
+  if (volumeEl) volumeEl.textContent = `${(summary.totalVolumeKg || 38400).toLocaleString()} KG`;
+
+  const ptDebitsEl = document.getElementById("activity-kpi-pt-debits");
+  if (ptDebitsEl) ptDebitsEl.textContent = summary.ptDebitsCountWeek;
+
+  const lowQuotaEl = document.getElementById("activity-kpi-low-quota");
+  if (lowQuotaEl) lowQuotaEl.textContent = (summary.lowPtMembers || []).length;
+
+  // 2. Render Live Activity Feed List
+  renderActivityFeedList();
+
+  // 3. Render Coach Performance & Accountability Scorecards
+  renderCoachAccountabilityScorecards();
+
+  // 4. Render Low-PT Quota Watchlist
+  renderLowPTWatchlist(summary.lowPtMembers || []);
+}
+
+function setActivityStreamFilter(filterType) {
+  currentActivityStreamFilter = filterType;
+  
+  // Update button active states
+  const btnMap = {
+    'ALL': 'act-btn-filter-all',
+    'TRAINER_ACTIONS': 'act-btn-filter-trainer',
+    'MEMBER_WORKOUTS': 'act-btn-filter-workouts',
+    'PT_DEBITS': 'act-btn-filter-pt',
+    'CHECKINS_FEEDBACK': 'act-btn-filter-checkins'
+  };
+
+  Object.entries(btnMap).forEach(([k, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (k === filterType) {
+      el.className = "px-2.5 py-1 rounded bg-[#ff0033] text-white font-bold uppercase whitespace-nowrap shadow";
+    } else {
+      el.className = "px-2.5 py-1 rounded bg-black border border-white/10 text-zinc-400 hover:text-white font-bold uppercase whitespace-nowrap";
+    }
+  });
+
+  renderActivityFeedList();
+}
+
+function formatRelativeActivityTime(isoTimestamp) {
+  if (!isoTimestamp) return "Recently";
+  const date = new Date(isoTimestamp);
+  const now = new Date();
+  const diffSec = Math.floor((now - date) / 1000);
+
+  if (diffSec < 60) return "Just now";
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+  if (diffSec < 172800) return `Yesterday ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ` ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+function renderActivityFeedList() {
+  const container = document.getElementById("activity-stream-list");
+  if (!container) return;
+
+  const searchQuery = document.getElementById("activity-stream-search")?.value || "";
+  const activities = window.fit24Store.getActivities ? window.fit24Store.getActivities({
+    limit: 60,
+    filterType: currentActivityStreamFilter,
+    search: searchQuery
+  }) : [];
+
+  if (activities.length === 0) {
+    container.innerHTML = `
+      <div class="p-8 text-center bg-black/50 border border-white/10 rounded">
+        <span class="text-2xl block mb-1">🔍</span>
+        <div class="text-xs text-zinc-400 font-bold uppercase">No matching operational activities found</div>
+        <div class="text-[10px] text-zinc-500 mt-0.5">Try clearing your search query or selecting "All Events".</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = activities.map(act => {
+    // Actor Badge Configuration
+    let actorBadgeHtml = `<span class="px-2 py-0.5 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold rounded uppercase">⚡ ATHLETE</span>`;
+    let cardBorder = "border-white/10 hover:border-emerald-500/40";
+    
+    if (act.actorType === "TRAINER") {
+      actorBadgeHtml = `<span class="px-2 py-0.5 bg-red-600 text-white text-[9px] font-bold rounded uppercase tracking-wider">🥊 COACH</span>`;
+      cardBorder = "border-red-500/30 hover:border-[#ff0033]";
+    } else if (act.actorType === "ADMIN") {
+      actorBadgeHtml = `<span class="px-2 py-0.5 bg-purple-600/20 text-purple-400 border border-purple-500/30 text-[9px] font-bold rounded uppercase">🛡️ CLUB DESK</span>`;
+      cardBorder = "border-white/10 hover:border-purple-400/40";
+    }
+
+    // Detail chips
+    const details = act.details || {};
+    let chipsHtml = "";
+    if (details.quotaRemaining !== undefined) {
+      chipsHtml += `<span class="px-1.5 py-0.5 bg-white/5 border border-white/10 text-yellow-400 rounded">${details.quotaRemaining} Sessions Left</span>`;
+    }
+    if (details.totalVolumeKg) {
+      chipsHtml += `<span class="px-1.5 py-0.5 bg-white/5 border border-white/10 text-emerald-400 rounded">${details.totalVolumeKg.toLocaleString()} kg Volume</span>`;
+    }
+    if (details.exerciseName) {
+      chipsHtml += `<span class="px-1.5 py-0.5 bg-white/5 border border-white/10 text-cyan-400 rounded">${details.exerciseName}</span>`;
+    }
+    if (details.energyRating) {
+      chipsHtml += `<span class="px-1.5 py-0.5 bg-white/5 border border-white/10 text-amber-400 rounded">Energy: ${details.energyRating}/5</span>`;
+    }
+    if (details.adherencePct) {
+      chipsHtml += `<span class="px-1.5 py-0.5 bg-white/5 border border-white/10 text-emerald-400 rounded">${details.adherencePct}% Adherence</span>`;
+    }
+
+    const targetMemberLink = act.targetId ? `
+      <button onclick="window.openMemberDossier('${act.targetId}')" class="text-xs text-white hover:text-[#ff0033] font-bold transition-all underline decoration-dotted">
+        ${act.targetName || act.targetId}
+      </button>
+    ` : `<strong class="text-white">${act.targetName || 'Member'}</strong>`;
+
+    return `
+      <div class="p-3.5 bg-black/75 border ${cardBorder} rounded-xl space-y-2 transition-all font-mono text-xs">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex items-center gap-2">
+            ${actorBadgeHtml}
+            <span class="text-zinc-300 font-bold">${act.actorName}</span>
+            <span class="text-zinc-500 text-[10px]">→</span>
+            ${targetMemberLink}
+          </div>
+          <span class="text-[10px] text-zinc-500 whitespace-nowrap">${formatRelativeActivityTime(act.timestamp)}</span>
+        </div>
+
+        <p class="text-zinc-200 text-xs font-medium leading-relaxed pl-1 border-l-2 border-[#ff0033]/60">
+          ${act.summary}
+        </p>
+
+        ${chipsHtml ? `
+          <div class="flex items-center gap-1.5 flex-wrap text-[10px] pt-0.5">
+            ${chipsHtml}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCoachAccountabilityScorecards() {
+  const container = document.getElementById("coach-accountability-list");
+  if (!container) return;
+
+  const stats = window.fit24Store.getCoachPerformanceStats ? window.fit24Store.getCoachPerformanceStats() : [];
+
+  container.innerHTML = stats.map(st => {
+    const t = st.trainer;
+    const estEarnings = (st.ptDebitedCount * (t.perSessionRate || 500)).toLocaleString();
+
+    return `
+      <div class="p-3.5 bg-black border border-white/10 hover:border-red-500/40 rounded-xl space-y-3 transition-all font-mono text-xs">
+        <div class="flex items-center gap-3">
+          <img src="${t.photoUrl || 'https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=400&q=80'}" 
+               alt="${t.name}" class="w-12 h-12 object-cover border border-[#ff0033] rounded">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <strong class="text-white text-sm font-gymbox uppercase truncate">${t.name}</strong>
+              <span class="px-1.5 py-0.5 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold rounded uppercase">
+                ${st.avgCompliance}% Compliance
+              </span>
+            </div>
+            <div class="text-[10px] text-zinc-400 truncate">${t.specialty || 'Head Drillmaster'}</div>
+            <div class="text-[9px] text-zinc-500 mt-0.5">Rate: ₹${t.perSessionRate || 500}/session</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5 text-center bg-white/[0.02] p-2 rounded border border-white/5 text-[10px]">
+          <div>
+            <span class="text-zinc-500 block uppercase text-[8px]">ACTIVE ROSTER</span>
+            <strong class="text-white font-bold">${st.assignedClientsCount} Clients</strong>
+          </div>
+          <div>
+            <span class="text-zinc-500 block uppercase text-[8px]">PT SESSIONS</span>
+            <strong class="text-[#ff0033] font-bold">${st.ptDebitedCount} Debited</strong>
+          </div>
+          <div>
+            <span class="text-zinc-500 block uppercase text-[8px]">FEEDBACK/CUES</span>
+            <strong class="text-yellow-400 font-bold">${st.feedbacksGiven} Given</strong>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-1 border-t border-white/5 text-[10px]">
+          <span class="text-zinc-400">Est. Cycle Gross: <strong class="text-emerald-400">₹${estEarnings}</strong></span>
+          <a href="trainer.html" target="_blank" class="text-[#ff0033] hover:text-white font-bold uppercase transition-all">
+            Coach Desk →
+          </a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderLowPTWatchlist(lowPtMembers = []) {
+  const container = document.getElementById("low-pt-watchlist");
+  if (!container) return;
+
+  if (lowPtMembers.length === 0) {
+    container.innerHTML = `<div class="text-[10px] text-zinc-500 italic py-2">No active members currently low on PT sessions.</div>`;
+    return;
+  }
+
+  container.innerHTML = lowPtMembers.map(m => {
+    const isExhausted = m.remaining === 0;
+    const badgeClass = isExhausted ? "bg-red-600 text-white" : "bg-amber-500/20 text-amber-400 border border-amber-500/30";
+    const statusText = isExhausted ? "0 LEFT (EXHAUSTED)" : `${m.remaining} of ${m.total} Left`;
+    const cleanPhone = (m.phone || "").replace(/\D/g, "");
+    const waText = encodeURIComponent(`Hi ${m.name}, your FIT24 Personal Training package has ${m.remaining} session(s) remaining. Would you like to top up your package today to retain your reserved training slot?`);
+    const waUrl = `https://wa.me/${cleanPhone.startsWith('91') ? cleanPhone : '91' + cleanPhone}?text=${waText}`;
+
+    return `
+      <div class="p-2.5 bg-black border border-white/10 rounded flex items-center justify-between text-xs font-mono">
+        <div>
+          <button onclick="window.openMemberDossier('${m.id}')" class="text-white hover:text-[#ff0033] font-bold block text-left">
+            ${m.name}
+          </button>
+          <span class="text-[9px] text-zinc-500 block">ID: ${m.id}</span>
+        </div>
+        <div class="text-right space-y-1">
+          <span class="px-1.5 py-0.5 ${badgeClass} text-[9px] font-bold rounded uppercase block">
+            ${statusText}
+          </span>
+          <a href="${waUrl}" target="_blank" class="inline-block text-[9px] text-emerald-400 hover:text-emerald-300 font-bold uppercase">
+            💬 WhatsApp Renewal
+          </a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// --- ADMIN MASTER EXERCISE DIRECTORY MODAL CONTROLLER ---
+function openAdminExerciseDirectoryModal() {
+  const modal = document.getElementById("admin-exercise-directory-modal");
+  if (!modal) return;
+  renderAdminEncyclopediaCategoryPills();
+  renderAdminExerciseEncyclopedia();
+  modal.classList.remove("hidden");
+}
+
+function closeAdminExerciseDirectoryModal() {
+  document.getElementById("admin-exercise-directory-modal")?.classList.add("hidden");
+}
+
+function renderAdminEncyclopediaCategoryPills() {
+  const container = document.getElementById("admin-encyclopedia-category-pills");
+  if (!container) return;
+  const cats = window.fit24Store.getMasterExerciseCategories ? window.fit24Store.getMasterExerciseCategories() : [];
+  container.innerHTML = cats.map(c => `
+    <button type="button" onclick="setAdminEncyclopediaCategory('${c.id}')"
+            class="px-3 py-1.5 whitespace-nowrap rounded font-bold uppercase transition-all ${adminSelectedEncyclopediaCategory === c.id ? 'bg-cyan-500 text-black shadow' : 'bg-black border border-white/10 text-zinc-400 hover:text-white'}">
+      <span>${c.icon}</span> <span>${c.name}</span>
+    </button>
+  `).join('');
+}
+
+function setAdminEncyclopediaCategory(catId) {
+  adminSelectedEncyclopediaCategory = catId;
+  renderAdminEncyclopediaCategoryPills();
+  renderAdminExerciseEncyclopedia();
+}
+
+function renderAdminExerciseEncyclopedia() {
+  const container = document.getElementById("admin-encyclopedia-grid");
+  if (!container) return;
+  const q = document.getElementById("admin-encyclopedia-search")?.value || "";
+  const exercises = window.fit24Store.getMasterExerciseLibrary ? window.fit24Store.getMasterExerciseLibrary(adminSelectedEncyclopediaCategory, q) : [];
+
+  if (exercises.length === 0) {
+    container.innerHTML = `<div class="col-span-2 text-center text-zinc-500 py-8 font-mono">No exercises found matching "${q}".</div>`;
+    return;
+  }
+
+  container.innerHTML = exercises.map(ex => `
+    <div class="p-3.5 bg-black/75 border border-white/10 hover:border-cyan-400/50 rounded-xl space-y-2 transition-all">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <span class="px-1.5 py-0.5 bg-cyan-950/60 text-cyan-400 border border-cyan-500/20 text-[9px] font-bold rounded uppercase">${ex.categoryLabel}</span>
+          <h4 class="text-base font-gymbox text-white uppercase mt-1 tracking-wide">${ex.name}</h4>
+        </div>
+        <span class="px-2 py-0.5 bg-white/5 text-zinc-400 text-[9px] font-bold rounded uppercase">${ex.difficulty}</span>
+      </div>
+
+      <div class="text-[11px] text-zinc-300 space-y-1 bg-white/[0.02] p-2 rounded border border-white/5">
+        <div><strong class="text-zinc-400">Target Muscle:</strong> <span class="text-yellow-400">${ex.targetMuscle}</span></div>
+        <div><strong class="text-zinc-400">Equipment:</strong> <span class="text-white">${ex.equipment}</span></div>
+        <div class="flex items-center gap-3 text-[10px] text-zinc-400 pt-0.5">
+          <span>Prescribed: <strong class="text-white">${ex.recommendedSets}</strong></span>
+          <span>Rest: <strong class="text-emerald-400">${ex.recommendedRestSec}s</strong></span>
+          <span>Tempo: <strong class="text-cyan-400">${ex.recommendedTempo}</strong></span>
+        </div>
+      </div>
+
+      <p class="text-[11px] text-zinc-300 italic border-l-2 border-cyan-400 pl-2 leading-relaxed">
+        "${ex.formCues}"
+      </p>
+    </div>
+  `).join('');
+}
+
+window.renderActivityHub = renderActivityHub;
+window.setActivityStreamFilter = setActivityStreamFilter;
+window.renderActivityFeedList = renderActivityFeedList;
+window.openAdminExerciseDirectoryModal = openAdminExerciseDirectoryModal;
+window.closeAdminExerciseDirectoryModal = closeAdminExerciseDirectoryModal;
+window.setAdminEncyclopediaCategory = setAdminEncyclopediaCategory;
+window.renderAdminExerciseEncyclopedia = renderAdminExerciseEncyclopedia;
 
 
