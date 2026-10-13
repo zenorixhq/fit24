@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIT24 Enterprise Operating Platform // Executive Proposal & Feature Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #d90429;
+      --primary-dark: #b8001f;
+      --primary-light: #fff0f3;
+      --dark: #0f172a;
+      --dark-card: #1e293b;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg-alt: #f8fafc;
+      --emerald: #059669;
+      --emerald-light: #ecfdf5;
+      --cyan: #0284c7;
+      --cyan-light: #f0f9ff;
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background-color: #ffffff;
+      line-height: 1.55;
+      font-size: 11pt;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Print Specific Formatting */
+    @page {
+      size: A4 portrait;
+      margin: 12mm 14mm 14mm 14mm;
+      @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8pt;
+        color: var(--text-muted);
+      }
+    }
+
+    @media print {
+      body {
+        font-size: 10pt;
+        line-height: 1.45;
+        background: #fff;
+      }
+      .page-break {
+        page-break-before: always;
+        break-before: page;
+      }
+      .no-break {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .header-bar, .footer-bar {
+        position: fixed;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 10px 0;
+    }
+
+    /* Document Header */
+    .doc-header {
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 32pt;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #000;
+      line-height: 1;
+    }
+
+    .brand-title span {
+      color: var(--primary);
+    }
+
+    .doc-subtitle {
+      font-size: 11pt;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-box {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5pt;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .meta-box strong {
+      color: var(--dark);
+    }
+
+    /* Section Typography */
+    h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 18pt;
+      color: var(--dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-left: 4px solid var(--primary);
+      padding-left: 10px;
+      margin: 24px 0 12px 0;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 13pt;
+      color: var(--dark);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin: 14px 0 8px 0;
+    }
+
+    h4 {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 10px 0 4px 0;
+    }
+
+    p {
+      margin-bottom: 10px;
+      color: #334155;
+    }
+
+    /* Alert & Highlight Boxes */
+    .highlight-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      padding: 14px 16px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    .highlight-card.emerald {
+      border-left-color: var(--emerald);
+      background: var(--emerald-light);
+    }
+
+    .highlight-card.cyan {
+      border-left-color: var(--cyan);
+      background: var(--cyan-light);
+    }
+
+    .highlight-card.purple {
+      border-left-color: var(--purple);
+      background: var(--purple-light);
+    }
+
+    .exec-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .metric-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .metric-value {
+      font-family: 'Oswald', sans-serif;
+      font-size: 20pt;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .metric-label {
+      font-size: 8.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .metric-sub {
+      font-size: 8pt;
+      color: #475569;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 12px 0 16px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 12px 0 16px 0;
+    }
+
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 9.5pt;
+    }
+
+    .feature-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      font-size: 10pt;
+      color: var(--dark);
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-primary { background: var(--primary-light); color: var(--primary-dark); }
+    .badge-emerald { background: var(--emerald-light); color: var(--emerald); }
+    .badge-cyan { background: var(--cyan-light); color: var(--cyan); }
+    .badge-amber { background: var(--amber-light); color: var(--amber); }
+    .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 9pt;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      text-align: left;
+      padding: 8px 10px;
+      font-weight: 700;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: #334155;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    /* Diagram */
+    .flow-diagram {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 14px 18px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      line-height: 1.45;
+      margin: 12px 0 16px 0;
+      overflow-x: auto;
+    }
+
+    .flow-diagram .title {
+      color: #f87171;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .check-list {
+      list-style: none;
+      margin: 8px 0 14px 0;
+    }
+
+    .check-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+      font-size: 9.5pt;
+      color: #334155;
+    }
+
+    .check-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--emerald);
+      font-weight: bold;
+    }
+
+    .footer-note {
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 8pt;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ================= COVER / HEADER ================= -->
+    <div class="doc-header">
+      <div>
+        <div class="brand-title">FIT<span>24</span></div>
+        <div class="doc-subtitle">Enterprise Club Operating Platform // Comprehensive Guide</div>
+      </div>
+      <div class="meta-box">
+        <strong>FIT24 THALASSERY, KERALA</strong><br>
+        Target Launch: Grand Opening (Oct 18, 2026)<br>
+        Audience: Executive Board & Stakeholders<br>
+        Status: <strong>PRODUCTION VERIFIED</strong>
+      </div>
+    </div>
+
+    <!-- ================= EXECUTIVE SUMMARY ================= -->
+    <div class="highlight-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <h4 style="margin:0; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary);">Executive Strategic Overview</h4>
+        <span class="badge badge-primary">100% OWNED & INDEPENDENT</span>
+      </div>
+      <p style="margin-bottom:8px; font-size:9.5pt;">
+        The <strong>FIT24 Enterprise Operating Platform</strong> is a unified, cloud-backed operating ecosystem built specifically for the luxury high-performance standards of FIT24 Thalassery. It connects front desk operations, facility quotas, personal training management, client retention, and daily mobile workout tracking into a single frictionless system with <strong>zero recurring software subscription fees</strong>.
+      </p>
+    </div>
+
+    <!-- Executive KPI Highlights -->
+    <div class="exec-summary-grid">
+      <div class="metric-card">
+        <div class="metric-value">₹0 / Month</div>
+        <div class="metric-label">Zero Software Subscriptions</div>
+        <div class="metric-sub">Saves ₹3,00,000 to ₹5,00,000 every single year compared to commercial gym software subscriptions. Completely owned outright.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">100% Quotas</div>
+        <div class="metric-label">Strict Facility Passbooks</div>
+        <div class="metric-sub">Eliminates unauthorized usage of Infrared Sauna, Ice Baths, Café Wallet discounts, and Snooker lounge access across all tiers.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">Dual-Track</div>
+        <div class="metric-label">Retention & Coaching Architecture</div>
+        <div class="metric-sub">Dedicated 1-on-1 Personal Training track for VIP clients + automated 5-split programming for self-guided floor members.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">Zero Friction</div>
+        <div class="metric-label">Instant QR Web App (No App Store)</div>
+        <div class="metric-sub">Members and trainers scan a reception QR code and start immediately. No 100MB downloads, no iOS/Android update delays.</div>
+      </div>
+    </div>
+
+    <!-- ================= 1. THE 4 OPERATIONAL PILLARS ================= -->
+    <h2>1. The Four Operational Pillars</h2>
+    <p style="font-size:9.5pt;">The platform operates across four coordinated portals, giving each department exactly the tools they need without clutter or security compromises:</p>
+
+    <!-- Pillar 1 -->
+    <div class="no-break" style="margin-top:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Pillar 1: Front Desk & Club Operational Control Hub</h3>
+        <span class="badge badge-primary">FRONT DESK & MANAGEMENT</span>
+      </div>
+      <div class="grid-2">
+        <div class="feature-card">
+          <div class="feature-card-header">⚡ 3-Second Fast Check-In</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Instant member check-in via optical smartphone QR scanning or rapid search by name, phone, or member code (e.g. <code>F24-1001</code>). Live front desk counter shows current headcount on gym floor.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">📋 Member CRM & Expiry Radar</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Complete member profiles with plan tiers (Elite, Prime, Pro), duration (1 to 12 months), and proactive <strong>Expiry Radar</strong> flagging athletes expiring within 7–14 days for renewal.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">🧖 Strict Facility Quota Passbook</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Automated session debiting for Infrared Sauna (e.g. 4/4 sessions) and Cold Plunge Ice Baths. Tracks café wallet balances, complimentary guest passes, and snooker lounge hours.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">🧾 18% GST Invoicing & Cashbook Ledger</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Instant GST tax receipt issuance (9% CGST + 9% SGST). Daily cashbook closing ledger groups revenue into UPI/GPay, Cash, and Card/POS for daily financial reconciliation.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">⏸ Brochure-Compliant Pause Engine</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Strictly automates FIT24 policy: memberships ≥3 months can pause for minimum 7 days (max 2 blocks). Automatically extends the athlete's expiration date in real time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">🎯 VIP Lead Capture & CRM Pipeline</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Tracks website tour inquiries, trial bookings, and walk-in prospects from initial inquiry to contact and member conversion.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Break for clean print layout -->
+    <div class="page-break"></div>
+
+    <!-- Pillar 2 -->
+    <div class="no-break">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Pillar 2: Dual-Track Athlete Mobile Portal</h3>
+        <span class="badge badge-emerald">MEMBER EXPERIENCE & RETENTION</span>
+      </div>
+      <p style="font-size:9.5pt;">To solve the industry-wide problem where 60% of gym members quit within 60 days from lack of guidance, FIT24 provides an intuitive mobile action center that automatically adapts to the athlete's status:</p>
+
+      <div class="flow-diagram">
+        <div class="title">// AUTOMATED DUAL-TRACK ARCHITECTURE</div>
+┌────────────────────────────────────────────────────────────────────────┐
+│                      MEMBER MOBILE ACTION CENTER                       │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+         ┌──────────────────────────┴──────────────────────────┐
+         ▼                                                     ▼
+  TRACK A: 1-ON-1 PT CLIENTS                          TRACK B: SELF-GUIDED FLOOR MEMBERS
+  • Dedicated Coach Card & Direct WhatsApp            • 5 Pre-Built Periodized Splits (PPL, Upper/Lower)
+  • Coach-Prescribed Periodized Timelines             • 1-Click In-App Routine Switcher
+  • PT Passbook Sessions Remaining (e.g. 18/24)       • Smart Goal Macro & Calorie Calculator
+  • Guided Sunday Reflections & Coach Debriefs        • Duty Desk Floor Support & 1-Click PT Upgrade
+      </div>
+
+      <div class="grid-2">
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--emerald);">🏋️ 72-Movement Master Exercise Directory</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Full movement encyclopedia across 10 body categories (Chest, Back, Legs, Glutes, Shoulders, Arms, Core, Cardio, Functional, Mobility) with equipment, tempo cues (e.g. <code>3-0-1-0</code>), and drillmaster form cues.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--emerald);">📈 Progressive Overload Set/Rep Logger</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Members check off completed sets with weight and reps. Pre-fills previous weights and cues progressive load increases (+2.5 kg). Tracks total workout tonnage lifted.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--emerald);">⏱ Synthesized Audio Rest Timer</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Built-in rest intervals (60s, 90s, 120s) with clean dual-tone audio chime synthesized natively via Web Audio API. Zero external audio downloads, 100% offline reliable.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--emerald);">🔥 Daily Habits & Fuel Intake Monitor</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">1-tap accountability for 10,000 steps, 3.5L hydration, 8 hours sleep, and protein target. Live energy balance compares calories consumed vs calories burnt.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pillar 3 -->
+    <div class="no-break" style="margin-top:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Pillar 3: Dedicated Trainer Portal & Client Roster</h3>
+        <span class="badge badge-purple">COACHING EFFICIENCY & INTEGRITY</span>
+      </div>
+      <p style="font-size:9.5pt;">A clean, focused workspace built strictly for personal trainers. Trainers do not have access to sensitive club financials or reception settings:</p>
+      
+      <div class="grid-3">
+        <div class="feature-card">
+          <div class="feature-card-header">🥊 Isolated 1-on-1 Roster</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Coaches only see athletes assigned to them. Live compliance scoring (0–100%) identifies struggling athletes early.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">⚡ Split Builder & Form Cues</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Coaches customize 7-day timelines, select from 70+ exercises, set rep targets, and write personalized cues pushed straight to athlete phones.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">💬 Sunday Review Queue</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Weekly reflection inbox where coaches review energy levels, obstacles, and wins, then send debrief feedback directly to the athlete.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">🎟 1-Click PT Session Debit</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Tapping <code>-1 PT Done</code> logs the session in the unified audit log and updates remaining session counts for both client and management.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">⚡ Floor Athlete Claiming</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Coaches can view unassigned floor athletes and onboard them directly into their 1-on-1 roster upon package purchase.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header">🩺 PAR-Q Medical Screenings</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Physical Activity Readiness Questionnaire flags cardiac or orthopedic contraindications (<code>⚠️ Caution</code>) for member safety.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pillar 4 -->
+    <div class="no-break" style="margin-top:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Pillar 4: Live Coaching & Operational Surveillance Hub</h3>
+        <span class="badge badge-cyan">MANAGEMENT AUDIT & SURVEILLANCE</span>
+      </div>
+      <p style="font-size:9.5pt;">Gives gym owners and floor managers real-time visibility into everything happening on the gym floor:</p>
+
+      <div class="grid-2">
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--cyan);">📡 Real-Time Operational Activity Stream</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Live audit feed of every action: PT sessions debited, routine updates, workout check-offs, Sunday check-in replies, and quota additions with exact actor and timestamp.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--cyan);">🏆 Coach Accountability Scorecards</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Monitors coach delivery: active client count, completed PT sessions conducted this week, client compliance score, and pending check-in reviews.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--cyan);">⚠️ Low-PT Quota Renewal Watchlist</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Automatically flags all athletes whose PT packages have <strong>fewer than 3 sessions remaining</strong>, enabling the front desk to trigger proactive package renewals before sessions lapse.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-header" style="color:var(--cyan);">📊 Club Performance Live Telemetry</div>
+          <p style="margin:0; font-size:8.5pt; color:#475569;">Tracks total club lifters active today, total weekly tonnage lifted across all workouts, and total PT sessions successfully executed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Break for clean print layout -->
+    <div class="page-break"></div>
+
+    <!-- ================= 2. HOW 1-ON-1 PT ELEVATION WORKS ================= -->
+    <h2>2. How 1-on-1 PT Elevation Works (Floor to Personal Training)</h2>
+    <p style="font-size:9.5pt;">A common question from management is: <em>"How does a member become 1-on-1 PT enabled? Is it when we add PT points?"</em></p>
+
+    <div class="highlight-card emerald">
+      <div style="font-weight:700; color:var(--emerald); font-size:10.5pt; margin-bottom:4px;">
+        YES — PT SESSIONS & COACH ASSIGNMENT AUTOMATICALLY TRIGGER ELEVATION
+      </div>
+      <p style="margin:0; font-size:9pt; color:#064e3b;">
+        An athlete is considered <strong>1-on-1 PT Enabled</strong> when they have an assigned coach and active PT session credits (<code>ptSessionsTotal > 0</code>). As soon as session credits are purchased or allotted, the platform elevates the athlete across all portals instantly with zero manual reconfiguration.
+      </p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:25%;">Platform Area</th>
+          <th style="width:37%;">Floor Athlete Mode (0 PT Sessions)</th>
+          <th style="width:38%;">1-on-1 PT Mode (Sessions Added)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Member Mobile Portal</strong></td>
+          <td>Displays <strong>Floor Coaches & Duty Desk</strong> support, 5 standard routine presets, and a transparent PT package upgrade showcase.</td>
+          <td>Instantly upgrades to <strong>"YOUR ASSIGNED DRILLMASTER"</strong> with coach photo, bio, remaining sessions badge, direct WhatsApp link, and booking calendar. Daily workout timeline locks to coach prescriptions.</td>
+        </tr>
+        <tr>
+          <td><strong>Trainer Portal</strong></td>
+          <td>Member appears under general <strong>"Floor Athletes"</strong> tab for technique assistance and spotting.</td>
+          <td>Member moves directly into that coach’s <strong>"Active 1-on-1 Roster"</strong> with adherence monitoring, Sunday reviews, and 1-click <code>-1 PT Done</code> debiting.</td>
+        </tr>
+        <tr>
+          <td><strong>Management Console</strong></td>
+          <td>Marked as <code>Floor Athlete (Self-Guided)</code> with a fast <code>⚡ Enable 1-on-1 PT</code> button.</td>
+          <td>Displays coach name badge, remaining quota (<code>🥊 6/12 Left</code>), coach switcher link, and automatic entry onto the <strong>Low-PT Renewal Watchlist</strong>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ================= 3. BUSINESS BENEFITS & ROI ================= -->
+    <h2>3. Business Benefits & Return on Investment (ROI)</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30%;">Key Benefit</th>
+          <th style="width:35%;">Commercial Off-the-Shelf Software</th>
+          <th style="width:35%;">FIT24 Proprietary Platform</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Recurring Software Overhead</strong></td>
+          <td>₹25,000 to ₹40,000+ charged every month + user seat licenses.</td>
+          <td><strong>₹0 / Month</strong>. Owned outright with zero recurring software fees. <strong>Saves ₹3L–₹5L every year</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>Policy Compliance</strong></td>
+          <td>Rigid templates; cannot enforce FIT24 3-month pause rules or quotas.</td>
+          <td><strong>100% Custom Tailored</strong> to FIT24’s exact membership rules, sauna limits, and GST rules.</td>
+        </tr>
+        <tr>
+          <td><strong>App Store Friction</strong></td>
+          <td>Members forced to download 100MB apps from Google Play / App Store.</td>
+          <td><strong>Instant Web App</strong> opens via QR scan in 2 seconds on any smartphone.</td>
+        </tr>
+        <tr>
+          <td><strong>Facility Revenue Leaks</strong></td>
+          <td>Untracked paper records; unauthorized sauna and ice bath usage.</td>
+          <td><strong>Strict Quota Passbooks</strong> debit sessions automatically, eliminating free usage.</td>
+        </tr>
+        <tr>
+          <td><strong>30-Day Churn Prevention</strong></td>
+          <td>Unguided floor members feel lost, stop attending, and cancel memberships.</td>
+          <td><strong>Daily Action Center & Routine Switcher</strong> gives every member an immediate, clear workout plan.</td>
+        </tr>
+        <tr>
+          <td><strong>Data Privacy & Security</strong></td>
+          <td>Member data stored on third-party multi-tenant commercial servers.</td>
+          <td><strong>100% FIT24 Proprietary Data</strong> hosted on secure private cloud infrastructure.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ================= 4. IMPLEMENTATION & ROLLOUT PLAN ================= -->
+    <h2>4. Implementation & Rollout Roadmap</h2>
+    <p style="font-size:9.5pt;">A streamlined 3-phase rollout designed for zero friction leading up to Grand Opening on October 18, 2026:</p>
+
+    <div class="grid-3" style="margin-top:10px;">
+      <div class="feature-card" style="border-top:3px solid var(--primary);">
+        <div style="font-weight:700; color:var(--primary); font-size:9pt; margin-bottom:4px;">PHASE 1: PRE-LAUNCH DRILL</div>
+        <div style="font-weight:700; color:var(--dark); font-size:10pt; margin-bottom:6px;">Oct 13 – Oct 16, 2026</div>
+        <ul style="padding-left:14px; font-size:8pt; color:#475569; line-height:1.4;">
+          <li>Bookmark Front Desk Console on reception computers and tablets.</li>
+          <li>Print 2 counter standees with QR codes reading: <em>"Scan for Your FIT24 Daily Workout"</em>.</li>
+          <li>Run 15-minute staff drill on member check-in, GST invoicing, and quota debiting.</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="border-top:3px solid var(--emerald);">
+        <div style="font-weight:700; color:var(--emerald); font-size:9pt; margin-bottom:4px;">PHASE 2: GRAND OPENING</div>
+        <div style="font-weight:700; color:var(--dark); font-size:10pt; margin-bottom:6px;">October 18, 2026</div>
+        <ul style="padding-left:14px; font-size:8pt; color:#475569; line-height:1.4;">
+          <li>As members enroll, generate member codes (e.g. <code>F24-1001</code>) and send via WhatsApp in 1 click.</li>
+          <li>Member scans reception standee, enters code, and immediately logs their first workout.</li>
+          <li>Real-time counter tracks peak opening day floor capacity.</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="border-top:3px solid var(--purple);">
+        <div style="font-weight:700; color:var(--purple); font-size:9pt; margin-bottom:4px;">PHASE 3: RETENTION CULTURE</div>
+        <div style="font-weight:700; color:var(--dark); font-size:10pt; margin-bottom:6px;">Week 2 & Ongoing</div>
+        <ul style="padding-left:14px; font-size:8pt; color:#475569; line-height:1.4;">
+          <li>Personal trainers use Trainer Portal to monitor client compliance and review Sunday reflections.</li>
+          <li>Self-guided members progress through workout routines using the in-app routine switcher.</li>
+          <li>Low-PT renewal alerts trigger proactive package extensions before clients lapse.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Summary Checklist -->
+    <div class="no-break" style="margin-top:20px;">
+      <h3 style="margin-bottom:8px;">Summary Checklist for Executive Sign-Off</h3>
+      <ul class="check-list">
+        <li><strong>Full Front Desk Operations Ready:</strong> Rapid check-in, 18% GST invoicing, facility quota tracking, and official pause policies verified.</li>
+        <li><strong>Dual-Track Coaching Operational:</strong> 1-on-1 PT coaching + 5 standard pre-built splits + 70+ exercise movement library live.</li>
+        <li><strong>Isolated Trainer Workspace:</strong> Personal trainers have a dedicated client roster and workout builder without access to club financials.</li>
+        <li><strong>Operational Surveillance Active:</strong> Real-time activity audit stream, coach scorecards, and low-PT renewal radar in place.</li>
+        <li><strong>Zero Software Overhead:</strong> 100% proprietary ownership, saving ₹3,00,000 to ₹5,00,000 every year in recurring software fees.</li>
+      </ul>
+    </div>
+
+    <!-- Document Footer -->
+    <div class="footer-note">
+      <div>FIT24 ENTERPRISE CLUB OPERATING PLATFORM</div>
+      <div>CONFIDENTIAL // PREPARED FOR FIT24 MANAGEMENT</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
