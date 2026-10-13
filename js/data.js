@@ -2451,6 +2451,22 @@ class Fit24Store {
     if (!member) return null;
     member.assignedTrainerId = trainerId || null;
     this.saveStore(store);
+
+    const trainer = this.getTrainer(trainerId);
+    const coachName = trainer ? trainer.name : "Unassigned";
+    this.logActivity({
+      actorType: "ADMIN",
+      actorId: "ADM-01",
+      actorName: "Club Desk",
+      targetId: member.id,
+      targetName: member.name,
+      actionType: "COACH_ASSIGNED",
+      summary: trainerId 
+        ? `Assigned 1-on-1 Drillmaster: ${coachName} to athlete ${member.name}` 
+        : `Unassigned coach from athlete ${member.name} (Floor Athlete Mode)`,
+      details: { trainerId, coachName, memberTier: member.tier }
+    });
+
     if (window.fit24Supabase) {
       window.fit24Supabase.updateMemberField(memberId, 'assigned_trainer_id', trainerId);
     }
@@ -2779,7 +2795,7 @@ class Fit24Store {
     };
   }
 
-  addPTSessions(memberId, count = 6) {
+  addPTSessions(memberId, count = 6, assignedTrainerId = null) {
     const store = this.getStore();
     if (!store.members) return { success: false, message: "Member not found" };
     const member = store.members.find(m => m.id === memberId);
@@ -2787,11 +2803,17 @@ class Fit24Store {
 
     const addCount = parseInt(count) || 6;
     member.ptSessionsTotal = (member.ptSessionsTotal || 0) + addCount;
-    // If member has no trainer assigned yet, assign first active coach by default
-    if (!member.assignedTrainerId && store.trainers && store.trainers.length > 0) {
+    
+    // If specific trainer provided, assign them; otherwise assign first active coach if none set
+    if (assignedTrainerId) {
+      member.assignedTrainerId = assignedTrainerId;
+    } else if (!member.assignedTrainerId && store.trainers && store.trainers.length > 0) {
       member.assignedTrainerId = store.trainers[0].id;
     }
     this.saveStore(store);
+
+    const coach = this.getTrainer(member.assignedTrainerId);
+    const coachName = coach ? coach.name : "Coach";
 
     this.logActivity({
       actorType: "ADMIN",
@@ -2800,8 +2822,8 @@ class Fit24Store {
       targetId: member.id,
       targetName: member.name,
       actionType: "PT_QUOTA_ADDED",
-      summary: `Top-up: Added +${addCount} 1-on-1 PT sessions for ${member.name} (Total: ${member.ptSessionsTotal})`,
-      details: { added: addCount, newTotal: member.ptSessionsTotal }
+      summary: `Top-up: Added +${addCount} 1-on-1 PT sessions for ${member.name} (Total: ${member.ptSessionsTotal}, Coach: ${coachName})`,
+      details: { added: addCount, newTotal: member.ptSessionsTotal, coachName, trainerId: member.assignedTrainerId }
     });
 
     if (window.fit24Supabase) {
@@ -2812,7 +2834,8 @@ class Fit24Store {
       success: true,
       member,
       newTotal: member.ptSessionsTotal,
-      remaining: (member.ptSessionsTotal - (member.ptSessionsUsed || 0))
+      remaining: (member.ptSessionsTotal - (member.ptSessionsUsed || 0)),
+      coachName
     };
   }
 

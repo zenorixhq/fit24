@@ -434,6 +434,8 @@
       const compColorClass = compliance.color === 'emerald' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : compliance.color === 'amber' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30';
       const progTitle = m.workoutPlan ? m.workoutPlan.title : "No Split Assigned";
       const hasPendingCheckin = m.weeklyCheckIns && m.weeklyCheckIns.length > 0 && !m.weeklyCheckIns[0].coachFeedback;
+      const assignedCoach = m.assignedTrainerId ? window.fit24Store.getTrainer(m.assignedTrainerId) : null;
+      const isMyClient = m.assignedTrainerId === activeTrainerId;
 
       return `
         <div class="bg-[#0e0e12] border ${hasPendingCheckin ? 'border-amber-500/60' : 'border-white/10 hover:border-white/30'} p-4 space-y-3 font-mono transition-all">
@@ -448,6 +450,11 @@
               <div class="text-[10px] text-zinc-400">
                 Code: <strong class="text-red-400">${m.id}</strong> · Tier: <strong class="text-yellow-400">${m.tier}</strong>
               </div>
+              ${!isAssigned ? `
+                <div class="text-[9px] mt-0.5">
+                  ${assignedCoach ? `<span class="text-purple-300">Coached by: <strong>Coach ${assignedCoach.name}</strong></span>` : `<span class="text-cyan-400">🏃 Self-Guided Floor Athlete</span>`}
+                </div>
+              ` : ''}
             </div>
             <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase border ${compColorClass}">
               ${compliance.score}% Adherence
@@ -463,9 +470,13 @@
                   ${ptTotal > 0 ? `${ptRem} / ${ptTotal} Sessions Left` : 'Self-Guided (No PT)'}
                 </strong>
               </div>
-              ${ptRem > 0 ? `
+              ${isMyClient && ptRem > 0 ? `
                 <button onclick="logPTSessionDirect('${m.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white font-bold text-[10px] uppercase rounded" title="Deduct 1 Completed PT Session">
                   -1 PT Done
+                </button>
+              ` : !isMyClient ? `
+                <button onclick="onboardFloorAthlete('${m.id}')" class="px-2 py-1 bg-[#ff0033]/20 hover:bg-[#ff0033] text-[#ff0033] hover:text-white font-bold text-[10px] uppercase border border-[#ff0033]/40 rounded transition-all" title="Claim athlete to your 1-on-1 PT roster">
+                  ⚡ Claim to Me
                 </button>
               ` : `
                 <button onclick="addPTDirect('${m.id}', 6)" class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white font-bold text-[10px] uppercase border border-emerald-500/40 rounded">
@@ -901,7 +912,7 @@
     }
 
     function addPTDirect(memberId, count) {
-      const res = window.fit24Store.addPTSessions(memberId, count);
+      const res = window.fit24Store.addPTSessions(memberId, count, activeTrainerId);
       if (res && res.success) {
         alert(`🥊 Added +${count} PT Sessions! Total: ${res.newTotal} sessions.`);
         renderActiveTabContent();
@@ -909,6 +920,26 @@
         if (activeDossierMemberId === memberId) {
           openCoachAthleteDossier(memberId);
         }
+      }
+    }
+
+    function onboardFloorAthlete(memberId) {
+      const member = window.fit24Store.getMember(memberId);
+      if (!member) return;
+      const trainer = window.fit24Store.getTrainer(activeTrainerId);
+      const coachName = trainer ? trainer.name : "Your Roster";
+      const countInput = prompt(`Onboard ${member.name} (${member.id}) to Coach ${coachName}'s 1-on-1 PT Roster.\n\nEnter PT sessions count to allocate (e.g. 6, 12, 24):`, "6");
+      if (countInput === null) return;
+      const count = parseInt(countInput.trim(), 10) || 6;
+
+      window.fit24Store.assignTrainer(memberId, activeTrainerId);
+      const res = window.fit24Store.addPTSessions(memberId, count, activeTrainerId);
+
+      alert(`✓ ELEVATION SUCCESS!\n\n${member.name} has been enrolled as your 1-on-1 PT athlete with ${count} sessions credited.\nThey have been added to your Active 1-on-1 Roster!`);
+      updateCoachBanner();
+      renderActiveTabContent();
+      if (activeDossierMemberId === memberId) {
+        openCoachAthleteDossier(memberId);
       }
     }
 

@@ -375,7 +375,7 @@
           </div>
 
           <!-- Filters -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
             <input id="member-table-search" type="text" placeholder="Search by name, phone or code..." 
                    class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
             <select id="member-filter-tier" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
@@ -383,6 +383,11 @@
               <option value="ELITE">Elite Tier</option>
               <option value="PRIME">Prime Tier</option>
               <option value="PRO">Pro Tier</option>
+            </select>
+            <select id="member-filter-coach" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
+              <option value="ALL">All Athletes (Floor & PT)</option>
+              <option value="PT_ONLY">🥊 1-on-1 PT Enabled Only</option>
+              <option value="FLOOR_ONLY">🏃 Floor Athletes Only (Self-Guided)</option>
             </select>
             <select id="member-filter-status" class="bg-black border border-white/20 p-2.5 text-xs text-white focus:outline-none focus:border-[#ff0033] font-mono">
               <option value="ALL">All Statuses</option>
@@ -399,6 +404,7 @@
                   <th class="py-3 px-4">Code</th>
                   <th class="py-3 px-4">Athlete Info</th>
                   <th class="py-3 px-4">Plan Tier</th>
+                  <th class="py-3 px-4">Assigned Coach / PT</th>
                   <th class="py-3 px-4">Validity</th>
                   <th class="py-3 px-4">Facility Quotas</th>
                   <th class="py-3 px-4">Café Wallet</th>
@@ -1721,6 +1727,86 @@
       <div id="admin-encyclopedia-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[55vh] overflow-y-auto pr-1">
         <!-- populated dynamically -->
       </div>
+    </div>
+  </div>
+
+  <!-- 9. 1-ON-1 PERSONAL TRAINING ACTIVATION / COACH ASSIGNMENT MODAL -->
+  <div id="enable-pt-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#0e0e12] border-2 border-[#ff0033] max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto font-mono">
+      <button onclick="window.closeEnablePTModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg font-bold">✕</button>
+
+      <div class="mb-4">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 bg-[#ff0033]/20 text-[#ff0033] border border-[#ff0033]/40 text-[9px] font-bold rounded uppercase">PT ENROLLMENT</span>
+          <span class="text-emerald-400 text-[10px] font-bold uppercase">● 1-ON-1 UPGRADE</span>
+        </div>
+        <h3 class="text-2xl font-gymbox text-white mt-1 uppercase tracking-wide">ENABLE 1-ON-1 PERSONAL TRAINING</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">Assign a dedicated coach and allocate session credits to elevate an athlete from floor status.</p>
+      </div>
+
+      <!-- Athlete Preview Chip -->
+      <div id="enable-pt-athlete-card" class="p-3 bg-black border border-white/10 mb-4">
+        <!-- Rendered by admin.js -->
+      </div>
+
+      <form id="enable-pt-form" onsubmit="window.submitEnablePT(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="enable-pt-member-id" value="">
+
+        <!-- Coach Selector -->
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-zinc-400 mb-1">Select Dedicated Coach / Drillmaster:</label>
+          <select id="enable-pt-coach-select" required class="w-full bg-black border border-white/20 p-2 text-white focus:outline-none focus:border-[#ff0033]">
+            <!-- Rendered by admin.js with active coaches -->
+          </select>
+        </div>
+
+        <!-- PT Session Package Credit -->
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-zinc-400 mb-1">PT Session Package / Quota to Allot:</label>
+          <div class="grid grid-cols-3 gap-2 mb-2">
+            <button type="button" onclick="setPTSessionPreset(6)" id="preset-pt-6" class="p-2 border border-white/10 bg-black text-center hover:border-red-500 transition-all">
+              <span class="block text-white font-gymbox text-sm">6 Sessions</span>
+              <span class="text-[9px] text-zinc-400">Starter (₹3,000)</span>
+            </button>
+            <button type="button" onclick="setPTSessionPreset(12)" id="preset-pt-12" class="p-2 border border-[#ff0033] bg-[#ff0033]/10 text-center hover:border-red-500 transition-all">
+              <span class="block text-white font-gymbox text-sm">12 Sessions</span>
+              <span class="text-[9px] text-emerald-400">Standard (₹5,500)</span>
+            </button>
+            <button type="button" onclick="setPTSessionPreset(24)" id="preset-pt-24" class="p-2 border border-white/10 bg-black text-center hover:border-red-500 transition-all">
+              <span class="block text-white font-gymbox text-sm">24 Sessions</span>
+              <span class="text-[9px] text-zinc-400">VIP Pro (₹10,000)</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-zinc-500 text-[10px] uppercase">Sessions Count:</span>
+            <input type="number" id="enable-pt-sessions-input" value="12" min="1" max="100" required
+                   class="flex-1 bg-black border border-white/20 p-1.5 text-white text-center font-bold focus:border-[#ff0033]">
+          </div>
+        </div>
+
+        <!-- Training Split Assignment -->
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-zinc-400 mb-1">Initial Coach Workout Blueprint:</label>
+          <select id="enable-pt-split-preset" class="w-full bg-black border border-white/20 p-2 text-white focus:outline-none focus:border-[#ff0033]">
+            <option value="keep">Keep Current Routine / Coach Will Customize</option>
+            <option value="ppl-6day">⚡ Push / Pull / Legs Hypertrophy (6-Day)</option>
+            <option value="upper-lower-4day">🏋️ Upper / Lower Powerbuilding (4-Day)</option>
+            <option value="fat-shred-5day">🔥 Metabolic HIIT Conditioning & Shred (5-Day)</option>
+            <option value="fullbody-3day">🧱 Full Body Strength & Longevity (3-Day)</option>
+            <option value="ladies-sculpt-4day">🌸 Ladies Sculpt & Posterior Chain (4-Day)</option>
+          </select>
+        </div>
+
+        <!-- Submit & Actions -->
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-white/10">
+          <button type="button" onclick="window.closeEnablePTModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-bold uppercase">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 bg-[#ff0033] hover:bg-white hover:text-black text-white font-gymbox text-base uppercase tracking-wider transition-all shadow-lg shadow-red-900/40">
+            ⚡ ACTIVATE 1-ON-1 PT STATUS
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

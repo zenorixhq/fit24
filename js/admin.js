@@ -326,35 +326,70 @@ function initMemberCRM() {
   // Search & Filter
   const searchInput = document.getElementById("member-table-search");
   const filterTier = document.getElementById("member-filter-tier");
+  const filterCoach = document.getElementById("member-filter-coach");
   const filterStatus = document.getElementById("member-filter-status");
 
+  if (filterCoach) {
+    const trainers = window.fit24Store.getTrainers() || [];
+    filterCoach.innerHTML = `
+      <option value="ALL">All Athletes (Floor & PT)</option>
+      <option value="PT_ONLY">🥊 1-on-1 PT Enabled Only</option>
+      <option value="FLOOR_ONLY">🏃 Floor Athletes Only (Self-Guided)</option>
+      ${trainers.map(t => `<option value="${t.id}">🥊 Coach ${t.name}</option>`).join("")}
+    `;
+  }
+
   function filterMembers() {
-    renderMemberTable(searchInput ? searchInput.value : "", filterTier ? filterTier.value : "ALL", filterStatus ? filterStatus.value : "ALL");
+    renderMemberTable();
   }
 
   if (searchInput) searchInput.addEventListener("input", filterMembers);
   if (filterTier) filterTier.addEventListener("change", filterMembers);
+  if (filterCoach) filterCoach.addEventListener("change", filterMembers);
   if (filterStatus) filterStatus.addEventListener("change", filterMembers);
 }
 
-function renderMemberTable(searchQuery = "", filterTier = "ALL", filterStatus = "ALL") {
+function renderMemberTable(searchQuery = null, filterTier = null, filterStatus = null, filterCoach = null) {
   const tbody = document.getElementById("members-table-tbody");
   if (!tbody) return;
 
+  const searchInput = document.getElementById("member-table-search");
+  const fTier = document.getElementById("member-filter-tier");
+  const fStatus = document.getElementById("member-filter-status");
+  const fCoach = document.getElementById("member-filter-coach");
+
+  const q = (searchQuery !== null ? searchQuery : (searchInput ? searchInput.value : "")).toLowerCase().trim();
+  const tierVal = filterTier !== null ? filterTier : (fTier ? fTier.value : "ALL");
+  const statusVal = filterStatus !== null ? filterStatus : (fStatus ? fStatus.value : "ALL");
+  const coachVal = filterCoach !== null ? filterCoach : (fCoach ? fCoach.value : "ALL");
+
   let members = window.fit24Store.getMembers();
 
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
+  if (q) {
     members = members.filter(m => m.name.toLowerCase().includes(q) || m.phone.includes(q) || m.id.toLowerCase().includes(q));
   }
-  if (filterTier !== "ALL") {
-    members = members.filter(m => m.tier === filterTier);
+  if (tierVal !== "ALL") {
+    members = members.filter(m => m.tier === tierVal);
   }
-  if (filterStatus !== "ALL") {
-    members = members.filter(m => m.status === filterStatus);
+  if (statusVal !== "ALL") {
+    members = members.filter(m => m.status === statusVal);
+  }
+  if (coachVal !== "ALL") {
+    if (coachVal === "PT_ONLY") {
+      members = members.filter(m => Boolean(m.assignedTrainerId && (m.ptSessionsTotal > 0)));
+    } else if (coachVal === "FLOOR_ONLY") {
+      members = members.filter(m => !m.assignedTrainerId || (m.ptSessionsTotal || 0) === 0);
+    } else {
+      members = members.filter(m => m.assignedTrainerId === coachVal && (m.ptSessionsTotal || 0) > 0);
+    }
   }
 
   tbody.innerHTML = members.map(m => {
+    const isPTActive = Boolean(m.assignedTrainerId && (m.ptSessionsTotal > 0));
+    const trainer = m.assignedTrainerId ? window.fit24Store.getTrainer(m.assignedTrainerId) : null;
+    const ptRem = Math.max(0, (m.ptSessionsTotal || 0) - (m.ptSessionsUsed || 0));
+    const ptTotal = m.ptSessionsTotal || 0;
+
     const saunaRem = m.saunaTotal - m.saunaUsed;
     const iceBathRem = m.iceBathTotal - m.iceBathUsed;
     const guestRem = m.guestPassesTotal - m.guestPassesUsed;
@@ -374,6 +409,39 @@ function renderMemberTable(searchQuery = "", filterTier = "ALL", filterStatus = 
         <td class="py-3 px-4 text-xs">
           <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${m.tier === 'ELITE' ? 'bg-yellow-500/20 text-yellow-400' : m.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">${m.tier}</span>
           <div class="text-[10px] text-zinc-500 mt-0.5">${m.durationMonths} Months (₹${m.amountPaid.toLocaleString('en-IN')})</div>
+        </td>
+        <td class="py-3 px-4 text-xs font-mono">
+          ${isPTActive ? `
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0 shadow-sm shadow-emerald-500/50"></span>
+                <span class="font-bold text-white text-xs">${trainer ? trainer.name : 'Dedicated Coach'}</span>
+              </div>
+              <div class="text-[10px] text-zinc-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                <span class="px-1.5 py-0.2 bg-red-600/20 text-[#ff0033] border border-red-500/30 rounded font-bold">
+                  🥊 ${ptRem}/${ptTotal} Left
+                </span>
+                <span class="text-[9px] text-emerald-400 font-bold">1-on-1 PT</span>
+              </div>
+              <div class="mt-1 flex items-center gap-1.5 text-[10px]">
+                <button onclick="window.promptChangeCoach('${m.id}')" class="text-purple-400 hover:text-white underline cursor-pointer" title="Switch personal trainer">Switch</button>
+                <span class="text-zinc-600">·</span>
+                <button onclick="window.addMemberPTSessions('${m.id}', 6)" class="text-emerald-400 hover:text-white underline cursor-pointer" title="Top-up +6 PT Sessions">+6 PT</button>
+              </div>
+            </div>
+          ` : `
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-zinc-600 shrink-0"></span>
+                <span class="text-zinc-400 text-xs font-bold">Floor Athlete</span>
+              </div>
+              <div class="text-[10px] text-zinc-500 mt-0.5">Self-Guided (No PT)</div>
+              <button onclick="window.openEnablePTModal('${m.id}')" 
+                      class="mt-1 px-2 py-0.5 bg-red-600/20 hover:bg-[#ff0033] text-red-300 hover:text-white border border-red-500/40 text-[9px] font-bold uppercase rounded transition-all inline-block cursor-pointer">
+                ⚡ Enable 1-on-1 PT
+              </button>
+            </div>
+          `}
         </td>
         <td class="py-3 px-4 text-xs font-mono text-zinc-300">
           <div>${m.startDate}</div>
@@ -396,14 +464,14 @@ function renderMemberTable(searchQuery = "", filterTier = "ALL", filterStatus = 
           }
         </td>
         <td class="py-3 px-4 text-xs text-right space-x-1 whitespace-nowrap">
-          <button onclick="window.openMemberDossier('${m.id}')" class="px-2.5 py-1 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] border border-purple-400/50 shadow-sm" title="360° Health & Biometrics Dossier">📋 View 360°</button>
-          <button onclick="window.issueInvoiceForMember('${m.id}')" class="px-2 py-1 rounded bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-[11px]" title="GST Tax Receipt">Receipt</button>
-          <button onclick="viewMemberPass('${m.id}')" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-[11px] text-white">Pass</button>
-          <button onclick="openQuotaModal('${m.id}')" class="px-2 py-1 rounded bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[11px]">Quota</button>
+          <button onclick="window.openMemberDossier('${m.id}')" class="px-2.5 py-1 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] border border-purple-400/50 shadow-sm cursor-pointer" title="360° Health & Biometrics Dossier">📋 View 360°</button>
+          <button onclick="window.issueInvoiceForMember('${m.id}')" class="px-2 py-1 rounded bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-[11px] cursor-pointer" title="GST Tax Receipt">Receipt</button>
+          <button onclick="viewMemberPass('${m.id}')" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-[11px] text-white cursor-pointer">Pass</button>
+          <button onclick="openQuotaModal('${m.id}')" class="px-2 py-1 rounded bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white text-[11px] cursor-pointer">Quota</button>
         </td>
       </tr>
     `;
-  }).join("") || `<tr><td colspan="8" class="text-center py-6 text-zinc-500 text-xs">No members found matching filters.</td></tr>`;
+  }).join("") || `<tr><td colspan="9" class="text-center py-6 text-zinc-500 text-xs">No members found matching filters.</td></tr>`;
 }
 
 // 3.1 Lead Pipeline / CRM Management
@@ -2290,13 +2358,19 @@ window.openMemberDossier = function(id) {
               </div>
               <div class="flex items-center gap-1">
                 ${ptRem > 0 ? `
-                  <button onclick="window.deductMemberPT('${member.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded">
+                  <button onclick="window.deductMemberPT('${member.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded cursor-pointer">
                     -1 PT
                   </button>
                 ` : ''}
-                <button onclick="window.addMemberPTSessions('${member.id}', 6)" class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-[10px] font-bold uppercase rounded" title="Add +6 PT Sessions">
-                  +6 PT
-                </button>
+                ${!hasTrainer ? `
+                  <button onclick="window.openEnablePTModal('${member.id}')" class="px-2 py-1 bg-[#ff0033] hover:bg-white hover:text-black text-white text-[10px] font-bold uppercase rounded cursor-pointer" title="Upgrade floor athlete to 1-on-1 PT">
+                    ⚡ Enable PT
+                  </button>
+                ` : `
+                  <button onclick="window.addMemberPTSessions('${member.id}', 6)" class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-[10px] font-bold uppercase rounded cursor-pointer" title="Add +6 PT Sessions">
+                    +6 PT
+                  </button>
+                `}
               </div>
             </div>
             <div class="p-2 bg-white/5 border border-white/10 flex justify-between">
@@ -3120,6 +3194,151 @@ window.applyStandardProgram = function(memberId, programId) {
     alert(`📋 Routine Blueprint applied: "${member.workoutPlan?.title || programId}"`);
     window.openMemberDossier(memberId);
     renderAllData();
+  }
+};
+
+window.setPTSessionPreset = function(sessions) {
+  const input = document.getElementById("enable-pt-sessions-input");
+  if (input) input.value = sessions;
+  [6, 12, 24].forEach(c => {
+    const btn = document.getElementById(`preset-pt-${c}`);
+    if (btn) {
+      if (c === sessions) {
+        btn.classList.add("border-[#ff0033]", "bg-[#ff0033]/10");
+        btn.classList.remove("border-white/10", "bg-black");
+      } else {
+        btn.classList.remove("border-[#ff0033]", "bg-[#ff0033]/10");
+        btn.classList.add("border-white/10", "bg-black");
+      }
+    }
+  });
+};
+
+window.openEnablePTModal = function(memberId) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+
+  const modal = document.getElementById("enable-pt-modal");
+  const athleteCard = document.getElementById("enable-pt-athlete-card");
+  const coachSelect = document.getElementById("enable-pt-coach-select");
+  const memberIdInput = document.getElementById("enable-pt-member-id");
+  if (!modal) return;
+
+  if (memberIdInput) memberIdInput.value = member.id;
+
+  const trainers = window.fit24Store.getTrainers() || [];
+  if (coachSelect) {
+    coachSelect.innerHTML = trainers.map(t => `
+      <option value="${t.id}" ${t.id === member.assignedTrainerId ? 'selected' : ''}>
+        🥊 Coach ${t.name} (${t.title || t.badge || 'PT Coach'}) · ${t.specialty || 'Biomechanics'}
+      </option>
+    `).join("") || '<option value="">No coaches available</option>';
+  }
+
+  const isPT = Boolean(member.assignedTrainerId && (member.ptSessionsTotal > 0));
+  const currentCoach = member.assignedTrainerId ? window.fit24Store.getTrainer(member.assignedTrainerId) : null;
+  const ptRem = Math.max(0, (member.ptSessionsTotal || 0) - (member.ptSessionsUsed || 0));
+
+  if (athleteCard) {
+    athleteCard.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-white uppercase">${member.name}</span>
+          <div class="text-[10px] text-zinc-400 font-mono">
+            Code: <strong class="text-red-400">${member.id}</strong> · Tier: <strong class="text-yellow-400">${member.tier}</strong> · Phone: ${member.phone}
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${isPT ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-zinc-800 text-zinc-400'}">
+          ${isPT ? `● PT Active (${ptRem} Left)` : '○ Floor Athlete (No PT)'}
+        </span>
+      </div>
+      ${isPT && currentCoach ? `
+        <div class="mt-2 pt-2 border-t border-white/5 text-[11px] text-zinc-300">
+          Currently coached by: <strong class="text-white">${currentCoach.name}</strong>. Adding sessions will credit this package.
+        </div>
+      ` : `
+        <div class="mt-2 pt-2 border-t border-white/5 text-[10px] text-zinc-400">
+          This athlete is currently self-guided on the gym floor. Selecting a coach and allotting PT credits will instantly elevate them to 1-on-1 PT status.
+        </div>
+      `}
+    `;
+  }
+
+  window.setPTSessionPreset(12);
+  modal.classList.remove("hidden");
+};
+
+window.closeEnablePTModal = function() {
+  document.getElementById("enable-pt-modal")?.classList.add("hidden");
+};
+
+window.submitEnablePT = function(event) {
+  event.preventDefault();
+  const memberId = document.getElementById("enable-pt-member-id")?.value;
+  const coachId = document.getElementById("enable-pt-coach-select")?.value;
+  const sessions = parseInt(document.getElementById("enable-pt-sessions-input")?.value, 10) || 6;
+  const splitPreset = document.getElementById("enable-pt-split-preset")?.value;
+
+  if (!memberId || !coachId) {
+    alert("Please select a coach and member.");
+    return;
+  }
+
+  // 1. Assign trainer
+  window.fit24Store.assignTrainer(memberId, coachId);
+
+  // 2. Add PT sessions
+  const ptRes = window.fit24Store.addPTSessions(memberId, sessions, coachId);
+
+  // 3. Assign routine template if selected
+  if (splitPreset && splitPreset !== "keep" && window.fit24Store.applyProgramTemplate) {
+    window.fit24Store.applyProgramTemplate(memberId, splitPreset);
+  }
+
+  const member = window.fit24Store.getMember(memberId);
+  const trainer = window.fit24Store.getTrainer(coachId);
+
+  alert(`✓ 1-ON-1 PT ELEVATION COMPLETE!\n\nAthlete: ${member?.name} (${memberId})\nDedicated Coach: Coach ${trainer?.name}\nSessions Credited: +${sessions} (Total: ${ptRes?.newTotal || sessions})\n\nThe athlete's portal has been updated to 1-on-1 Coach-Prescribed mode and they now appear in Coach ${trainer?.name}'s active roster!`);
+
+  window.closeEnablePTModal();
+  renderAllData();
+  if (document.getElementById("member-dossier-modal") && !document.getElementById("member-dossier-modal").classList.contains("hidden")) {
+    window.openMemberDossier(memberId);
+  }
+};
+
+window.promptChangeCoach = function(memberId) {
+  const member = window.fit24Store.getMember(memberId);
+  if (!member) return;
+  const trainers = window.fit24Store.getTrainers() || [];
+  if (trainers.length === 0) {
+    alert("No trainers found in system.");
+    return;
+  }
+
+  const coachListStr = trainers.map((t, i) => `${i + 1}. Coach ${t.name} (${t.title || t.badge})`).join("\n");
+  const input = prompt(
+    `Switch 1-on-1 Personal Trainer for ${member.name} (${member.id}):\n\nEnter number (1-${trainers.length}):\n${coachListStr}\n\n(Enter 0 to unassign and revert to floor athlete)`,
+    "1"
+  );
+
+  if (input === null) return;
+  const choice = parseInt(input.trim(), 10);
+  if (choice === 0) {
+    window.fit24Store.assignTrainer(memberId, null);
+    alert(`✓ ${member.name} unassigned from coach. Reverted to Self-Guided Floor Athlete.`);
+  } else if (choice >= 1 && choice <= trainers.length) {
+    const selectedTrainer = trainers[choice - 1];
+    window.fit24Store.assignTrainer(memberId, selectedTrainer.id);
+    alert(`✓ Coach assigned: ${member.name} is now training under Coach ${selectedTrainer.name}!`);
+  } else {
+    alert("Invalid selection.");
+    return;
+  }
+
+  renderAllData();
+  if (document.getElementById("member-dossier-modal") && !document.getElementById("member-dossier-modal").classList.contains("hidden")) {
+    window.openMemberDossier(memberId);
   }
 };
 
