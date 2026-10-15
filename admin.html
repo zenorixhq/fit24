@@ -329,16 +329,21 @@
 
           <div id="checkin-preview-card" class="hidden mb-4"></div>
 
-          <button id="do-checkin-btn" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-2xl uppercase tracking-wider text-white transition-all">
-            LOG ATHLETE ENTRY & CHECK IN
-          </button>
+          <div id="checkin-actions-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button id="do-checkin-btn" class="w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-2xl uppercase tracking-wider text-white transition-all shadow-lg">
+              ⚡ LOG ATHLETE ENTRY (CHECK-IN)
+            </button>
+            <button id="do-checkout-btn" class="w-full py-4 bg-zinc-900 hover:bg-amber-600 font-gymbox text-2xl uppercase tracking-wider text-white transition-all border border-white/20">
+              🔴 LOG ATHLETE EXIT (CHECK-OUT)
+            </button>
+          </div>
         </div>
 
         <!-- Today's Attendance Table -->
         <div class="bg-[#0e0e12] border-2 border-white/10 p-6">
           <div class="flex items-center justify-between mb-4">
             <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-white">TODAY'S VISITOR LOG</h4>
-            <span class="text-xs text-zinc-500 font-mono">Auto-timestamped entry</span>
+            <span class="text-xs text-zinc-500 font-mono">Real-time floor occupancy tracking</span>
           </div>
 
           <div class="overflow-x-auto">
@@ -348,9 +353,11 @@
                   <th class="py-3 px-4">Member ID</th>
                   <th class="py-3 px-4">Name</th>
                   <th class="py-3 px-4">Tier</th>
-                  <th class="py-3 px-4">Check-In Time</th>
+                  <th class="py-3 px-4">Check-In</th>
+                  <th class="py-3 px-4">Check-Out</th>
+                  <th class="py-3 px-4">Duration</th>
                   <th class="py-3 px-4">Method</th>
-                  <th class="py-3 px-4 text-right">Floor Status</th>
+                  <th class="py-3 px-4 text-right">Floor Status & Action</th>
                 </tr>
               </thead>
               <tbody id="attendance-log-tbody">
@@ -615,12 +622,21 @@
             </p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 font-mono">
+          <div id="pause-member-alert" class="hidden mb-4 p-4 border font-mono text-xs"></div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 font-mono">
             <div>
               <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Select Member</label>
               <select id="pause-member-select" class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
                 <option value="">-- Choose Member --</option>
               </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 uppercase mb-1">Pause Start Date</label>
+              <input id="pause-start-date" type="date" 
+                     class="w-full bg-black border border-white/20 p-2.5 text-xs text-white focus:border-[#ff0033]">
+              <span id="pause-start-date-hint" class="text-[10px] text-zinc-500">Effective start date</span>
             </div>
 
             <div>

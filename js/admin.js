@@ -87,12 +87,19 @@ function renderDashboardMetrics() {
   const attendances = store.attendances || [];
   const facilityLogs = store.facilityLogs || [];
 
-  // Active / Paused count
-  const activeCount = members.filter(m => m.status === "ACTIVE").length;
-  const pausedCount = members.filter(m => m.status === "PAUSED").length;
+  // Active / Paused count:
+  // Active Plans: status === "ACTIVE" and !isPaused (including members with pause scheduled for tomorrow)
+  // Paused Members: isPaused === true or status === "PAUSED"
+  const activeCount = members.filter(m => m.status === "ACTIVE" && !m.isPaused).length;
+  const pausedCount = members.filter(m => m.status === "PAUSED" || m.isPaused).length;
   const eliteCount = members.filter(m => m.tier === "ELITE").length;
   const primeCount = members.filter(m => m.tier === "PRIME").length;
   const proCount = members.filter(m => m.tier === "PRO").length;
+
+  // Real-time live floor occupancy: athletes currently inside
+  const liveOccupancy = window.fit24Store.getLiveOccupancyCount 
+    ? window.fit24Store.getLiveOccupancyCount() 
+    : attendances.filter(a => a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT")).length;
 
   // Counts
   const elTotal = document.getElementById("metric-total-members");
@@ -106,7 +113,7 @@ function renderDashboardMetrics() {
   if (elActive) elActive.innerText = activeCount;
   if (elPaused) elPaused.innerText = pausedCount;
   if (elCheckins) elCheckins.innerText = attendances.length;
-  if (elOccupancy) elOccupancy.innerText = Math.max(1, attendances.length); // simulated floor occupancy
+  if (elOccupancy) elOccupancy.innerText = liveOccupancy;
   if (elFacilityCount) elFacilityCount.innerText = facilityLogs.length;
 
   // Tier counts
@@ -115,23 +122,29 @@ function renderDashboardMetrics() {
     elTiers.innerText = `Elite: ${eliteCount} · Prime: ${primeCount} · Pro: ${proCount}`;
   }
 
-  // Recent feed
+  // Recent feed: display live floor status and departure duration
   const feedContainer = document.getElementById("dashboard-recent-feed");
   if (feedContainer) {
-    feedContainer.innerHTML = attendances.slice(0, 5).map(att => `
-      <div class="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-red-600/20 text-red-400 font-bold font-mono text-xs flex items-center justify-center">
-            ${att.memberId.replace('F24-', '')}
+    feedContainer.innerHTML = attendances.slice(0, 5).map(att => {
+      const isOut = att.status === "CHECKED_OUT" || Boolean(att.checkOutTime);
+      return `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg ${isOut ? 'bg-zinc-800 text-zinc-400' : 'bg-red-600/20 text-[#ff0033]'} font-bold font-mono text-xs flex items-center justify-center">
+              ${att.memberId.replace('F24-', '')}
+            </div>
+            <div>
+              <h5 class="text-xs font-bold text-white flex items-center gap-2">
+                ${att.name}
+                ${isOut ? '<span class="text-[9px] px-1.5 py-0.2 bg-zinc-800 text-zinc-400 rounded font-mono">CHECKED OUT</span>' : '<span class="text-[9px] px-1.5 py-0.2 bg-emerald-500/20 text-emerald-400 rounded font-mono font-bold">ON FLOOR</span>'}
+              </h5>
+              <span class="text-[10px] text-zinc-400 font-mono">${att.tier} · ${isOut ? `Duration: ${att.duration || 'Departed'}` : att.method}</span>
+            </div>
           </div>
-          <div>
-            <h5 class="text-xs font-bold text-white">${att.name}</h5>
-            <span class="text-[10px] text-zinc-400">${att.tier} · ${att.method}</span>
-          </div>
+          <span class="text-xs font-mono text-zinc-400 font-semibold">${isOut ? att.checkOutTime : att.time}</span>
         </div>
-        <span class="text-xs font-mono text-zinc-400 font-semibold">${att.time}</span>
-      </div>
-    `).join("") || `<div class="text-xs text-zinc-500 text-center py-4">No check-ins logged yet today</div>`;
+      `;
+    }).join("") || `<div class="text-xs text-zinc-500 text-center py-4">No check-ins logged yet today</div>`;
   }
 }
 
@@ -140,6 +153,7 @@ function initAttendanceDesk() {
   const searchInput = document.getElementById("checkin-search-input");
   const suggestionsBox = document.getElementById("checkin-suggestions");
   const checkinBtn = document.getElementById("do-checkin-btn");
+  const checkoutBtn = document.getElementById("do-checkout-btn");
   let selectedMemberForCheckin = null;
 
   if (searchInput) {
@@ -163,20 +177,29 @@ function initAttendanceDesk() {
         return;
       }
 
-      suggestionsBox.innerHTML = matches.map(m => `
-        <div class="p-3 hover:bg-white/10 cursor-pointer border-b border-white/5 last:border-0 flex items-center justify-between suggestion-item" data-id="${m.id}">
-          <div>
-            <div class="text-xs font-bold text-white flex items-center gap-2">
-              ${m.name}
-              <span class="text-[10px] px-1.5 py-0.5 rounded font-mono ${m.tier === 'ELITE' ? 'bg-yellow-500/20 text-yellow-400' : m.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">${m.tier}</span>
+      suggestionsBox.innerHTML = matches.map(m => {
+        const isInside = window.fit24Store.isMemberCurrentlyInside(m.id);
+        const activeSession = window.fit24Store.getActiveFloorSession(m.id);
+        return `
+          <div class="p-3 hover:bg-white/10 cursor-pointer border-b border-white/5 last:border-0 flex items-center justify-between suggestion-item" data-id="${m.id}">
+            <div>
+              <div class="text-xs font-bold text-white flex items-center gap-2">
+                ${m.name}
+                <span class="text-[10px] px-1.5 py-0.5 rounded font-mono ${m.tier === 'ELITE' ? 'bg-yellow-500/20 text-yellow-400' : m.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">${m.tier}</span>
+                ${isInside ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono font-bold animate-pulse">🟢 ON FLOOR</span>' : ''}
+              </div>
+              <div class="text-[11px] text-zinc-400 font-mono">${m.id} · ${m.phone}</div>
             </div>
-            <div class="text-[11px] text-zinc-400 font-mono">${m.id} · ${m.phone}</div>
+            <div class="text-right">
+              ${isInside ? `
+                <span class="text-[11px] text-emerald-400 font-bold font-mono">In: ${activeSession ? activeSession.time : 'Today'}</span>
+              ` : `
+                <span class="text-[11px] font-bold ${m.isPaused ? 'text-amber-400' : 'text-zinc-400'}">${m.isPaused ? 'PAUSED' : 'ACTIVE'}</span>
+              `}
+            </div>
           </div>
-          <div class="text-right">
-            <span class="text-[11px] font-bold ${m.isPaused ? 'text-amber-400' : 'text-emerald-400'}">${m.isPaused ? 'PAUSED' : 'ACTIVE'}</span>
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
 
       suggestionsBox.classList.remove("hidden");
 
@@ -192,6 +215,7 @@ function initAttendanceDesk() {
     });
   }
 
+  // Check-In Button Handler
   if (checkinBtn) {
     checkinBtn.addEventListener("click", () => {
       if (!selectedMemberForCheckin) {
@@ -201,11 +225,21 @@ function initAttendanceDesk() {
 
       const res = window.fit24Store.checkInMember(selectedMemberForCheckin.id, "Front Desk Search");
       if (!res.success) {
+        if (res.alreadyInside) {
+          const doCheckout = confirm(`${res.message}\n\nWould you like to Check Out ${res.member.name} now?`);
+          if (doCheckout) {
+            window.checkOutMemberQuick(res.member.id);
+            searchInput.value = "";
+            selectedMemberForCheckin = null;
+            document.getElementById("checkin-preview-card").classList.add("hidden");
+          }
+          return;
+        }
         alert(`Cannot Check In: ${res.message}`);
         return;
       }
 
-      alert(`✓ Checked In: ${res.member.name} (${res.member.tier}) at ${res.record.time}`);
+      alert(`✓ Checked In: ${res.member.name} (${res.member.tier}) at ${res.record.time}. Live Occupancy: ${res.occupancy} athletes.`);
       searchInput.value = "";
       selectedMemberForCheckin = null;
       document.getElementById("checkin-preview-card").classList.add("hidden");
@@ -213,17 +247,51 @@ function initAttendanceDesk() {
     });
   }
 
-  // Simulated QR Check-in scanner
+  // Check-Out Button Handler
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", () => {
+      if (!selectedMemberForCheckin) {
+        alert("Please search and select a member first.");
+        return;
+      }
+
+      const res = window.fit24Store.checkOutMember(selectedMemberForCheckin.id);
+      if (!res.success) {
+        alert(`Cannot Check Out: ${res.message}`);
+        return;
+      }
+
+      alert(`✓ Checked Out: ${res.member.name} departed at ${res.checkOutTime}.\nFloor Session Duration: ${res.duration}.\nLive Floor Occupancy: ${res.occupancy} athletes.`);
+      searchInput.value = "";
+      selectedMemberForCheckin = null;
+      document.getElementById("checkin-preview-card").classList.add("hidden");
+      renderAllData();
+    });
+  }
+
+  // Simulated QR Code Scanner with Auto In/Out Detection
   const qrSimulateBtn = document.getElementById("simulate-qr-btn");
   if (qrSimulateBtn) {
     qrSimulateBtn.addEventListener("click", () => {
-      const code = prompt("Scan / Enter Member Code (e.g. F24-1001, F24-1002):", "F24-1001");
+      const code = prompt("Scan / Enter Member Code (e.g. F24-1001, F24-1002, F24-1005):", "F24-1002");
       if (code) {
-        const res = window.fit24Store.checkInMember(code.trim(), "QR Pass Scanner");
+        const cleanCode = code.trim();
+        // Check if member is already inside
+        if (window.fit24Store.isMemberCurrentlyInside(cleanCode)) {
+          const activeSession = window.fit24Store.getActiveFloorSession(cleanCode);
+          const member = window.fit24Store.getMember(cleanCode);
+          const name = member ? member.name : (activeSession ? activeSession.name : cleanCode);
+          const doCheckout = confirm(`Athlete ${name} is currently ON THE FLOOR (Entry: ${activeSession ? activeSession.time : 'Today'}).\n\nClick OK to LOG CHECK-OUT & EXIT FLOOR.\nClick Cancel to keep session open.`);
+          if (doCheckout) {
+            window.checkOutMemberQuick(cleanCode);
+            return;
+          }
+        }
+        const res = window.fit24Store.checkInMember(cleanCode, "QR Pass Scanner");
         if (!res.success) {
           alert(`QR Scan Error: ${res.message}`);
         } else {
-          alert(`✓ QR Scan Success: ${res.member.name} checked into FIT24 Kanhangad!`);
+          alert(`✓ QR Scan Check-In: ${res.member.name} checked into FIT24! Live Occupancy: ${res.occupancy} athletes.`);
           renderAllData();
         }
       }
@@ -235,11 +303,26 @@ function displayCheckinPreview(m) {
   const card = document.getElementById("checkin-preview-card");
   if (!card) return;
 
+  const isInside = window.fit24Store.isMemberCurrentlyInside(m.id);
+  const activeSession = window.fit24Store.getActiveFloorSession(m.id);
+  const checkinBtn = document.getElementById("do-checkin-btn");
+  const checkoutBtn = document.getElementById("do-checkout-btn");
+
+  if (checkinBtn && checkoutBtn) {
+    if (isInside) {
+      checkoutBtn.className = "w-full py-4 bg-amber-600 hover:bg-white hover:text-black font-gymbox text-2xl uppercase tracking-wider text-white transition-all shadow-lg animate-pulse";
+      checkinBtn.className = "w-full py-4 bg-zinc-900 hover:bg-[#ff0033] font-gymbox text-2xl uppercase tracking-wider text-zinc-400 hover:text-white transition-all border border-white/20";
+    } else {
+      checkinBtn.className = "w-full py-4 bg-[#ff0033] hover:bg-white hover:text-black font-gymbox text-2xl uppercase tracking-wider text-white transition-all shadow-lg";
+      checkoutBtn.className = "w-full py-4 bg-zinc-900 hover:bg-amber-600 font-gymbox text-2xl uppercase tracking-wider text-zinc-400 hover:text-white transition-all border border-white/20";
+    }
+  }
+
   card.classList.remove("hidden");
   card.innerHTML = `
-    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
+    <div class="p-4 bg-white/5 border ${isInside ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-white/10'} rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-red-600/20 text-red-500 font-bold font-display text-lg flex items-center justify-center">
+        <div class="w-12 h-12 rounded-xl ${isInside ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-600/20 text-[#ff0033]'} font-bold font-display text-lg flex items-center justify-center">
           ${m.tier[0]}
         </div>
         <div>
@@ -247,7 +330,7 @@ function displayCheckinPreview(m) {
             ${m.name}
             <span class="text-xs px-2 py-0.5 rounded ${m.tier === 'ELITE' ? 'bg-yellow-500/20 text-yellow-400' : m.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">${m.tier}</span>
           </h4>
-          <div class="text-xs text-zinc-400 font-mono">${m.id} · ${m.phone}</div>
+          <div class="text-xs text-zinc-400">${m.id} · ${m.phone}</div>
           <div class="text-xs mt-1">
             <span class="text-zinc-500">Plan Expiry:</span> <strong class="text-zinc-200">${m.endDate}</strong>
             <span class="mx-2 text-zinc-600">|</span>
@@ -255,11 +338,17 @@ function displayCheckinPreview(m) {
           </div>
         </div>
       </div>
-      <div class="text-right">
-        ${m.isPaused 
-          ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">⏸ PAUSED</span>` 
-          : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">● ACTIVE</span>`
-        }
+      <div class="text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1.5">
+        ${isInside ? `
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> ON FLOOR (${activeSession ? activeSession.time : 'Active'})
+          </span>
+          <span class="text-[10px] text-zinc-400">Ready for Check-Out</span>
+        ` : m.isPaused ? `
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">⏸ MEMBERSHIP PAUSED</span>
+        ` : `
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-zinc-800 text-zinc-300 border border-white/10">⚪ OUTSIDE GYM FLOOR</span>
+        `}
       </div>
     </div>
   `;
@@ -270,21 +359,55 @@ function renderAttendanceTable() {
   if (!table) return;
 
   const attendances = window.fit24Store.getStore().attendances || [];
-  table.innerHTML = attendances.map(a => `
-    <tr class="border-b border-white/5 hover:bg-white/[0.02]">
-      <td class="py-3 px-4 text-xs font-mono font-bold text-red-400">${a.memberId}</td>
-      <td class="py-3 px-4 text-xs font-bold text-white">${a.name}</td>
-      <td class="py-3 px-4 text-xs">
-        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${a.tier === 'ELITE' ? 'bg-yellow-500/20 text-yellow-400' : a.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">${a.tier}</span>
-      </td>
-      <td class="py-3 px-4 text-xs font-mono text-zinc-300">${a.time}</td>
-      <td class="py-3 px-4 text-xs text-zinc-400">${a.method}</td>
-      <td class="py-3 px-4 text-xs text-right">
-        <span class="text-[11px] text-emerald-400 font-mono">Inside Floor</span>
-      </td>
-    </tr>
-  `).join("") || `<tr><td colspan="6" class="text-center py-6 text-zinc-500 text-xs">No attendance entries recorded today.</td></tr>`;
+  table.innerHTML = attendances.map(a => {
+    const isInside = a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT");
+    const inTime = a.checkInTime || a.time || "—";
+    const outTime = a.checkOutTime || "—";
+    const duration = a.duration || (isInside ? '<span class="text-emerald-400 font-bold animate-pulse">Training...</span>' : "—");
+
+    return `
+      <tr class="border-b border-white/5 hover:bg-white/[0.02]">
+        <td class="py-3 px-4 text-xs font-mono font-bold text-red-400">${a.memberId}</td>
+        <td class="py-3 px-4 text-xs font-bold text-white">${a.name}</td>
+        <td class="py-3 px-4 text-xs">
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${a.tier === 'ELITE' ? 'bg-yellow-500/20 text-yellow-400' : a.tier === 'PRIME' ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'}">${a.tier}</span>
+        </td>
+        <td class="py-3 px-4 text-xs font-mono text-zinc-300">${inTime}</td>
+        <td class="py-3 px-4 text-xs font-mono text-zinc-400">${outTime}</td>
+        <td class="py-3 px-4 text-xs font-mono text-zinc-300">${duration}</td>
+        <td class="py-3 px-4 text-xs text-zinc-400">${a.method}</td>
+        <td class="py-3 px-4 text-xs text-right whitespace-nowrap">
+          ${isInside ? `
+            <div class="flex items-center justify-end gap-2">
+              <span class="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-mono font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Inside Floor
+              </span>
+              <button onclick="window.checkOutMemberQuick('${a.id || a.memberId}')" 
+                      class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase rounded transition-all shadow-sm cursor-pointer">
+                🔴 Check Out
+              </button>
+            </div>
+          ` : `
+            <span class="inline-block px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 font-mono text-[10px]">
+              ⚪ Departed (${outTime})
+            </span>
+          `}
+        </td>
+      </tr>
+    `;
+  }).join("") || `<tr><td colspan="8" class="text-center py-6 text-zinc-500 text-xs">No attendance entries recorded today.</td></tr>`;
 }
+
+// Global 1-Click Quick Check-Out Handler
+window.checkOutMemberQuick = function(identifier) {
+  const res = window.fit24Store.checkOutMember(identifier);
+  if (!res.success) {
+    alert(`Check-out failed: ${res.message}`);
+    return;
+  }
+  alert(`✓ CHECK-OUT COMPLETED:\n${res.member.name} departed at ${res.checkOutTime}.\nFloor session duration: ${res.duration}.\nLive Floor Occupancy: ${res.occupancy} athletes.`);
+  renderAllData();
+};
 
 // 3. Member CRM Directory
 function initMemberCRM() {
@@ -457,10 +580,15 @@ function renderMemberTable(searchQuery = null, filterTier = null, filterStatus =
         <td class="py-3 px-4 text-xs font-mono text-amber-400 font-bold">
           ₹${m.cafeCredit.toFixed(2)}
         </td>
-        <td class="py-3 px-4 text-xs">
+        <td class="py-3 px-4 text-xs font-mono">
           ${m.isPaused 
             ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400">PAUSED</span>` 
-            : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">ACTIVE</span>`
+            : m.scheduledPause ? `
+              <div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">ACTIVE</span>
+                <div class="text-[9px] text-blue-400 font-mono mt-0.5">Freeze from tmrw</div>
+              </div>
+            ` : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">ACTIVE</span>`
           }
         </td>
         <td class="py-3 px-4 text-xs text-right space-x-1 whitespace-nowrap">
@@ -818,30 +946,135 @@ function renderFacilityLogs() {
 
 // 5. Membership Pause / Freeze Engine
 function initPauseEngine() {
+  const memberSelect = document.getElementById("pause-member-select");
+  const startDateInput = document.getElementById("pause-start-date");
+  const alertBox = document.getElementById("pause-member-alert");
+  const startDateHint = document.getElementById("pause-start-date-hint");
   const applyPauseBtn = document.getElementById("apply-pause-btn");
+  const resumeBtn = document.getElementById("resume-pause-btn");
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const tmrw = new Date();
+  tmrw.setDate(tmrw.getDate() + 1);
+  const tomorrowStr = tmrw.toISOString().split('T')[0];
+
+  if (memberSelect) {
+    memberSelect.addEventListener("change", () => {
+      const memberId = memberSelect.value;
+      if (!memberId) {
+        if (alertBox) {
+          alertBox.classList.add("hidden");
+          alertBox.innerHTML = "";
+        }
+        if (startDateInput) {
+          startDateInput.value = todayStr;
+          startDateInput.min = todayStr;
+        }
+        if (startDateHint) startDateHint.innerHTML = "Effective start date";
+        return;
+      }
+
+      const m = window.fit24Store.getMember(memberId);
+      if (!m) return;
+
+      const isInside = window.fit24Store.isMemberCurrentlyInside(m.id);
+      const attendedToday = window.fit24Store.hasMemberAttendedToday(m.id);
+
+      if (isInside || attendedToday) {
+        // OPERATIONAL POLICY: cannot pause from today
+        if (alertBox) {
+          alertBox.className = "mb-4 p-4 border border-amber-500/50 bg-amber-950/30 rounded-xl font-mono text-xs text-amber-200 block";
+          alertBox.innerHTML = `
+            <div class="flex items-start gap-3">
+              <span class="text-xl">⚠️</span>
+              <div>
+                <div class="font-bold text-amber-400 uppercase tracking-wider text-[11px]">ACTIVE GYM FLOOR RULE ENFORCED</div>
+                <div class="mt-1 text-zinc-300">
+                  <strong>${m.name}</strong> is currently on the gym floor (or trained today). Under FIT24 operations policy, today's facility day is in use. 
+                  <strong class="text-amber-300">Pause CANNOT take effect today — it must begin TOMORROW (${tomorrowStr}).</strong>
+                </div>
+                <div class="mt-1 text-[11px] text-zinc-400">
+                  ✓ Today remains <strong class="text-emerald-400">ACTIVE</strong> so they can finish their workout without interruption.
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        if (startDateInput) {
+          startDateInput.value = tomorrowStr;
+          startDateInput.min = tomorrowStr;
+        }
+        if (startDateHint) {
+          startDateHint.innerHTML = `<span class="text-amber-400 font-bold">Locked to tomorrow (${tomorrowStr}) because athlete is active today</span>`;
+        }
+      } else if (m.isPaused) {
+        if (alertBox) {
+          alertBox.className = "mb-4 p-4 border border-blue-500/50 bg-blue-950/30 rounded-xl font-mono text-xs text-blue-200 block";
+          alertBox.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="text-base">⏸</span>
+              <span><strong>${m.name}</strong> is currently PAUSED (since ${m.currentPauseStart || 'Recent'}). Click 'Resume Member Early' below to reactivate.</span>
+            </div>
+          `;
+        }
+        if (startDateInput) startDateInput.value = todayStr;
+      } else {
+        const availablePause = m.totalPauseAllowed - m.pauseDaysUsed;
+        if (alertBox) {
+          alertBox.className = "mb-4 p-4 border border-white/10 bg-white/5 rounded-xl font-mono text-xs text-zinc-300 block";
+          alertBox.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-bold text-white">${m.name}</span> (${m.tier} Tier · ${m.durationMonths}M plan)
+                <div class="text-[11px] text-zinc-400 mt-0.5">Available Pause: <strong>${availablePause} days</strong> (Block ${m.pauseBlocksUsed + 1}/2) · Expiry: ${m.endDate}</div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 font-mono">ELIGIBLE</span>
+            </div>
+          `;
+        }
+        if (startDateInput) {
+          startDateInput.value = todayStr;
+          startDateInput.min = todayStr;
+        }
+        if (startDateHint) startDateHint.innerHTML = "Effective start date (Today or future)";
+      }
+    });
+  }
+
   if (applyPauseBtn) {
     applyPauseBtn.addEventListener("click", () => {
       const memberId = document.getElementById("pause-member-select").value;
       const pauseDays = parseInt(document.getElementById("pause-days-input").value);
       const reason = document.getElementById("pause-reason-input").value;
+      const startDate = startDateInput ? startDateInput.value : null;
 
       if (!memberId) {
         alert("Please select a member.");
         return;
       }
 
-      const res = window.fit24Store.pauseMembership(memberId, pauseDays, reason);
+      const res = window.fit24Store.pauseMembership(memberId, pauseDays, reason, startDate);
       if (!res.success) {
-        alert(`Pause Request Rejected: ${res.message}`);
+        alert(`Pause Request Rejected:\n${res.message}`);
+        if (res.requiresTomorrow && startDateInput) {
+          startDateInput.value = res.tomorrowDate;
+          startDateInput.min = res.tomorrowDate;
+        }
         return;
       }
 
-      alert(`✓ Membership Paused: ${res.member.name} paused for ${pauseDays} days. New membership expiry extended to ${res.newEndDate}.`);
+      if (res.isScheduledForTomorrow) {
+        alert(`✓ PAUSE SCHEDULED FOR TOMORROW:\n${res.member.name}'s pause takes effect tomorrow (${res.startDate}) for ${pauseDays} days.\nToday's status remains ACTIVE so they can complete their workout.\nNew membership expiry extended to: ${res.newEndDate}.`);
+      } else {
+        alert(`✓ MEMBERSHIP PAUSED:\n${res.member.name} paused for ${pauseDays} days starting today.\nNew membership expiry extended to: ${res.newEndDate}.`);
+      }
+
+      document.getElementById("pause-reason-input").value = "";
+      if (alertBox) alertBox.classList.add("hidden");
       renderAllData();
     });
   }
 
-  const resumeBtn = document.getElementById("resume-pause-btn");
   if (resumeBtn) {
     resumeBtn.addEventListener("click", () => {
       const memberId = document.getElementById("pause-member-select").value;
@@ -866,34 +1099,79 @@ function renderPauseOverview() {
 
   const members = window.fit24Store.getMembers();
   const pausedMembers = members.filter(m => m.isPaused);
+  const scheduledMembers = members.filter(m => m.scheduledPause && !m.isPaused);
 
-  if (pausedMembers.length === 0) {
-    container.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500">No members currently on pause.</div>`;
+  if (pausedMembers.length === 0 && scheduledMembers.length === 0) {
+    container.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 font-mono">No members currently on pause or scheduled for pause.</div>`;
     return;
   }
 
-  container.innerHTML = pausedMembers.map(m => `
-    <div class="p-4 rounded-xl bg-black/40 border border-amber-500/30 flex items-center justify-between">
+  const pausedHTML = pausedMembers.map(m => `
+    <div class="p-4 rounded-xl bg-black/40 border border-amber-500/30 flex items-center justify-between font-mono">
       <div>
         <h5 class="text-xs font-bold text-white flex items-center gap-2">
           ${m.name} (${m.id})
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono">PAUSED</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono">ACTIVE FREEZE</span>
         </h5>
         <div class="text-[11px] text-zinc-400 mt-1">
-          Paused on: ${m.currentPauseStart || 'Recent'} · Total Pause Used: ${m.pauseDaysUsed}/${m.totalPauseAllowed} days (Block ${m.pauseBlocksUsed}/2)
+          Frozen since: ${m.currentPauseStart || 'Recent'} · Pause Used: ${m.pauseDaysUsed}/${m.totalPauseAllowed} days (Block ${m.pauseBlocksUsed}/2)
         </div>
         <div class="text-[11px] text-zinc-300 font-mono mt-0.5">
           Extended Expiry: <strong>${m.endDate}</strong>
         </div>
       </div>
       <div>
-        <button onclick="resumeMemberQuick('${m.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white">
+        <button onclick="resumeMemberQuick('${m.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-all cursor-pointer">
           Resume Now
         </button>
       </div>
     </div>
   `).join("");
+
+  const scheduledHTML = scheduledMembers.map(m => `
+    <div class="p-4 rounded-xl bg-blue-950/20 border border-blue-500/30 flex items-center justify-between font-mono">
+      <div>
+        <h5 class="text-xs font-bold text-white flex items-center gap-2">
+          ${m.name} (${m.id})
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-mono font-bold">⏳ SCHEDULED FOR TOMORROW</span>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono">ACTIVE TODAY</span>
+        </h5>
+        <div class="text-[11px] text-zinc-400 mt-1">
+          Freeze starts: <strong>${m.scheduledPause.startDate}</strong> (${m.scheduledPause.days} days) · Reason: ${m.scheduledPause.reason}
+        </div>
+        <div class="text-[11px] text-zinc-300 font-mono mt-0.5">
+          Extended Expiry: <strong>${m.endDate}</strong>
+        </div>
+      </div>
+      <div>
+        <button onclick="cancelScheduledPauseQuick('${m.id}')" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-red-600 text-xs font-bold text-zinc-300 hover:text-white transition-all cursor-pointer">
+          Cancel Schedule
+        </button>
+      </div>
+    </div>
+  `).join("");
+
+  container.innerHTML = pausedHTML + scheduledHTML;
 }
+
+window.cancelScheduledPauseQuick = function(id) {
+  const store = window.fit24Store.getStore();
+  const m = store.members.find(x => x.id === id);
+  if (!m || !m.scheduledPause) return;
+  const days = m.scheduledPause.days || 7;
+  const curEnd = new Date(m.endDate);
+  curEnd.setDate(curEnd.getDate() - days);
+  m.endDate = curEnd.toISOString().split('T')[0];
+  m.pauseDaysUsed = Math.max(0, (m.pauseDaysUsed || 0) - days);
+  m.pauseBlocksUsed = Math.max(0, (m.pauseBlocksUsed || 1) - 1);
+  m.scheduledPause = null;
+  if (m.pauseHistory && m.pauseHistory[0] && m.pauseHistory[0].status === "SCHEDULED_PAUSE") {
+    m.pauseHistory.shift();
+  }
+  window.fit24Store.saveStore(store);
+  alert(`✓ Scheduled pause cancelled for ${m.name}. Expiry restored to ${m.endDate}.`);
+  renderAllData();
+};
 
 window.resumeMemberQuick = function(id) {
   const res = window.fit24Store.resumeMembership(id);
@@ -1014,11 +1292,16 @@ function populateMemberSelectDropdowns() {
     const el = document.getElementById(id);
     if (!el) return;
     const curVal = el.value;
-    el.innerHTML = `<option value="">-- Choose Member --</option>` + members.map(m => `
-      <option value="${m.id}" ${m.id === curVal ? 'selected' : ''}>
-        ${m.name} (${m.id}) - ${m.tier}
-      </option>
-    `).join("");
+    el.innerHTML = `<option value="">-- Choose Member --</option>` + members.map(m => {
+      const isInside = window.fit24Store.isMemberCurrentlyInside(m.id);
+      const floorTag = isInside ? ' [🟢 Inside Gym]' : '';
+      const pauseTag = m.isPaused ? ' [⏸ Paused]' : (m.scheduledPause ? ' [⏳ Freeze Tmrw]' : '');
+      return `
+        <option value="${m.id}" ${m.id === curVal ? 'selected' : ''}>
+          ${m.name} (${m.id}) - ${m.tier}${floorTag}${pauseTag}
+        </option>
+      `;
+    }).join("");
   });
 }
 
@@ -3006,6 +3289,25 @@ window.viewTrainerClients = function(trainerId) {
 window.executeScanCheckIn = function(code) {
   if (!code) return;
   const cleanCode = code.trim();
+
+  // If member is currently on the floor, prompt and execute check-out
+  if (window.fit24Store.isMemberCurrentlyInside(cleanCode)) {
+    const activeSession = window.fit24Store.getActiveFloorSession(cleanCode);
+    const member = window.fit24Store.getMember(cleanCode);
+    const name = member ? member.name : (activeSession ? activeSession.name : cleanCode);
+    const doCheckout = confirm(`ATHLETE ON FLOOR:\n${name} (${cleanCode}) entered at ${activeSession ? activeSession.time : 'Today'}.\n\nClick OK to LOG CHECK-OUT & EXIT FLOOR.\nClick Cancel to keep session active.`);
+    if (doCheckout) {
+      const outRes = window.fit24Store.checkOutMember(cleanCode);
+      if (outRes.success) {
+        if (window.fit24Scanner) window.fit24Scanner.playSuccessBeep();
+        alert(`✓ CHECK-OUT COMPLETED:\n${outRes.member.name} departed at ${outRes.checkOutTime}.\nSession Duration: ${outRes.duration}.\nLive Floor Occupancy: ${outRes.occupancy} athletes.`);
+        renderAllData();
+        return;
+      }
+    }
+    return;
+  }
+
   const res = window.fit24Store.checkInMember(cleanCode, "Barcode / QR Laser");
 
   if (!res.success) {
@@ -3013,7 +3315,7 @@ window.executeScanCheckIn = function(code) {
     alert(`⚠️ Cannot Check In: ${res.message}`);
   } else {
     if (window.fit24Scanner) window.fit24Scanner.playSuccessBeep();
-    alert(`✓ CHECK-IN APPROVED: ${res.member.name} (${res.member.tier}) at ${res.record.time}`);
+    alert(`✓ CHECK-IN APPROVED: ${res.member.name} (${res.member.tier}) at ${res.record.time}. Live Occupancy: ${res.occupancy} athletes.`);
     renderAllData();
   }
 };

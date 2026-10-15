@@ -982,9 +982,9 @@ const FIT24_DATA = {
   ],
 
   initialAttendances: [
-    { id: "att-1", memberId: "F24-1005", name: "Arjun Balakrishnan", tier: "ELITE", time: "06:30 AM", date: "Today", method: "QR Code" },
-    { id: "att-2", memberId: "F24-1002", name: "Dr. Anjali Menon", tier: "PRIME", time: "07:45 AM", date: "Today", method: "Fast Search" },
-    { id: "att-3", memberId: "F24-1001", name: "Rahul Nambiar", tier: "ELITE", time: "08:15 AM", date: "Today", method: "QR Code" }
+    { id: "att-1", memberId: "F24-1005", name: "Arjun Balakrishnan", tier: "ELITE", time: "06:30 AM", checkInTime: "06:30 AM", checkOutTime: null, duration: null, status: "INSIDE_GYM", date: "Today", method: "QR Code" },
+    { id: "att-2", memberId: "F24-1002", name: "Dr. Anjali Menon", tier: "PRIME", time: "07:45 AM", checkInTime: "07:45 AM", checkOutTime: null, duration: null, status: "INSIDE_GYM", date: "Today", method: "Fast Search" },
+    { id: "att-3", memberId: "F24-1001", name: "Rahul Nambiar", tier: "ELITE", time: "08:15 AM", checkInTime: "08:15 AM", checkOutTime: "09:30 AM", duration: "1h 15m", status: "CHECKED_OUT", date: "Today", method: "QR Code" }
   ],
 
   initialFacilityLogs: [
@@ -2039,26 +2039,95 @@ class Fit24Store {
   }
 
   getStore() {
+    let store = null;
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
       if (data) {
-        const parsed = JSON.parse(data);
-        if (!parsed.activities || parsed.activities.length === 0) {
-          parsed.activities = (FIT24_DATA.initialActivities || []).slice();
-          this.saveStore(parsed);
-        }
-        return parsed;
+        store = JSON.parse(data);
       }
     } catch (e) {
       // fallback
     }
-    if (!this._memoryStore) {
-      this.resetToDefaults();
+    if (!store) {
+      if (!this._memoryStore) {
+        this.resetToDefaults();
+      }
+      store = this._memoryStore;
     }
-    if (this._memoryStore && (!this._memoryStore.activities || this._memoryStore.activities.length === 0)) {
-      this._memoryStore.activities = (FIT24_DATA.initialActivities || []).slice();
+
+    let needsSave = false;
+
+    if (!store.activities || store.activities.length === 0) {
+      store.activities = (FIT24_DATA.initialActivities || []).slice();
+      needsSave = true;
     }
-    return this._memoryStore;
+
+    // Auto-backfill attendance session fields (checkInTime, checkOutTime, duration, status)
+    if (store.attendances && store.attendances.length > 0) {
+      store.attendances.forEach(att => {
+        if (!att.checkInTime) {
+          att.checkInTime = att.time || "07:00 AM";
+          needsSave = true;
+        }
+        if (!att.status) {
+          att.status = att.checkOutTime ? "CHECKED_OUT" : "INSIDE_GYM";
+          needsSave = true;
+        }
+      });
+    }
+
+    // Self-heal: ensure members currently on the gym floor today cannot be in PAUSED state today
+    // An active floor session means today's facility day is in use; pause must take effect tomorrow.
+    const todayStr = new Date().toISOString().split('T')[0];
+    const tmrw = new Date();
+    tmrw.setDate(tmrw.getDate() + 1);
+    const tomorrowStr = tmrw.toISOString().split('T')[0];
+
+    if (store.members && store.attendances) {
+      const insideMemberIds = new Set(
+        store.attendances
+          .filter(a => {
+            const isToday = a.date === "Today" || (a.date && a.date.includes(todayStr));
+            return isToday && (a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT"));
+          })
+          .map(a => a.memberId)
+      );
+
+      store.members.forEach(m => {
+        // Self-heal: Member is inside gym floor right now (or attended today), but marked PAUSED
+        if (insideMemberIds.has(m.id) && (m.isPaused || m.status === "PAUSED")) {
+          m.isPaused = false;
+          m.status = "ACTIVE";
+          m.scheduledPause = {
+            startDate: tomorrowStr,
+            days: (m.pauseHistory && m.pauseHistory[0] ? m.pauseHistory[0].days : 7),
+            reason: (m.pauseHistory && m.pauseHistory[0] ? m.pauseHistory[0].reason : "Scheduled pause (post-workout)")
+          };
+          if (m.pauseHistory && m.pauseHistory.length > 0 && m.pauseHistory[0].status === "ACTIVE_PAUSE") {
+            m.pauseHistory[0].status = "SCHEDULED_PAUSE";
+            m.pauseHistory[0].startDate = tomorrowStr;
+          }
+          needsSave = true;
+        }
+
+        // Activate scheduled pause if its start date has arrived
+        if (m.scheduledPause && todayStr >= m.scheduledPause.startDate) {
+          m.isPaused = true;
+          m.status = "PAUSED";
+          m.currentPauseStart = m.scheduledPause.startDate;
+          m.scheduledPause = null;
+          if (m.pauseHistory && m.pauseHistory.length > 0 && m.pauseHistory[0].status === "SCHEDULED_PAUSE") {
+            m.pauseHistory[0].status = "ACTIVE_PAUSE";
+          }
+          needsSave = true;
+        }
+      });
+    }
+
+    if (needsSave) {
+      this.saveStore(store);
+    }
+    return store;
   }
 
   saveStore(store) {
@@ -2175,13 +2244,105 @@ class Fit24Store {
     return newMember;
   }
 
+  isMemberCurrentlyInside(memberId) {
+    if (!memberId) return false;
+    const store = this.getStore();
+    const cleanId = String(memberId).trim().toLowerCase();
+    const todayStr = new Date().toISOString().split('T')[0];
+    const active = (store.attendances || []).find(a => {
+      const matchId = String(a.memberId).trim().toLowerCase() === cleanId;
+      if (!matchId) return false;
+      const isToday = a.date === "Today" || (a.date && a.date.includes(todayStr));
+      const isInside = a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT");
+      return isToday && isInside;
+    });
+    return Boolean(active);
+  }
+
+  hasMemberAttendedToday(memberId) {
+    if (!memberId) return false;
+    const store = this.getStore();
+    const cleanId = String(memberId).trim().toLowerCase();
+    const todayStr = new Date().toISOString().split('T')[0];
+    const record = (store.attendances || []).find(a => {
+      const matchId = String(a.memberId).trim().toLowerCase() === cleanId;
+      if (!matchId) return false;
+      return a.date === "Today" || (a.date && a.date.includes(todayStr));
+    });
+    return Boolean(record);
+  }
+
+  getActiveFloorSession(memberId) {
+    if (!memberId) return null;
+    const store = this.getStore();
+    const cleanId = String(memberId).trim().toLowerCase();
+    const todayStr = new Date().toISOString().split('T')[0];
+    return (store.attendances || []).find(a => {
+      const matchId = String(a.memberId).trim().toLowerCase() === cleanId;
+      if (!matchId) return false;
+      const isToday = a.date === "Today" || (a.date && a.date.includes(todayStr));
+      const isInside = a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT");
+      return isToday && isInside;
+    }) || null;
+  }
+
+  getLiveOccupancyCount() {
+    const store = this.getStore();
+    const todayStr = new Date().toISOString().split('T')[0];
+    const insideSessions = (store.attendances || []).filter(a => {
+      const isToday = a.date === "Today" || (a.date && a.date.includes(todayStr));
+      const isInside = a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT");
+      return isToday && isInside;
+    });
+    return insideSessions.length;
+  }
+
+  calculateAttendanceDuration(inTimeStr, outTimeStr) {
+    if (!inTimeStr || !outTimeStr) return null;
+    try {
+      const parseTime = (tStr) => {
+        const parts = tStr.trim().split(/\s+/);
+        const timeParts = parts[0].split(':').map(Number);
+        let hours = timeParts[0];
+        const minutes = timeParts[1] || 0;
+        if (parts[1]) {
+          const ampm = parts[1].toUpperCase();
+          if (ampm === 'PM' && hours < 12) hours += 12;
+          if (ampm === 'AM' && hours === 12) hours = 0;
+        }
+        return hours * 60 + minutes;
+      };
+      let diffMins = parseTime(outTimeStr) - parseTime(inTimeStr);
+      if (diffMins < 0) diffMins += 24 * 60;
+      const hrs = Math.floor(diffMins / 60);
+      const mins = diffMins % 60;
+      if (hrs > 0) {
+        return `${hrs}h ${mins > 0 ? mins + 'm' : ''}`.trim();
+      }
+      return `${Math.max(1, mins)}m`;
+    } catch (e) {
+      return null;
+    }
+  }
+
   checkInMember(memberId, method = "Fast Search") {
     const store = this.getStore();
-    const member = store.members.find(m => m.id === memberId);
+    const member = store.members.find(m => m.id.toLowerCase() === memberId.toLowerCase() || m.phone.replace(/\s+/g, '').includes(memberId.replace(/\s+/g, '')));
     if (!member) return { success: false, message: "Member not found" };
 
     if (member.isPaused) {
       return { success: false, message: `Membership is PAUSED until resume request is approved.` };
+    }
+
+    if (this.isMemberCurrentlyInside(member.id)) {
+      const activeSession = this.getActiveFloorSession(member.id);
+      return { 
+        success: false, 
+        alreadyInside: true,
+        member,
+        record: activeSession,
+        message: `${member.name} is ALREADY checked in on the gym floor (Entered: ${activeSession ? activeSession.time : 'Today'}). Please check them out upon departure.` 
+      };
     }
 
     const now = new Date();
@@ -2193,6 +2354,10 @@ class Fit24Store {
       name: member.name,
       tier: member.tier,
       time: timeStr,
+      checkInTime: timeStr,
+      checkOutTime: null,
+      duration: null,
+      status: "INSIDE_GYM",
       date: "Today",
       method: method
     };
@@ -2201,13 +2366,89 @@ class Fit24Store {
     member.totalVisits = (member.totalVisits || 0) + 1;
 
     store.attendances.unshift(attendanceRecord);
+
+    this.logActivity({
+      actorType: "STAFF",
+      actorId: "FRONT_DESK",
+      actorName: "Front Desk",
+      targetId: member.id,
+      targetName: member.name,
+      type: "CHECK_IN",
+      description: `Logged gym floor arrival for ${member.name} (${member.id}, ${member.tier}). Checked in via ${method}.`,
+      metadata: { checkIn: timeStr, method: method }
+    });
+
     this.saveStore(store);
 
     // Sync to Supabase Cloud
     if (window.fit24Supabase) {
       window.fit24Supabase.logAttendance(attendanceRecord, member);
     }
-    return { success: true, member, record: attendanceRecord };
+    return { success: true, member, record: attendanceRecord, occupancy: this.getLiveOccupancyCount() };
+  }
+
+  checkOutMember(identifier) {
+    const store = this.getStore();
+    if (!identifier) return { success: false, message: "Member ID or Attendance ID required" };
+
+    const clean = String(identifier).trim().toLowerCase();
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Find attendance record by record id OR memberId
+    let record = (store.attendances || []).find(a => 
+      (a.id && a.id.toLowerCase() === clean && (a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT")))
+    );
+
+    if (!record) {
+      record = (store.attendances || []).find(a => {
+        const matchId = String(a.memberId).trim().toLowerCase() === clean;
+        const isToday = a.date === "Today" || (a.date && a.date.includes(todayStr));
+        const isInside = a.status === "INSIDE_GYM" || (!a.checkOutTime && a.status !== "CHECKED_OUT");
+        return matchId && isToday && isInside;
+      });
+    }
+
+    if (!record) {
+      return { success: false, message: `No active floor session found for this member today.` };
+    }
+
+    const member = store.members.find(m => m.id === record.memberId) || { name: record.name, id: record.memberId, tier: record.tier };
+    const now = new Date();
+    const outTimeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const inTimeStr = record.checkInTime || record.time || outTimeStr;
+    const duration = this.calculateAttendanceDuration(inTimeStr, outTimeStr) || "Session Completed";
+
+    record.checkOutTime = outTimeStr;
+    record.status = "CHECKED_OUT";
+    record.duration = duration;
+
+    // Log Activity Feed
+    this.logActivity({
+      actorType: "STAFF",
+      actorId: "FRONT_DESK",
+      actorName: "Front Desk",
+      targetId: record.memberId,
+      targetName: record.name,
+      type: "CHECK_OUT",
+      description: `Logged gym floor departure for ${record.name} (${record.memberId}). Session duration: ${duration}.`,
+      metadata: { checkIn: inTimeStr, checkOut: outTimeStr, duration: duration, method: record.method }
+    });
+
+    this.saveStore(store);
+
+    if (window.fit24Supabase && typeof window.fit24Supabase.logAttendance === 'function') {
+      window.fit24Supabase.logAttendance(record, member);
+    }
+
+    return {
+      success: true,
+      member,
+      record,
+      duration,
+      checkInTime: inTimeStr,
+      checkOutTime: outTimeStr,
+      occupancy: this.getLiveOccupancyCount()
+    };
   }
 
   deductFacilityQuota(memberId, facilityType, staff = "Front Desk") {
@@ -2256,7 +2497,7 @@ class Fit24Store {
     return { success: true, member, remaining: remainingMsg };
   }
 
-  pauseMembership(memberId, pauseDays, reason) {
+  pauseMembership(memberId, pauseDays, reason, startDate = null) {
     const store = this.getStore();
     const member = store.members.find(m => m.id === memberId);
     if (!member) return { success: false, message: "Member not found" };
@@ -2276,23 +2517,87 @@ class Fit24Store {
       return { success: false, message: `Exceeds available pause limit. Only ${availablePause} days remaining.` };
     }
 
-    member.isPaused = true;
-    member.status = "PAUSED";
-    member.pauseDaysUsed += parseInt(pauseDays);
-    member.pauseBlocksUsed += 1;
+    const todayStr = new Date().toISOString().split('T')[0];
+    const tmrw = new Date();
+    tmrw.setDate(tmrw.getDate() + 1);
+    const tomorrowStr = tmrw.toISOString().split('T')[0];
+
+    const isInsideNow = this.isMemberCurrentlyInside(member.id);
+    const attendedToday = this.hasMemberAttendedToday(member.id);
+
+    // Operational rule: an active member who is in the gym right now (or attended today) cannot pause from today!
+    // The pause must start from tomorrow or later.
+    let effectiveStart = (startDate && String(startDate).trim()) ? String(startDate).trim() : (isInsideNow || attendedToday ? tomorrowStr : todayStr);
+
+    if ((isInsideNow || attendedToday) && effectiveStart <= todayStr) {
+      return {
+        success: false,
+        requiresTomorrow: true,
+        tomorrowDate: tomorrowStr,
+        message: `${member.name} is currently checked in or has already trained on the gym floor today. Under club operations policy, today's facility day is in use. Pause CANNOT take effect today — it must begin tomorrow (${tomorrowStr}).`
+      };
+    }
 
     const curEnd = new Date(member.endDate);
     curEnd.setDate(curEnd.getDate() + parseInt(pauseDays));
     member.endDate = curEnd.toISOString().split('T')[0];
 
-    const todayStr = new Date().toISOString().split('T')[0];
-    member.currentPauseStart = todayStr;
-    member.pauseHistory.unshift({
-      startDate: todayStr,
-      days: parseInt(pauseDays),
-      reason: reason || "Member request",
-      status: "ACTIVE_PAUSE"
-    });
+    member.pauseDaysUsed = (member.pauseDaysUsed || 0) + parseInt(pauseDays);
+    member.pauseBlocksUsed = (member.pauseBlocksUsed || 0) + 1;
+
+    if (effectiveStart > todayStr) {
+      // Future/Tomorrow pause: member remains ACTIVE today!
+      member.isPaused = false;
+      member.status = "ACTIVE";
+      member.scheduledPause = {
+        startDate: effectiveStart,
+        days: parseInt(pauseDays),
+        reason: reason || "Member scheduled freeze"
+      };
+      member.pauseHistory = member.pauseHistory || [];
+      member.pauseHistory.unshift({
+        startDate: effectiveStart,
+        days: parseInt(pauseDays),
+        reason: reason || "Member request (takes effect tomorrow)",
+        status: "SCHEDULED_PAUSE",
+        scheduledOn: todayStr
+      });
+
+      this.logActivity({
+        actorType: "STAFF",
+        actorId: "FRONT_DESK",
+        actorName: "Front Desk",
+        targetId: member.id,
+        targetName: member.name,
+        type: "MEMBERSHIP_PAUSE",
+        description: `Scheduled future membership pause for ${member.name} starting ${effectiveStart} for ${pauseDays} days. Status remains ACTIVE today so they can complete workout.`,
+        metadata: { startDate: effectiveStart, pauseDays, newEndDate: member.endDate }
+      });
+    } else {
+      // Immediate pause (allowed only when member has NOT attended gym today)
+      member.isPaused = true;
+      member.status = "PAUSED";
+      member.currentPauseStart = todayStr;
+      member.scheduledPause = null;
+      member.pauseHistory = member.pauseHistory || [];
+      member.pauseHistory.unshift({
+        startDate: todayStr,
+        days: parseInt(pauseDays),
+        reason: reason || "Member request",
+        status: "ACTIVE_PAUSE"
+      });
+
+      this.logActivity({
+        actorType: "STAFF",
+        actorId: "FRONT_DESK",
+        actorName: "Front Desk",
+        targetId: member.id,
+        targetName: member.name,
+        type: "MEMBERSHIP_PAUSE",
+        description: `Applied instant freeze for ${member.name} for ${pauseDays} days starting today.`,
+        metadata: { startDate: todayStr, pauseDays, newEndDate: member.endDate }
+      });
+    }
 
     this.saveStore(store);
 
@@ -2300,7 +2605,13 @@ class Fit24Store {
     if (window.fit24Supabase) {
       window.fit24Supabase.logPause(member, pauseDays, reason);
     }
-    return { success: true, member, newEndDate: member.endDate };
+    return {
+      success: true,
+      member,
+      newEndDate: member.endDate,
+      isScheduledForTomorrow: effectiveStart > todayStr,
+      startDate: effectiveStart
+    };
   }
 
   resumeMembership(memberId) {
@@ -2310,9 +2621,23 @@ class Fit24Store {
 
     member.isPaused = false;
     member.status = "ACTIVE";
-    if (member.pauseHistory.length > 0 && member.pauseHistory[0].status === "ACTIVE_PAUSE") {
-      member.pauseHistory[0].status = "RESUMED";
+    member.scheduledPause = null;
+    if (member.pauseHistory && member.pauseHistory.length > 0) {
+      if (member.pauseHistory[0].status === "ACTIVE_PAUSE" || member.pauseHistory[0].status === "SCHEDULED_PAUSE") {
+        member.pauseHistory[0].status = "RESUMED";
+      }
     }
+
+    this.logActivity({
+      actorType: "STAFF",
+      actorId: "FRONT_DESK",
+      actorName: "Front Desk",
+      targetId: member.id,
+      targetName: member.name,
+      type: "MEMBERSHIP_RESUME",
+      description: `Resumed membership for ${member.name}. Status restored to ACTIVE.`,
+      metadata: { resumedOn: new Date().toISOString() }
+    });
 
     this.saveStore(store);
 
