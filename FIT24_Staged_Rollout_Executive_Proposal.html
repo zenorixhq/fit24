@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIT24 Enterprise Operating Platform // 3-Month Staged Rollout Strategy & Executive Proposal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #d90429;
+      --primary-dark: #b8001f;
+      --primary-light: #fff0f3;
+      --dark: #0f172a;
+      --dark-card: #1e293b;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg-alt: #f8fafc;
+      --emerald: #059669;
+      --emerald-light: #ecfdf5;
+      --cyan: #0284c7;
+      --cyan-light: #f0f9ff;
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background-color: #ffffff;
+      line-height: 1.5;
+      font-size: 10pt;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm 14mm 14mm 14mm;
+      @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 7.5pt;
+        color: var(--text-muted);
+      }
+    }
+
+    @media print {
+      body {
+        font-size: 9.5pt;
+        line-height: 1.42;
+        background: #fff;
+      }
+      .page-break {
+        page-break-before: always;
+        break-before: page;
+      }
+      .no-break {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .doc-header {
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 30pt;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+    }
+
+    .brand-title span {
+      color: var(--primary);
+    }
+
+    .doc-subtitle {
+      font-size: 10pt;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-box {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .meta-box strong {
+      color: var(--dark);
+    }
+
+    /* Headings */
+    h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16pt;
+      color: var(--dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-left: 4px solid var(--primary);
+      padding-left: 10px;
+      margin: 20px 0 10px 0;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 12pt;
+      color: var(--dark);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin: 12px 0 6px 0;
+    }
+
+    h4 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 8px 0 3px 0;
+    }
+
+    p {
+      margin-bottom: 8px;
+      color: #334155;
+    }
+
+    /* Cards & Boxes */
+    .highlight-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      padding: 12px 14px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .highlight-card.emerald { border-left-color: var(--emerald); background: var(--emerald-light); }
+    .highlight-card.cyan { border-left-color: var(--cyan); background: var(--cyan-light); }
+    .highlight-card.purple { border-left-color: var(--purple); background: var(--purple-light); }
+    .highlight-card.amber { border-left-color: var(--amber); background: var(--amber-light); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 10px 0 14px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 10px 0 14px 0;
+    }
+
+    .feature-module {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 10px 12px;
+      font-size: 9pt;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .feature-module-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 4px;
+    }
+
+    .feature-module-title {
+      font-weight: 700;
+      font-size: 9.5pt;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .feature-desc {
+      font-size: 8.5pt;
+      color: #475569;
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+
+    .feature-benefit {
+      margin-top: 6px;
+      padding: 4px 6px;
+      background: #f8fafc;
+      border-left: 2px solid var(--emerald);
+      font-size: 8pt;
+      color: #065f46;
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-primary { background: var(--primary-light); color: var(--primary-dark); }
+    .badge-emerald { background: var(--emerald-light); color: var(--emerald); }
+    .badge-cyan { background: var(--cyan-light); color: var(--cyan); }
+    .badge-amber { background: var(--amber-light); color: var(--amber); }
+    .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px 0;
+      font-size: 8.5pt;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      text-align: left;
+      padding: 7px 9px;
+      font-weight: 700;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    td {
+      padding: 6px 9px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    /* Flow Diagrams */
+    .flow-diagram {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      line-height: 1.4;
+      margin: 10px 0 14px 0;
+      overflow-x: auto;
+    }
+
+    .flow-diagram .title {
+      color: #f87171;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .check-list {
+      list-style: none;
+      margin: 6px 0 12px 0;
+    }
+
+    .check-list li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 5px;
+      font-size: 9pt;
+      color: #334155;
+    }
+
+    .check-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--emerald);
+      font-weight: bold;
+    }
+
+    .footer-note {
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+      margin-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 7.5pt;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ================= COVER / HEADER ================= -->
+    <div class="doc-header">
+      <div>
+        <div class="brand-title">FIT<span>24</span></div>
+        <div class="doc-subtitle">3-Month Staged Implementation Plan // Executive Specification</div>
+      </div>
+      <div class="meta-box">
+        <strong>FIT24 THALASSERY, KERALA</strong><br>
+        Target Launch: Grand Opening (Oct 18, 2026)<br>
+        Framework: <strong>Month 1 (CRM) &rarr; Month 2 (Trainers) &rarr; Month 3 (Members)</strong><br>
+        Document Status: <strong>EXECUTIVE SIGN-OFF READY</strong>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 1: STAGED ROLLOUT ROADMAP ================= -->
+    <div class="highlight-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <h4 style="margin:0; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary);">Strategic Rationale: Why Roll Out Stage-by-Stage?</h4>
+        <span class="badge badge-primary">ZERO OPENING-DAY CHAOS</span>
+      </div>
+      <p style="margin-bottom:4px; font-size:9pt;">
+        Rather than overwhelming staff, trainers, and athletes with multiple apps on Day 1, FIT24 follows a battle-tested 3-stage rollout. 
+        <strong>Month 1 focuses 100% on Front Desk & Club Operational CRM Mastery</strong> to stabilize registrations, stop facility leaks (sauna/ice bath), issue GST invoices, and reconcile daily cash. Once desk routines are flawless, Month 2 equips trainers, and Month 3 launches the member mobile portal as an exclusive VIP upgrade.
+      </p>
+    </div>
+
+    <!-- Visual 3-Month Roadmap Diagram -->
+    <div class="flow-diagram">
+      <div class="title">// FIT24 3-MONTH STAGED IMPLEMENTATION ARCHITECTURE</div>
+┌─────────────────────────────────┬─────────────────────────────────┬─────────────────────────────────┐
+│       STAGE 1: MONTH 1          │       STAGE 2: MONTH 2          │       STAGE 3: MONTH 3          │
+│ FRONT DESK CRM & CLUB OPERATIONS│ TRAINER COMMAND HUB WORKSPACE   │  ATHLETE MOBILE ACTION CENTER   │
+├─────────────────────────────────┼─────────────────────────────────┼─────────────────────────────────┤
+│ • 3-Sec Member Fast Check-In    │ • Dedicated Trainer Mobile View │ • Reception QR Standee Scans    │
+│ • Member Database & Tier CRM    │ • Isolated 1-on-1 Client Roster │ • Dual-Track Architecture       │
+│ • Strict Sauna & Ice Bath Quotas│ • 7-Day Split Builder (70+ Ex)  │ • 5 Pre-Built Standard Splits   │
+│ • 18% GST Invoicing & Ledgers   │ • 1-Click Floor PT Debit (-1 PT)│ • Live Set/Rep Volume Logger    │
+│ • Desk PT Quota Passbook & Coach│ • Sunday Check-In Review Queue  │ • Offline Audio Rest Timer      │
+│ • Official 3-Mo Pause Engine    │ • PAR-Q Health Risk Flagging    │ • 4-Pillar Daily Habit Tracker  │
+│ • Daily UPI/Cash/Card Cashbook  │ • Low-PT Renewal Alert Watchlist│ • Macro & Calorie Calculator    │
+└─────────────────────────────────┴─────────────────────────────────┴─────────────────────────────────┘
+    </div>
+
+    <!-- ================= SECTION 2: MONTH 1 DEEP DIVE (HEAVY FOCUS) ================= -->
+    <h2>1. Stage 1: Month 1 — Front Desk & Club Operational CRM Mastery (HEAVY FOCUS)</h2>
+    <p style="font-size:9pt;">
+      During Month 1, <strong>only the front desk computers and management consoles run the system</strong>. No member or trainer needs to download or log in to anything. All control, billing, attendance, and facility quotas remain securely managed at the front desk.
+    </p>
+
+    <!-- Month 1 Functionality Grid -->
+    <div class="grid-2">
+
+      <!-- Feature 1 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">⚡ 1. 3-Second Fast Check-In & Headcount</div>
+          <span class="badge badge-primary">FRONT DESK</span>
+        </div>
+        <div class="feature-desc">
+          Optical camera scanner for member QR passes + instant search bar. Desk staff types 2 letters of a member's name, phone, or code (e.g. <code>F24-1001</code>) and taps check-in in under 3 seconds.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Eliminates reception bottlenecks during peak morning (6–9 AM) and evening (5–9 PM) rushes. Live counter displays exact real-time headcount inside the facility.
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">📋 2. Comprehensive Member CRM Directory</div>
+          <span class="badge badge-primary">DATABASE</span>
+        </div>
+        <div class="feature-desc">
+          Centralized athlete register storing contact details, blood group, emergency contacts, registration date, duration (1, 3, 6, 12 months), and plan tier (Elite, Prime, Pro). Searchable with 1 click.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Replaces fragile paper notebooks and messy Excel sheets with a secure, centralized cloud database accessible only by authorized staff.
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🥊 3. Desk-Controlled PT Quota & Coach Tracker</div>
+          <span class="badge badge-emerald">PT CONTROL</span>
+        </div>
+        <div class="feature-desc">
+          Tracks assigned personal trainer (Coach Rahul Menon, Coach Anjali Nair, Coach Vikram Das) and allocated PT session credits (e.g. 6, 12, or 24 sessions) directly from the member CRM table.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Prevents disputes between clients and trainers. When an athlete buys PT, desk credits sessions; when a session is conducted, desk debits <code>-1 PT</code>.
+        </div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🧖 4. Strict Facility Quota Passbook</div>
+          <span class="badge badge-cyan">ZERO LEAKS</span>
+        </div>
+        <div class="feature-desc">
+          Enforces tier quotas for Infrared Sauna (e.g. 4/4) and Cold Plunge Ice Baths. Desk taps <code>Deduct Quota</code> to log entry, updating remaining balances instantly with zero guesswork.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Stops unauthorized usage. In unmanaged gyms, non-entitled members sneak into saunas/ice baths, costing thousands in electricity and ice maintenance.
+        </div>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">☕ 5. Member Café POS & Auto-Discount Wallet</div>
+          <span class="badge badge-amber">REVENUE BOOST</span>
+        </div>
+        <div class="feature-desc">
+          Prepaid member wallet for protein shakes, smoothies, and snacks. Automatically applies tier-based discounts (10% for Prime, 15% for Elite) and deducts bill amount from prepaid balance.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Encourages members to prepay ₹1,000–₹5,000 into their gym wallet upfront, locking in café revenue and speeding up shake pickups post-workout.
+        </div>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🎱 6. Snooker Lounge & Guest Pass Allocator</div>
+          <span class="badge badge-cyan">AMENITIES</span>
+        </div>
+        <div class="feature-desc">
+          Tracks complimentary guest passes (e.g. 2 passes for Elite members) and snooker lounge hours. Logs guest name and member sponsor to preserve club exclusivity.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Turns guest passes into a high-converting sales funnel. Guests who visit with an Elite member are automatically captured as warm leads.
+        </div>
+      </div>
+
+      <!-- Feature 7 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">⏸ 7. Official Brochure-Compliant Pause Engine</div>
+          <span class="badge badge-primary">POLICY CONTROL</span>
+        </div>
+        <div class="feature-desc">
+          Enforces FIT24's official policy: freeze/pause is strictly valid only on plans $\ge 3$ months, for a minimum of 7 consecutive days (max 2 blocks). Automatically recalculates expiry date.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Eliminates staff favoritism and unauthorized membership extensions while giving legitimate traveling athletes clear, fair pause terms.
+        </div>
+      </div>
+
+      <!-- Feature 8 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🧾 8. 18% GST Tax Receipt & Daily Cashbook</div>
+          <span class="badge badge-emerald">ACCOUNTING</span>
+        </div>
+        <div class="feature-desc">
+          Generates compliant GST tax invoices (9% CGST + 9% SGST). Live daily financial closing ledger categorizes every rupee into UPI / GPay, Cash, and Card/POS before desk sign-off.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Simplifies monthly GST filing for your CA. Zero cash discrepancies between receptionist shift handovers.
+        </div>
+      </div>
+
+      <!-- Feature 9 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">⚠️ 9. 14-Day Automated Churn & Expiry Shield</div>
+          <span class="badge badge-amber">RETENTION</span>
+        </div>
+        <div class="feature-desc">
+          Proactive radar that automatically filters all members whose plans expire within the next 7 to 14 days. Provides a 1-click WhatsApp renewal reminder pre-filled with their details.
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Prevents members from continuing to train unpaid while lifting renewal conversion rates by 25% through timely, courteous reminders.
+        </div>
+      </div>
+
+      <!-- Feature 10 -->
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🎯 10. VIP Lead Capture & Inquiry CRM Pipeline</div>
+          <span class="badge badge-purple">SALES PIPELINE</span>
+        </div>
+        <div class="feature-desc">
+          Captures website VIP tour requests, phone inquiries, and walk-in prospects. Tracks stages (New Inquiry &rarr; Tour Booked &rarr; Trial Active &rarr; Converted Member).
+        </div>
+        <div class="feature-benefit">
+          <strong>Business Impact:</strong> Ensures no prospective high-paying lead falls through the cracks during the Grand Opening marketing campaign.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Page Break for clean print layout -->
+    <div class="page-break"></div>
+
+    <!-- ================= SECTION 3: COMPARISON WITH COMMERCIAL GYM SOFTWARE ================= -->
+    <h2>2. Strategic Comparison: FIT24 Custom Platform vs Commercial Gym Software</h2>
+    <p style="font-size:9pt;">Why owning a custom-engineered web platform tailored to FIT24 outperforms off-the-shelf software subscriptions:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:22%;">Evaluation Metric</th>
+          <th style="width:38%;">Commercial Off-the-Shelf Gym Software</th>
+          <th style="width:40%;">FIT24 Proprietary Web Platform</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Recurring Software Cost</strong></td>
+          <td>₹25,000 to ₹45,000 charged every single month + per-user seat licenses + SMS credits.</td>
+          <td><strong>₹0 / Month Forever</strong>. Fully owned outright. <strong>Saves ₹3,00,000 to ₹5,00,000 every single year</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>FIT24 Policy Matching</strong></td>
+          <td>Rigid commercial templates. Cannot enforce FIT24's 3-month pause policy or specific sauna tier quotas.</td>
+          <td><strong>100% Exact Policy Match</strong>. Tailored specifically to FIT24's brochure rules, sauna/ice bath allocations, and 18% GST rules.</td>
+        </tr>
+        <tr>
+          <td><strong>Member App Store Friction</strong></td>
+          <td>Forces members to download a 100MB native app from App Store / Play Store. 40% of members refuse or forget passwords.</td>
+          <td><strong>Instant Progressive Web App</strong>. Opens in 2 seconds via reception QR scan on any phone browser. Zero downloads, zero storage footprint.</td>
+        </tr>
+        <tr>
+          <td><strong>Front Desk Usability</strong></td>
+          <td>Bloated with 50+ confusing sub-menus designed for generic gyms; slow 45-second check-ins create reception queues.</td>
+          <td><strong>Streamlined Reception Console</strong>. Fast 3-second check-in, 1-click quota debiting, and quick front desk shortcut tiles.</td>
+        </tr>
+        <tr>
+          <td><strong>Amenity Quota Protection</strong></td>
+          <td>Treats sauna, cold plunge, and snooker as generic notes; paper coupons easily lost or forged.</td>
+          <td><strong>Strict Digital Passbooks</strong>. Deducts sessions with 1 click, showing exact remaining vs total quota (e.g. <code>3/4 Left</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>Data Ownership & Privacy</strong></td>
+          <td>Member data stored on third-party multi-tenant servers. Vendor can hold data hostage or hike renewal fees.</td>
+          <td><strong>100% FIT24 Proprietary Data</strong>. Secure private cloud database with encrypted backups. FIT24 owns every byte of member data.</td>
+        </tr>
+        <tr>
+          <td><strong>Brand Experience</strong></td>
+          <td>Generic commercial vendor branding ("Powered by GymSoft") diminishes your luxury boutique status.</td>
+          <td><strong>Signature FIT24 Luxury Aesthetic</strong>. High-performance electric red and obsidian styling reinforcing your position as the #1 club in Thalassery.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Financial ROI Summary Box -->
+    <div class="highlight-card emerald">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="margin:0; text-transform:uppercase; color:var(--emerald);">5-Year Financial Savings Analysis</h4>
+        <span class="badge badge-emerald">₹15,00,000+ PRESERVED</span>
+      </div>
+      <p style="margin-top:4px; font-size:8.5pt; color:#064e3b;">
+        By eliminating commercial software monthly fees (₹30,000/mo avg) and native app maintenance contracts, <strong>FIT24 preserves over ₹15,00,000 to ₹25,00,000 across 5 years</strong> directly in the club's capital reserves, while providing a faster, 100% custom-tailored user experience.
+      </p>
+    </div>
+
+    <!-- ================= SECTION 4: MONTH 2 (TRAINER COMMAND HUB) ================= -->
+    <h2>3. Stage 2: Month 2 — Trainer Command Hub & Coaching Operations</h2>
+    <p style="font-size:9pt;">
+      Once desk staff operates the CRM with 100% confidence, personal trainers receive mobile access to their dedicated coaching portal. 
+      <strong>Trainers operate in an isolated environment</strong>—they see only their assigned clients and floor athletes, with zero access to club revenue or desk settings.
+    </p>
+
+    <div class="grid-2">
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🥊 Dedicated 1-on-1 Client Roster</div>
+          <span class="badge badge-purple">ISOLATED VIEW</span>
+        </div>
+        <div class="feature-desc">
+          Trainers see their assigned client list, remaining PT sessions, and automated <strong>Adherence Score (0–100%)</strong> calculated from attendance and weekly check-in completion.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">⚡ 7-Day Day-by-Day Split Builder</div>
+          <span class="badge badge-purple">PROGRAMMING</span>
+        </div>
+        <div class="feature-desc">
+          Coaches prescribe custom workouts from a dropdown of <strong>72 movements</strong> across 10 body categories, setting target weights, tempo cues (e.g. <code>3-0-1-0</code>), and biomechanical coaching notes.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🎟 1-Click Floor Session Debit (-1 PT Done)</div>
+          <span class="badge badge-purple">ACCOUNTABILITY</span>
+        </div>
+        <div class="feature-desc">
+          After training a client on the floor, the coach taps <code>-1 PT Done</code> directly on their phone. This logs the session in the unified audit log and updates remaining session counts.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">💬 Sunday Reflection Review Queue</div>
+          <span class="badge badge-purple">CLIENT RETENTION</span>
+        </div>
+        <div class="feature-desc">
+          Dedicated inbox where trainers review weekly client check-ins (energy rating, obstacles, wins), reply with debrief notes, and adjust the upcoming week's training split.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">⚡ Floor Athlete Claiming (Sales Funnel)</div>
+          <span class="badge badge-purple">PT UPGRADES</span>
+        </div>
+        <div class="feature-desc">
+          Coaches can view unassigned gym floor athletes and tap <code>⚡ Claim to Me</code> upon PT package purchase, instantly moving the member into their active 1-on-1 roster.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🩺 PAR-Q Health Screening & Risk Flags</div>
+          <span class="badge badge-purple">SAFETY & LIABILITY</span>
+        </div>
+        <div class="feature-desc">
+          Pre-exercise Physical Activity Readiness Questionnaire flags cardiac, orthopedic, or blood pressure contraindications (<code>⚠️ Caution</code>) to protect club liability.
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Break for clean print layout -->
+    <div class="page-break"></div>
+
+    <!-- ================= SECTION 5: MONTH 3 (ATHLETE MOBILE PORTAL) ================= -->
+    <h2>4. Stage 3: Month 3 — Full Athlete Mobile Portal Launch & Member Culture</h2>
+    <p style="font-size:9pt;">
+      In Month 3, the platform is introduced to all gym members as an <strong>exclusive VIP technological perk</strong>. Members scan the reception acrylic standees, enter their Member Code (e.g. <code>F24-1001</code>), and immediately access their daily workout timeline.
+    </p>
+
+    <!-- Dual-Track Architecture Diagram -->
+    <div class="flow-diagram">
+      <div class="title">// AUTOMATED DUAL-TRACK ARCHITECTURE (MEMBER PORTAL)</div>
+┌────────────────────────────────────────────────────────────────────────┐
+│                      MEMBER MOBILE ACTION CENTER                       │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+         ┌──────────────────────────┴──────────────────────────┐
+         ▼                                                     ▼
+  TRACK A: 1-ON-1 PT CLIENTS                          TRACK B: SELF-GUIDED FLOOR MEMBERS
+  • Dedicated Coach Profile & Bio Card                • 5 Pre-Built Periodized Splits (PPL, Upper/Lower)
+  • Direct 1-Tap Coach WhatsApp Chat                  • 1-Click In-App Routine Switcher
+  • Coach-Prescribed Progressive Overload Timeline    • 72-Movement Exercise Directory with Form Cues
+  • Live Remaining PT Passbook (e.g. 18/24 Left)      • Smart Goal Macro & Calorie Calculator
+  • Guided Sunday Reflection Submission               • Duty Desk Floor Support & Transparent PT Upgrades
+    </div>
+
+    <div class="grid-2">
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🏋️ 5 Pre-Built Standard Splits</div>
+          <span class="badge badge-emerald">FLOOR ATHLETES</span>
+        </div>
+        <div class="feature-desc">
+          Solves the 60% 30-day drop-off by giving unguided members ready-to-use programs: PPL (6-Day), Upper/Lower (4-Day), Full Body (3-Day), Fat Shred (5-Day), and Ladies Sculpt (4-Day).
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🔄 1-Click In-App Routine Switcher</div>
+          <span class="badge badge-emerald">FLEXIBILITY</span>
+        </div>
+        <div class="feature-desc">
+          Self-guided members can switch routines anytime as their fitness goals change (e.g. switching from Fat Shred to Upper/Lower) without waiting for staff assistance.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">📈 Progressive Overload Set/Rep Logger</div>
+          <span class="badge badge-emerald">WORKOUT LOG</span>
+        </div>
+        <div class="feature-desc">
+          Pre-fills previous session weights and cues progressive overload (+2.5 kg). Calculates total volume tonnage lifted and tracks personal bests (PRs).
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">⏱ Synthesized Offline Audio Rest Timer</div>
+          <span class="badge badge-emerald">TIMING</span>
+        </div>
+        <div class="feature-desc">
+          Built-in rest countdown (60s, 90s, 120s) with clean dual-tone audio chime synthesized natively via Web Audio API. Zero external audio downloads, 100% offline reliable.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🔥 4-Pillar Daily Habit Accountability</div>
+          <span class="badge badge-emerald">LIFESTYLE</span>
+        </div>
+        <div class="feature-desc">
+          1-tap daily tracking for 10,000 steps, 3.5L hydration, 8 hours sleep, and protein target completion. Energy balance compares calories consumed vs calories burnt.
+        </div>
+      </div>
+
+      <div class="feature-module">
+        <div class="feature-module-header">
+          <div class="feature-module-title">🥗 Smart Goal-Based Macro Calculator</div>
+          <span class="badge badge-emerald">NUTRITION</span>
+        </div>
+        <div class="feature-desc">
+          Calculates precise daily calories, protein (g), carbs (g), and healthy fats (g) tailored to member weight and goal (Fat Loss -20%, Recomposition, or Lean Muscle Bulk +15%).
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 6: IMPLEMENTATION TIMELINE & MILESTONES ================= -->
+    <div class="no-break">
+      <h2>5. Implementation & Rollout Milestones Checklist</h2>
+      <p style="font-size:9pt;">Structured roadmap ensuring smooth operational transitions across each 30-day milestone:</p>
+
+      <div class="grid-3">
+        <div class="feature-module" style="border-top:3px solid var(--primary);">
+          <div style="font-weight:700; color:var(--primary); font-size:8.5pt;">MONTH 1: DESK & CRM</div>
+          <div style="font-weight:700; color:var(--dark); font-size:9.5pt; margin:2px 0 4px 0;">Oct 18 – Nov 18, 2026</div>
+          <ul style="padding-left:14px; font-size:7.5pt; color:#475569; line-height:1.4;">
+            <li>Bookmark Front Desk Console on reception PC/tablet.</li>
+            <li>Run 15-min staff drill on check-in, GST billing, and quota passbooks.</li>
+            <li>Register all opening-day members and issue WhatsApp codes.</li>
+            <li>Balance daily cashbook ledger across UPI, Cash, Card.</li>
+          </ul>
+        </div>
+
+        <div class="feature-module" style="border-top:3px solid var(--purple);">
+          <div style="font-weight:700; color:var(--purple); font-size:8.5pt;">MONTH 2: TRAINER HUB</div>
+          <div style="font-weight:700; color:var(--dark); font-size:9.5pt; margin:2px 0 4px 0;">Nov 19 – Dec 18, 2026</div>
+          <ul style="padding-left:14px; font-size:7.5pt; color:#475569; line-height:1.4;">
+            <li>Conduct 30-min coach workshop on mobile rosters.</li>
+            <li>Coaches program 7-day splits using the 72-exercise picker.</li>
+            <li>Trainers log 1-click floor debits (<code>-1 PT Done</code>).</li>
+            <li>Review low-PT renewal alerts for proactive renewals.</li>
+          </ul>
+        </div>
+
+        <div class="feature-module" style="border-top:3px solid var(--emerald);">
+          <div style="font-weight:700; color:var(--emerald); font-size:8.5pt;">MONTH 3: ATHLETE PORTAL</div>
+          <div style="font-weight:700; color:var(--dark); font-size:9.5pt; margin:2px 0 4px 0;">Dec 19, 2026 & Beyond</div>
+          <ul style="padding-left:14px; font-size:7.5pt; color:#475569; line-height:1.4;">
+            <li>Place 2 acrylic QR standees at reception desk.</li>
+            <li>Broadcast WhatsApp launch message to all active members.</li>
+            <li>Members begin logging daily workouts and 4-pillar habits.</li>
+            <li>Establish automated Sunday check-in reflection habit.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Executive Sign-Off -->
+      <div style="margin-top:14px;">
+        <h3 style="margin-bottom:6px;">Executive Verification & Sign-Off</h3>
+        <ul class="check-list">
+          <li><strong>Month 1 Scope Locked:</strong> Front Desk CRM Console, 3-sec check-in, 18% GST invoices, sauna/ice bath passbooks, and desk PT quota tracking.</li>
+          <li><strong>Month 2 Scope Locked:</strong> Isolated Trainer Workspace, 72-movement split editor, floor debiting, and Sunday review queue.</li>
+          <li><strong>Month 3 Scope Locked:</strong> Athlete Mobile Action Center, dual-track coaching, 5 standard routines, and habit tracking.</li>
+          <li><strong>Zero Ongoing Software Overhead:</strong> Saves ₹3,00,000–₹5,00,000 every year with 100% proprietary ownership.</li>
+        </ul>
+      </div>
+
+      <!-- Document Footer -->
+      <div class="footer-note">
+        <div>FIT24 ENTERPRISE OPERATING PLATFORM // CONFIDENTIAL</div>
+        <div>PREPARED FOR MANAGEMENT & STAKEHOLDERS OF FIT24 THALASSERY</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
